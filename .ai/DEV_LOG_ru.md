@@ -81,4 +81,3 @@
   1) Убедиться, что PostgreSQL запущен и доступен по `DATABASE_URL` (по умолчанию `postgresql+psycopg://postgres:postgres@127.0.0.1:5432/snt_core`).
   2) Выполнить миграции: `.venv\Scripts\alembic -c backend_snt_core\alembic.ini upgrade head`.
   3) Выполнить seed: `.venv\Scripts\python -c "import sys; sys.path.insert(0, 'backend_snt_core'); from scripts.seed import main; main()"`.
-

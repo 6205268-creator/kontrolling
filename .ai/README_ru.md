@@ -7,7 +7,7 @@
 - **Frontend** (Vanilla JS) — дашборд, таблицы, модалки. Порт :3000.
 - UI/фронтенд не является источником истины; все инварианты — в backend/БД.
 
-Архитектура: `.ai/architecture.md`, `.ai/context.md`, `ARCHITECTURE_SNT_CORE.md`, `ARCHITECTURE_SNT_V2_PHYSICAL_PERSON.md`.
+Архитектура: `.ai/architecture.md`, `.ai/context.md`.
 
 ## Быстрый старт
 
@@ -21,7 +21,7 @@
 
 ### v1 (backend core, PostgreSQL)
 
-1. Создайте `backend_snt_core/.env` с `DATABASE_URL=postgresql+psycag://...`
+1. Создайте `backend_snt_core/.env` с `DATABASE_URL=postgresql+psycopg://...`
 2. Миграции и seed — см. `backend_snt_core/README.md`, `DEV_LOG.md`
 3. `.\backend_snt_core\run.ps1` — API :8000
 

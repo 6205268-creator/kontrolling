@@ -10,7 +10,7 @@ Accounting system for **SNT** (садовые некоммерческие то�
 
 - **Frontend is not the source of truth.** All invariants and calculations live in backend/DB.
 - **Multi‑tenant by SNT.** All relevant tables have `snt_id`; data of different SNTs must not mix.
-- **Strict isolation for `snt_user`.** Users bound to a single SNT must never see another SNT’s data.
+- **Strict isolation for `snt_user`.** Users bound to a single SNT must never see another SNT's data.
 - **Auth without passwords.** Only user selection in UI; identity via `X-User-Id` header. No sessions/tokens.
 - **v1 backend (`backend_snt_core`) is left unchanged.** v2 lives in `backend_snt_v2`; no shared code.
 
