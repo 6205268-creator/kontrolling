@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СНТ Учёт v2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">◇</span>
+                <span class="logo-text">СНТ Учёт</span>
+            </div>
+            <nav class="nav">
+                <button class="nav-item active" data-section="dashboard">
+                    <span class="nav-icon">◉</span>
+                    <span>Обзор</span>
+                </button>
+                <button class="nav-item" data-section="snts">
+                    <span class="nav-icon">▤</span>
+                    <span>СНТ</span>
+                </button>
+                <button class="nav-item" data-section="physical-persons">
+                    <span class="nav-icon">○</span>
+                    <span>Физ. лица</span>
+                </button>
+                <button class="nav-item" data-section="snt-members">
+                    <span class="nav-icon">▣</span>
+                    <span>Члены СНТ</span>
+                </button>
+                <button class="nav-item" data-section="plots">
+                    <span class="nav-icon">▢</span>
+                    <span>Участки</span>
+                </button>
+                <button class="nav-item" data-section="meters">
+                    <span class="nav-icon">◇</span>
+                    <span>Счётчики</span>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="theme-toggle" id="themeToggle">
+                    <span class="theme-icon">◐</span>
+                    <span>Тема</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="header">
+                <h1 class="page-title" id="pageTitle">Обзор</h1>
+                <div class="header-actions">
+                    <select class="user-select" id="userSelect" title="Пользователь">
+                        <option value="">— Пользователь —</option>
+                    </select>
+                    <select class="snt-select" id="sntSelect" title="СНТ">
+                        <option value="">— Выберите СНТ —</option>
+                    </select>
+                </div>
+            </header>
+
+            <div class="content" id="content"></div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="personModal" hidden>
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Физ. лицо</h2>
+                <button type="button" class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
