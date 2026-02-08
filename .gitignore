@@ -1,31 +1,6 @@
-# Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-venv/
-.venv/
-env/
-.env
-*.egg-info/
-.eggs/
-dist/
-build/
-
-# DB
-*.db
-*.sqlite
-*.sqlite3
-
-# IDE / OS
-.idea/
-.vscode/
-*.swp
+*.pyc
+*.env
 .DS_Store
-Thumbs.db
-
-# Logs
-*.log
-.env.local
-.env.*.local
+node_modules/
+.vscode/

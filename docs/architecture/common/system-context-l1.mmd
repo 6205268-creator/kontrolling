@@ -1,0 +1,26 @@
+```mermaid
+flowchart LR
+    subgraph Actors["Акторы"]
+        Person_Sobstvennik["Собственник участка"]
+        Person_Predsedatel_ST["Председатель СТ"]
+        Person_Kaznachey_ST["Казначей СТ"]
+    end
+
+    subgraph External["Внешние системы"]
+        System_Bank["Банк\nвыписки"]
+        System_Telegram["Telegram"]
+        System_Email_RB["Почта РБ"]
+        System_SMS["SMS"]
+    end
+
+    System_Kontrolling["«КОНТРОЛЛИНГ»"]
+
+    Person_Sobstvennik -->|получает уведомления| System_Kontrolling
+    System_Kontrolling --> Person_Sobstvennik
+    System_Bank -->|поставляет выписки| System_Kontrolling
+    Person_Predsedatel_ST -->|формирует отчёты| System_Kontrolling
+    Person_Kaznachey_ST -->|формирует отчёты| System_Kontrolling
+    System_Kontrolling --> System_Telegram
+    System_Kontrolling --> System_Email_RB
+    System_Kontrolling --> System_SMS
+```
