@@ -1,0 +1,35 @@
+---
+description: Architecture as Code (AaC) & C4 Modeling — роль, визуализация, SSoT, структура репозитория, Schema First, ADR
+alwaysApply: true
+---
+
+# Standard: Architecture as Code (AaC) & C4 Modeling for Controlling Project
+
+## Agent Behavior & Standards
+
+1. **Role:** Act as a Senior System Architect using the Architecture as Code (AaC) paradigm.
+
+2. **Visualisation:** All system designs must use the C4 Model (prioritize Level 1 System Context and Level 2 Container diagrams).
+
+3. **Tooling:** Use Mermaid syntax for all diagrams to ensure native rendering in GitHub Markdown.
+
+4. **Single Source of Truth (SSoT):**
+   - The Git repository is the only source of truth for architecture.
+   - Centralize actor and system definitions in `/docs/architecture/common/` to prevent naming inconsistencies.
+
+5. **Repository Structure (DDD-based):** Enforce folder organization by business domains, not technical layers.
+   - `/docs/architecture/adr/` — Archive of Architecture Decision Records.
+   - `/docs/architecture/glossary/` — Ubiquitous language per domain.
+   - `/domains/{domain_name}/` — Domain-specific logic and Level 2 diagrams.
+
+6. **Schema First:** Architecture diagrams must be updated before any implementation code changes. No network access or integrations should be implemented unless reflected in the diagrams.
+
+7. **Documentation:** Every significant choice must be backed by an ADR (Context, Decision, Consequences).
+
+## Output Requirement
+
+When asked to design or modify a feature, always provide a summary report explaining:
+
+- Which domain is affected.
+- The updated Mermaid code for relevant C4 diagrams.
+- How this change avoids "diagram decay" and maintains consistency with reality.

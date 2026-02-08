@@ -1,0 +1,30 @@
+---
+description: Архитектурные правила — Mermaid, именование, Schema First, глоссарий
+alwaysApply: true
+---
+
+# Архитектурные правила
+
+## Диаграммы
+
+- Все схемы только в **Mermaid**. PlantUML не использовать.
+
+## Именование
+
+- **Person_** — люди: `Person_Sobstvennik`
+- **Service_** — сервисы: `Service_ContributionManager`
+- **System_** — внешние системы: `System_TelegramBot`
+- **Database_** — БД: `Database_PostgreSQL_ST`
+
+## Schema First
+
+- Сначала схема в Git → потом код. Диаграммы обновлять до изменений в коде.
+
+## Запрещено
+
+- Дублировать названия компонентов.
+- Рисовать визуально без экспорта в код (диаграмма должна храниться в репозитории как Mermaid).
+
+## Обязательно
+
+- Глоссарий для каждого домена: `/docs/architecture/glossary/{domain}.md`.
