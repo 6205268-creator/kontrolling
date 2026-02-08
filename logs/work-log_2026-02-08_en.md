@@ -30,6 +30,18 @@
 
 7. **Logs folder** — Created `logs/` and two work-log files with date in name: `work-log_2026-02-08_ru.md` (Russian), `work-log_2026-02-08_en.md` (English); entries added on user request.
 
+### Entry 2 — 2026-02-08 (end of day)
+
+8. **Logs and README on GitHub** — Committed and pushed `logs/`; added `/logs/` to root `README.md` structure.
+
+9. **Mermaid extension in Cursor** — Installed `bierner.markdown-mermaid` for diagram preview in Markdown.
+
+10. **Obsidian duplicate** — Created `obsidian/`: «КОНТРОЛЛИНГ — диаграммы.md» (same Mermaid diagrams) and `README.md` with how to open in Obsidian.
+
+11. **Rules: question ≠ action** — Updated `docs/project-rules.md` and `.cursor/rules/guide-workflow.mdc`: if user **asks** («can we», «можно ли», etc.) — only answer, do nothing. Execute only on explicit request («сделай», «выполни», «подтверждаю»).
+
+12. **Git sync** — All changes committed and pushed to `origin main`. Work for today finished.
+
 ---
 
 *Folder `logs/` is used for architecture and other activity logs.*
