@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Концептуальная модель данных (ядро) — Controlling</title>
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 1rem; max-width: 1200px; margin-left: auto; margin-right: auto; }
+    h1 { font-size: 1.25rem; }
+    h2 { font-size: 1rem; margin-top: 1.5rem; }
+    .legend { background: #f5f5f5; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.9rem; }
+    .legend dt { font-weight: 600; margin-top: 0.35rem; }
+    .links-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 1rem; }
+    .links-table th, .links-table td { border: 1px solid #ccc; padding: 0.4rem 0.6rem; text-align: left; }
+    .links-table th { background: #e8e8e8; }
+    .links-table code { background: #f0f0f0; padding: 0.1em 0.3em; border-radius: 3px; }
+    #schema-network { width: 100%; height: 520px; border: 1px solid #ddd; border-radius: 8px; background: #fafafa; }
+    .schema-hint { font-size: 0.85rem; color: #666; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Концептуальная модель данных (минимальное ядро)</h1>
+  <p>Открой этот файл в браузере: <code>docs/data-model/schema-viewer.html</code></p>
+
+  <h2>Связи между полями (как в Access: это поле → то поле)</h2>
+  <p>Каждая строка — одна связь. Поле в колонке «Поле (FK)» ссылается на поле «Поле (PK)» в другой таблице.</p>
+  <table class="links-table">
+    <thead>
+      <tr>
+        <th>Таблица</th>
+        <th>Поле (FK)</th>
+        <th>Ссылается на таблицу</th>
+        <th>Поле (PK)</th>
+        <th>Связь</th>
+        <th>Пояснение (RU)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Person</td><td><code>cooperative_id</code></td><td>Cooperative</td><td><code>id</code></td><td>N : 1</td><td>Физ. лицо принадлежит одному СТ</td></tr>
+      <tr><td>Member</td><td><code>person_id</code></td><td>Person</td><td><code>id</code></td><td>1 : 1</td><td>Член — одно физ. лицо</td></tr>
+      <tr><td>Member</td><td><code>cooperative_id</code></td><td>Cooperative</td><td><code>id</code></td><td>N : 1</td><td>Член принадлежит одному СТ</td></tr>
+      <tr><td>LandPlot</td><td><code>cooperative_id</code></td><td>Cooperative</td><td><code>id</code></td><td>N : 1</td><td>Участок принадлежит одному СТ</td></tr>
+      <tr><td>PlotOwnership</td><td><code>plot_id</code></td><td>LandPlot</td><td><code>id</code></td><td>N : 1</td><td>Право на конкретный участок</td></tr>
+      <tr><td>PlotOwnership</td><td><code>person_id</code></td><td>Person</td><td><code>id</code></td><td>N : 1</td><td>Собственник — физ. лицо</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Схема связей (таблицы можно перетаскивать)</h2>
+  <p class="schema-hint">Линия идёт от таблицы, где лежит поле (FK), к таблице, на которую ссылаются (PK). Подпись на линии — имя поля. Таблицы можно двигать мышью — расположение сохранится при обновлении страницы.</p>
+  <div id="schema-network"></div>
+
+  <h2>Сущности (для справки)</h2>
+  <div class="legend">
+    <p><strong>Сущности (EN → RU):</strong></p>
+    <dl>
+      <dt>Cooperative</dt><dd>Садоводческое товарищество (СТ)</dd>
+      <dt>Person</dt><dd>Физическое лицо (принадлежит одному СТ)</dd>
+      <dt>Member</dt><dd>Член СТ (1:1 с Person в рамках одного СТ)</dd>
+      <dt>LandPlot</dt><dd>Земельный участок</dd>
+      <dt>PlotOwnership</dt><dd>Право собственности на участок (доля, тип: индивидуальная / долевая / совместная)</dd>
+    </dl>
+  </div>
+
+  <script>
+    (function() {
+      var STORAGE_KEY = 'controlling-schema-positions';
+
+      var nodes = new vis.DataSet([
+        { id: 'Cooperative',  label: 'Cooperative\nСадоводческое товарищество (СТ)', shape: 'box', font: { size: 14 }, x: 250, y: 80 },
+        { id: 'Person',       label: 'Person\nФизическое лицо', shape: 'box', font: { size: 14 }, x: 120, y: 240 },
+        { id: 'Member',       label: 'Member\nЧлен СТ', shape: 'box', font: { size: 14 }, x: 380, y: 240 },
+        { id: 'LandPlot',     label: 'LandPlot\nЗемельный участок', shape: 'box', font: { size: 14 }, x: 120, y: 400 },
+        { id: 'PlotOwnership', label: 'PlotOwnership\nПраво собственности на участок', shape: 'box', font: { size: 14 }, x: 380, y: 400 }
+      ]);
+
+      var edges = new vis.DataSet([
+        { from: 'Person',       to: 'Cooperative',  label: 'cooperative_id',  arrows: 'to', title: 'Person.cooperative_id → Cooperative.id\nФиз. лицо принадлежит одному СТ' },
+        { from: 'Member',       to: 'Person',       label: 'person_id',      arrows: 'to', title: 'Member.person_id → Person.id\nЧлен — одно физ. лицо (1:1)' },
+        { from: 'Member',       to: 'Cooperative',  label: 'cooperative_id',  arrows: 'to', title: 'Member.cooperative_id → Cooperative.id\nЧлен принадлежит одному СТ' },
+        { from: 'LandPlot',     to: 'Cooperative',  label: 'cooperative_id',  arrows: 'to', title: 'LandPlot.cooperative_id → Cooperative.id\nУчасток принадлежит одному СТ' },
+        { from: 'PlotOwnership', to: 'LandPlot',    label: 'plot_id',        arrows: 'to', title: 'PlotOwnership.plot_id → LandPlot.id\nПраво на конкретный участок' },
+        { from: 'PlotOwnership', to: 'Person',      label: 'person_id',      arrows: 'to', title: 'PlotOwnership.person_id → Person.id\nСобственник — физ. лицо' }
+      ]);
+
+      var container = document.getElementById('schema-network');
+      var data = { nodes: nodes, edges: edges };
+      var options = {
+        nodes: {
+          margin: 12,
+          widthConstraint: { minimum: 120 },
+          borderWidth: 2,
+          color: { background: '#fff', border: '#2b7ce9' },
+          font: { color: '#333', face: 'system-ui' }
+        },
+        edges: {
+          font: { size: 12, align: 'middle', color: '#333', strokeWidth: 0 },
+          color: { color: '#666', highlight: '#2b7ce9' },
+          width: 1.5,
+          smooth: { type: 'cubicBezier', roundness: 0.5 }
+        },
+        physics: false,
+        interaction: { dragNodes: true, dragView: true, zoomView: true }
+      };
+
+      var network = new vis.Network(container, data, options);
+
+      // Загрузить сохранённые позиции (таблицы останутся перетаскиваемыми)
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          var pos = JSON.parse(saved);
+          network.setPositions(pos);
+        }
+      } catch (e) {}
+
+      // Сохранять позиции при перетаскивании
+      network.on('dragEnd', function(params) {
+        if (params.nodes.length === 0) return;
+        var positions = network.getPositions();
+        var toStore = {};
+        for (var id in positions) toStore[id] = { x: positions[id].x, y: positions[id].y };
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore)); } catch (e) {}
+      });
+    })();
+  </script>
+</body>
+</html>
