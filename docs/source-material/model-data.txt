@@ -1,9 +1,8 @@
-# КОНЦЕПТУАЛЬНАЯ МОДЕЛЬ ДАННЫХ — МИНИМАЛЬНОЕ ЯДРО
+# КОНЦЕПТУАЛЬНАЯ МОДЕЛЬ ДАННЫХ — ЯДРО + PHASE 2
 
-Документ модели данных приведён в соответствие с минимальным ядром (Phase 1).  
-Дальнейшие изменения вносить в этот файл и синхронизировать с `docs/data-model/entities-minimal.md` и `docs/data-model/schema-viewer.html`.
+Документ синхронизирован с `docs/data-model/entities-minimal.md` и `docs/data-model/schema-viewer.html`.
 
-**Нормальная форма:** cooperative_id только у LandPlot. Связи «владелец ↔ СТ» нет — к товариществу идём через участок (LandPlot → Cooperative). Владение участком задаётся только через сущность PlotOwnership (участок, владелец, период, доля); участок может быть без владельца (нет записей PlotOwnership на нужную дату).
+**Нормальная форма:** cooperative_id только у LandPlot. Связи «владелец ↔ СТ» нет — к товариществу идём через участок (LandPlot → Cooperative). Владение участком задаётся только через PlotOwnership (участок, владелец, период, доля); участок без владельца — нет записей PlotOwnership на нужную дату.
 
 ---
 
@@ -85,41 +84,79 @@
 
 ---
 
-## 2. Связи и кардинальности (ядро)
+### 1.6 Вид взноса (ContributionType)
 
-```
-[Cooperative] —— (1:N) —— [LandPlot]
-  (в СТ много участков)
+Справочник: членский, целевой и т.д. Нужен для типа начисления (Accrual).
 
-[LandPlot] —— (1:N) —— [PlotOwnership] —— (N:1) —— [Owner]
-  (у участка много записей права/доли; у владельца много записей по разным участкам и периодам;
-   по дате определяем, кто владел участком и какой долей; участок может быть без владельца — нет записей на дату)
-
-[Owner] —— (1:N) —— [Meter]
-  (у владельца может быть несколько счётчиков)
-```
-
-Связи:
-- LandPlot → Cooperative (cooperative_id) — участок принадлежит одному СТ
-- PlotOwnership → LandPlot (land_plot_id) — право привязано к участку
-- PlotOwnership → Owner (owner_id) — право привязано к владельцу; по valid_from/valid_to и доле — кто и какой долей владел в период
-- Meter → Owner (owner_id) — счётчик привязан к владельцу
-- Связи Owner → Cooperative нет (к СТ идём через LandPlot).
+Атрибуты:
+- `id` — ключ
+- `code` (строка) — код (напр. membership, target)
+- `name` (строка) — название (напр. «Членский взнос»)
 
 ---
 
-## 3. Запланировано на потом (без изменения ядра)
+### 1.7 Платёж (Payment)
 
-Добавляются новыми сущностями и связями, без изменения перечисленных выше.
+Факт оплаты по участку. К СТ — через land_plot_id → LandPlot → Cooperative.
+
+Атрибуты:
+- `id` — ключ
+- `land_plot_id` (FK → LandPlot) — обязательно
+- `amount` (число) — сумма, BYN
+- `paid_at` (дата) — дата оплаты
+- `status` (строка) — created / confirmed / cancelled
+- `payer_id` (FK → Owner) — опционально, плательщик
+
+---
+
+### 1.8 Начисление (Accrual)
+
+Начисленная сумма по участку за период. К СТ — через участок.
+
+Атрибуты:
+- `id` — ключ
+- `land_plot_id` (FK → LandPlot)
+- `contribution_type_id` (FK → ContributionType)
+- `amount` (число) — BYN
+- `period_from`, `period_to` (даты) — период
+- `status` (строка) — created / applied / corrected
+
+---
+
+### 1.9 Показание счётчика (MeterReading)
+
+Одно значение: счётчик, дата, показание.
+
+Атрибуты:
+- `id` — ключ
+- `meter_id` (FK → Meter)
+- `value` (число) — значение показания
+- `reading_date` (дата) — дата снятия
+
+Баланс (Balance) — не сущность. Считается: сумма начислений по участку минус сумма платежей.
+
+---
+
+## 2. Связи и кардинальности
+
+- LandPlot → Cooperative (cooperative_id)
+- PlotOwnership → LandPlot (land_plot_id), PlotOwnership → Owner (owner_id)
+- Meter → Owner (owner_id)
+- Payment → LandPlot (land_plot_id), Payment → Owner (payer_id, опц.)
+- Accrual → LandPlot (land_plot_id), Accrual → ContributionType (contribution_type_id)
+- MeterReading → Meter (meter_id)
+- Owner → Cooperative связи нет (к СТ через участок).
+
+---
+
+## 3. Запланировано на потом
 
 - Линия (ряд/улица), член СТ (Member)
-- Вид взноса (справочник, общий для всех СТ)
-- Финансовые обязательства, начисления, платежи
 - Касса, банковские счета, банковские операции
 - Собрания, решения собраний
-- Показания счётчиков (MeterReading)
 - Общее имущество СТ
 - Первичные документы
+- Аудит (журнал операций), отчётность (Report)
 
 ---
 

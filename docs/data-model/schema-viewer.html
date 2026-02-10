@@ -20,11 +20,11 @@
   </style>
 </head>
 <body>
-  <h1>Концептуальная модель данных (минимальное ядро)</h1>
+  <h1>Концептуальная модель данных (ядро + Phase 2)</h1>
   <p>Открой этот файл в браузере: <code>docs/data-model/schema-viewer.html</code></p>
 
-  <h2>Связи между полями (как в Access: это поле → то поле)</h2>
-  <p>Каждая строка — одна связь. Поле в колонке «Поле (FK)» ссылается на поле «Поле (PK)» в другой таблице.</p>
+  <h2>Связи между полями (поле FK → таблица PK)</h2>
+  <p>Каждая строка — одна связь. Поле (FK) ссылается на поле (PK) в другой таблице.</p>
   <table class="links-table">
     <thead>
       <tr>
@@ -41,6 +41,11 @@
       <tr><td>PlotOwnership</td><td><code>land_plot_id</code></td><td>LandPlot</td><td><code>id</code></td><td>N : 1</td><td>Право привязано к участку; период + доля (1, 1/2, 1/3…)</td></tr>
       <tr><td>PlotOwnership</td><td><code>owner_id</code></td><td>Owner</td><td><code>id</code></td><td>N : 1</td><td>Право привязано к владельцу; по дате — кто владел какой долей</td></tr>
       <tr><td>Meter</td><td><code>owner_id</code></td><td>Owner</td><td><code>id</code></td><td>N : 1</td><td>Счётчик привязан к владельцу</td></tr>
+      <tr><td>Payment</td><td><code>land_plot_id</code></td><td>LandPlot</td><td><code>id</code></td><td>N : 1</td><td>Платёж по участку</td></tr>
+      <tr><td>Payment</td><td><code>payer_id</code></td><td>Owner</td><td><code>id</code></td><td>N : 1</td><td>Плательщик (опц.)</td></tr>
+      <tr><td>Accrual</td><td><code>land_plot_id</code></td><td>LandPlot</td><td><code>id</code></td><td>N : 1</td><td>Начисление по участку</td></tr>
+      <tr><td>Accrual</td><td><code>contribution_type_id</code></td><td>ContributionType</td><td><code>id</code></td><td>N : 1</td><td>Вид взноса</td></tr>
+      <tr><td>MeterReading</td><td><code>meter_id</code></td><td>Meter</td><td><code>id</code></td><td>N : 1</td><td>Показание по счётчику</td></tr>
     </tbody>
   </table>
 
@@ -48,15 +53,18 @@
   <p class="schema-hint">Линия идёт от таблицы, где лежит поле (FK), к таблице, на которую ссылаются (PK). Подпись на линии — имя поля. Таблицы можно двигать мышью — расположение сохранится при обновлении страницы.</p>
   <div id="schema-network"></div>
 
-  <h2>Сущности (для справки)</h2>
+  <h2>Сущности (EN → RU)</h2>
   <div class="legend">
-    <p><strong>Сущности (EN → RU):</strong></p>
     <dl>
       <dt>Cooperative</dt><dd>Садоводческое товарищество (СТ)</dd>
-      <dt>Owner</dt><dd>Владелец (owner_type: физ. лицо, юр. лицо); с СТ не связан — к СТ через участок</dd>
-      <dt>LandPlot</dt><dd>Земельный участок (cooperative_id); владение только через PlotOwnership</dd>
-      <dt>PlotOwnership</dt><dd>Право/доля собственности: участок ↔ владелец, период (valid_from, valid_to), доля (1, 1/2, 1/3…)</dd>
-      <dt>Meter</dt><dd>Счётчик; привязан к владельцу (owner_id)</dd>
+      <dt>Owner</dt><dd>Владелец (физ./юр. лицо); к СТ — через участок</dd>
+      <dt>LandPlot</dt><dd>Земельный участок (cooperative_id); владение через PlotOwnership</dd>
+      <dt>PlotOwnership</dt><dd>Право/доля собственности: участок ↔ владелец, период, доля</dd>
+      <dt>Meter</dt><dd>Счётчик; привязан к владельцу</dd>
+      <dt>ContributionType</dt><dd>Вид взноса (справочник)</dd>
+      <dt>Payment</dt><dd>Платёж: участок, сумма, дата, статус</dd>
+      <dt>Accrual</dt><dd>Начисление: участок, вид взноса, сумма, период</dd>
+      <dt>MeterReading</dt><dd>Показание счётчика: значение, дата</dd>
     </dl>
   </div>
 
@@ -65,18 +73,27 @@
       var STORAGE_KEY = 'controlling-schema-positions';
 
       var nodes = new vis.DataSet([
-        { id: 'Cooperative',    label: 'Cooperative\nСадоводческое товарищество (СТ)', shape: 'box', font: { size: 14 }, x: 280, y: 80 },
-        { id: 'Owner',          label: 'Owner\nВладелец', shape: 'box', font: { size: 14 }, x: 80, y: 300 },
-        { id: 'LandPlot',       label: 'LandPlot\nЗемельный участок', shape: 'box', font: { size: 14 }, x: 280, y: 440 },
-        { id: 'PlotOwnership',  label: 'PlotOwnership\nПраво/доля собственности', shape: 'box', font: { size: 14 }, x: 280, y: 300 },
-        { id: 'Meter',          label: 'Meter\nСчётчик', shape: 'box', font: { size: 14 }, x: 480, y: 300 }
+        { id: 'Cooperative',    label: 'Cooperative\nСТ', shape: 'box', font: { size: 14 }, x: 280, y: 60 },
+        { id: 'Owner',          label: 'Owner\nВладелец', shape: 'box', font: { size: 14 }, x: 60, y: 280 },
+        { id: 'LandPlot',       label: 'LandPlot\nУчасток', shape: 'box', font: { size: 14 }, x: 280, y: 380 },
+        { id: 'PlotOwnership',  label: 'PlotOwnership\nПраво/доля', shape: 'box', font: { size: 14 }, x: 280, y: 280 },
+        { id: 'Meter',          label: 'Meter\nСчётчик', shape: 'box', font: { size: 14 }, x: 500, y: 280 },
+        { id: 'ContributionType', label: 'ContributionType\nВид взноса', shape: 'box', font: { size: 14 }, x: 520, y: 480 },
+        { id: 'Payment',        label: 'Payment\nПлатёж', shape: 'box', font: { size: 14 }, x: 120, y: 480 },
+        { id: 'Accrual',        label: 'Accrual\nНачисление', shape: 'box', font: { size: 14 }, x: 280, y: 480 },
+        { id: 'MeterReading',   label: 'MeterReading\nПоказание', shape: 'box', font: { size: 14 }, x: 500, y: 180 }
       ]);
 
       var edges = new vis.DataSet([
-        { from: 'LandPlot', to: 'Cooperative', label: 'cooperative_id', arrows: 'to', title: 'LandPlot → Cooperative\nУчасток принадлежит одному СТ' },
-        { from: 'PlotOwnership', to: 'LandPlot', label: 'land_plot_id', arrows: 'to', title: 'PlotOwnership → LandPlot\nПраво привязано к участку (период, доля 1/2/1/3…)' },
-        { from: 'PlotOwnership', to: 'Owner',    label: 'owner_id',     arrows: 'to', title: 'PlotOwnership → Owner\nПраво привязано к владельцу; по дате — кто владел какой долей' },
-        { from: 'Meter', to: 'Owner', label: 'owner_id', arrows: 'to', title: 'Meter → Owner\nСчётчик привязан к владельцу' }
+        { from: 'LandPlot', to: 'Cooperative', label: 'cooperative_id', arrows: 'to', title: 'Участок принадлежит одному СТ' },
+        { from: 'PlotOwnership', to: 'LandPlot', label: 'land_plot_id', arrows: 'to', title: 'Право привязано к участку' },
+        { from: 'PlotOwnership', to: 'Owner',    label: 'owner_id',     arrows: 'to', title: 'Право привязано к владельцу' },
+        { from: 'Meter', to: 'Owner', label: 'owner_id', arrows: 'to', title: 'Счётчик привязан к владельцу' },
+        { from: 'Payment', to: 'LandPlot', label: 'land_plot_id', arrows: 'to', title: 'Платёж по участку' },
+        { from: 'Payment', to: 'Owner', label: 'payer_id', arrows: 'to', title: 'Плательщик (опц.)' },
+        { from: 'Accrual', to: 'LandPlot', label: 'land_plot_id', arrows: 'to', title: 'Начисление по участку' },
+        { from: 'Accrual', to: 'ContributionType', label: 'contribution_type_id', arrows: 'to', title: 'Вид взноса' },
+        { from: 'MeterReading', to: 'Meter', label: 'meter_id', arrows: 'to', title: 'Показание по счётчику' }
       ]);
 
       var container = document.getElementById('schema-network');

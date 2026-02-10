@@ -29,4 +29,23 @@
 
 ---
 
+### Запись 2 — 2026-02-10 (поведенческая модель, декомпозиция, Phase 2 сущности)
+
+**Что сделали:**
+
+1. **Поведенческая модель в дизайне** — в `docs/project-design.md` добавлены разделы 7–14: цели системы, акторы (председатель, казначей, администратор), карта сценариев (Use Cases), рабочие процессы (регистрация оплаты, начисление взноса, показания счётчика, формирование отчёта), жизненные циклы LandPlot / Payment / Accrual, доменные события, границы модулей. Уточнён п. 5.1: PlotOwnership в ядре; Member, Line, ContributionType — на потом.
+
+2. **Декомпозиция** — создан `docs/decomposition.md`: словарик EN → RU с короткими пояснениями; рекомендации по модели (без аудита и отчётов в текущей фазе); сущности Phase 2: Payment, Accrual, MeterReading, ContributionType; связи и целостность; разбивка по модулям (Land Management, Payments, Accruals, Meters; Reporting и Administration — позже); порядок разработки простыми словами.
+
+3. **Модель данных Phase 2** — добавлены сущности и связи в три артефакта:
+   - **ContributionType** (вид взноса) — справочник: code, name.
+   - **Payment** (платёж) — land_plot_id, amount, paid_at, status, payer_id (опц.).
+   - **Accrual** (начисление) — land_plot_id, contribution_type_id, amount, period_from/period_to, status.
+   - **MeterReading** (показание счётчика) — meter_id, value, reading_date.
+   Обновлены: `docs/data-model/entities-minimal.md`, `docs/data-model/schema-viewer.html`, `docs/source-material/model-data.txt`. Баланс — не сущность, считается по участку (начисления − платежи).
+
+**Планы на продолжение (после обновления на GitHub):** ещё раз проверить модель данных и продолжить работу по декомпозиции (детализация API, бизнес-правила, тесты по модулям).
+
+---
+
 *Папка `logs/` используется для журналов по архитектуре и другим задачам.*
