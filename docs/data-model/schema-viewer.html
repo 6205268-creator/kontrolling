@@ -15,7 +15,7 @@
     .links-table th, .links-table td { border: 1px solid #ccc; padding: 0.4rem 0.6rem; text-align: left; }
     .links-table th { background: #e8e8e8; }
     .links-table code { background: #f0f0f0; padding: 0.1em 0.3em; border-radius: 3px; }
-    #schema-network { width: 100%; height: 520px; border: 1px solid #ddd; border-radius: 8px; background: #fafafa; }
+    #schema-network { width: 100%; height: 580px; border: 1px solid #ddd; border-radius: 8px; background: #fafafa; }
     .schema-hint { font-size: 0.85rem; color: #666; margin-top: 0.5rem; }
   </style>
 </head>
@@ -37,12 +37,10 @@
       </tr>
     </thead>
     <tbody>
-      <tr><td>Person</td><td><code>cooperative_id</code></td><td>Cooperative</td><td><code>id</code></td><td>N : 1</td><td>Физ. лицо принадлежит одному СТ</td></tr>
-      <tr><td>Member</td><td><code>person_id</code></td><td>Person</td><td><code>id</code></td><td>1 : 1</td><td>Член — одно физ. лицо</td></tr>
-      <tr><td>Member</td><td><code>cooperative_id</code></td><td>Cooperative</td><td><code>id</code></td><td>N : 1</td><td>Член принадлежит одному СТ</td></tr>
       <tr><td>LandPlot</td><td><code>cooperative_id</code></td><td>Cooperative</td><td><code>id</code></td><td>N : 1</td><td>Участок принадлежит одному СТ</td></tr>
-      <tr><td>PlotOwnership</td><td><code>plot_id</code></td><td>LandPlot</td><td><code>id</code></td><td>N : 1</td><td>Право на конкретный участок</td></tr>
-      <tr><td>PlotOwnership</td><td><code>person_id</code></td><td>Person</td><td><code>id</code></td><td>N : 1</td><td>Собственник — физ. лицо</td></tr>
+      <tr><td>PlotOwnership</td><td><code>land_plot_id</code></td><td>LandPlot</td><td><code>id</code></td><td>N : 1</td><td>Право привязано к участку; период + доля (1, 1/2, 1/3…)</td></tr>
+      <tr><td>PlotOwnership</td><td><code>owner_id</code></td><td>Owner</td><td><code>id</code></td><td>N : 1</td><td>Право привязано к владельцу; по дате — кто владел какой долей</td></tr>
+      <tr><td>Meter</td><td><code>owner_id</code></td><td>Owner</td><td><code>id</code></td><td>N : 1</td><td>Счётчик привязан к владельцу</td></tr>
     </tbody>
   </table>
 
@@ -55,10 +53,10 @@
     <p><strong>Сущности (EN → RU):</strong></p>
     <dl>
       <dt>Cooperative</dt><dd>Садоводческое товарищество (СТ)</dd>
-      <dt>Person</dt><dd>Физическое лицо (принадлежит одному СТ)</dd>
-      <dt>Member</dt><dd>Член СТ (1:1 с Person в рамках одного СТ)</dd>
-      <dt>LandPlot</dt><dd>Земельный участок</dd>
-      <dt>PlotOwnership</dt><dd>Право собственности на участок (доля, тип: индивидуальная / долевая / совместная)</dd>
+      <dt>Owner</dt><dd>Владелец (owner_type: физ. лицо, юр. лицо); с СТ не связан — к СТ через участок</dd>
+      <dt>LandPlot</dt><dd>Земельный участок (cooperative_id); владение только через PlotOwnership</dd>
+      <dt>PlotOwnership</dt><dd>Право/доля собственности: участок ↔ владелец, период (valid_from, valid_to), доля (1, 1/2, 1/3…)</dd>
+      <dt>Meter</dt><dd>Счётчик; привязан к владельцу (owner_id)</dd>
     </dl>
   </div>
 
@@ -67,20 +65,18 @@
       var STORAGE_KEY = 'controlling-schema-positions';
 
       var nodes = new vis.DataSet([
-        { id: 'Cooperative',  label: 'Cooperative\nСадоводческое товарищество (СТ)', shape: 'box', font: { size: 14 }, x: 250, y: 80 },
-        { id: 'Person',       label: 'Person\nФизическое лицо', shape: 'box', font: { size: 14 }, x: 120, y: 240 },
-        { id: 'Member',       label: 'Member\nЧлен СТ', shape: 'box', font: { size: 14 }, x: 380, y: 240 },
-        { id: 'LandPlot',     label: 'LandPlot\nЗемельный участок', shape: 'box', font: { size: 14 }, x: 120, y: 400 },
-        { id: 'PlotOwnership', label: 'PlotOwnership\nПраво собственности на участок', shape: 'box', font: { size: 14 }, x: 380, y: 400 }
+        { id: 'Cooperative',    label: 'Cooperative\nСадоводческое товарищество (СТ)', shape: 'box', font: { size: 14 }, x: 280, y: 80 },
+        { id: 'Owner',          label: 'Owner\nВладелец', shape: 'box', font: { size: 14 }, x: 80, y: 300 },
+        { id: 'LandPlot',       label: 'LandPlot\nЗемельный участок', shape: 'box', font: { size: 14 }, x: 280, y: 440 },
+        { id: 'PlotOwnership',  label: 'PlotOwnership\nПраво/доля собственности', shape: 'box', font: { size: 14 }, x: 280, y: 300 },
+        { id: 'Meter',          label: 'Meter\nСчётчик', shape: 'box', font: { size: 14 }, x: 480, y: 300 }
       ]);
 
       var edges = new vis.DataSet([
-        { from: 'Person',       to: 'Cooperative',  label: 'cooperative_id',  arrows: 'to', title: 'Person.cooperative_id → Cooperative.id\nФиз. лицо принадлежит одному СТ' },
-        { from: 'Member',       to: 'Person',       label: 'person_id',      arrows: 'to', title: 'Member.person_id → Person.id\nЧлен — одно физ. лицо (1:1)' },
-        { from: 'Member',       to: 'Cooperative',  label: 'cooperative_id',  arrows: 'to', title: 'Member.cooperative_id → Cooperative.id\nЧлен принадлежит одному СТ' },
-        { from: 'LandPlot',     to: 'Cooperative',  label: 'cooperative_id',  arrows: 'to', title: 'LandPlot.cooperative_id → Cooperative.id\nУчасток принадлежит одному СТ' },
-        { from: 'PlotOwnership', to: 'LandPlot',    label: 'plot_id',        arrows: 'to', title: 'PlotOwnership.plot_id → LandPlot.id\nПраво на конкретный участок' },
-        { from: 'PlotOwnership', to: 'Person',      label: 'person_id',      arrows: 'to', title: 'PlotOwnership.person_id → Person.id\nСобственник — физ. лицо' }
+        { from: 'LandPlot', to: 'Cooperative', label: 'cooperative_id', arrows: 'to', title: 'LandPlot → Cooperative\nУчасток принадлежит одному СТ' },
+        { from: 'PlotOwnership', to: 'LandPlot', label: 'land_plot_id', arrows: 'to', title: 'PlotOwnership → LandPlot\nПраво привязано к участку (период, доля 1/2/1/3…)' },
+        { from: 'PlotOwnership', to: 'Owner',    label: 'owner_id',     arrows: 'to', title: 'PlotOwnership → Owner\nПраво привязано к владельцу; по дате — кто владел какой долей' },
+        { from: 'Meter', to: 'Owner', label: 'owner_id', arrows: 'to', title: 'Meter → Owner\nСчётчик привязан к владельцу' }
       ]);
 
       var container = document.getElementById('schema-network');
