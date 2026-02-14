@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_Payment_Process" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_Payment">
+    <bpmn:participant id="Participant_Bank" name="Банк!!!!!" />
+    <bpmn:participant id="Participant_Treasurer" name="Казначей СТ" processRef="Process_Treasurer" />
+    <bpmn:participant id="Participant_System" name="Система (автоматический процесс)" processRef="Process_System" />
+    <bpmn:messageFlow id="Flow_BankToTreasurer" name="Банковская квитанция" sourceRef="Participant_Bank" targetRef="Event_Start_Receipt" />
+    <bpmn:messageFlow id="Flow_DepositTrigger" name="Деньги зачислены → запуск автопроверки" sourceRef="Task_Deposit" targetRef="Participant_System" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_Treasurer" name="Ручной процесс казначея" isExecutable="false">
+    <bpmn:startEvent id="Event_Start_Receipt" name="Получена квитанция из банка">
+      <bpmn:documentation>Перевод пришёл на баланс СТ. Банк передаёт квитанцию казначею (сообщение по Message Flow).</bpmn:documentation>
+      <bpmn:outgoing>Flow_T1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Task_OpenReceipt" name="Открыть квитанцию">
+      <bpmn:documentation>Казначей открывает электронную или бумажную квитанцию из банка. Просматривает реквизиты перевода.</bpmn:documentation>
+      <bpmn:incoming>Flow_T1</bpmn:incoming>
+      <bpmn:outgoing>Flow_T2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_CheckAmount" name="Проверить сумму">
+      <bpmn:documentation>Проверить сумму поступления в BYN. Убедиться, что сумма корректна и соответствует ожиданиям.</bpmn:documentation>
+      <bpmn:incoming>Flow_T2</bpmn:incoming>
+      <bpmn:outgoing>Flow_T3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_IdentifyOwner" name="Определить владельца участка">
+      <bpmn:documentation>По плательщику (ФИО, счёту или назначению платежа) определить владельца участка. Найти запись Owner в системе.</bpmn:documentation>
+      <bpmn:incoming>Flow_T3</bpmn:incoming>
+      <bpmn:outgoing>Flow_T4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Task_Deposit" name="Зачислить на лицевой счёт владельца">
+      <bpmn:documentation>Система увеличивает balance в OwnerAccount. Деньги поступают на лицевой счёт физического лица. После зачисления формируется триггер для автопроверки списания.</bpmn:documentation>
+      <bpmn:incoming>Flow_T4</bpmn:incoming>
+      <bpmn:outgoing>Flow_T5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_End_Deposited" name="Деньги на счёте">
+      <bpmn:documentation>Деньги зачислены на лицевой счёт. Сообщение «Деньги зачислены» передаётся в автоматический процесс Системы.</bpmn:documentation>
+      <bpmn:incoming>Flow_T5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_T1" sourceRef="Event_Start_Receipt" targetRef="Task_OpenReceipt" />
+    <bpmn:sequenceFlow id="Flow_T2" sourceRef="Task_OpenReceipt" targetRef="Task_CheckAmount" />
+    <bpmn:sequenceFlow id="Flow_T3" sourceRef="Task_CheckAmount" targetRef="Task_IdentifyOwner" />
+    <bpmn:sequenceFlow id="Flow_T4" sourceRef="Task_IdentifyOwner" targetRef="Task_Deposit" />
+    <bpmn:sequenceFlow id="Flow_T5" sourceRef="Task_Deposit" targetRef="Event_End_Deposited" />
+  </bpmn:process>
+  <bpmn:process id="Process_System" name="Автоматическое списание" isExecutable="false">
+    <bpmn:startEvent id="Event_Timer" name="Таймер&#10;(каждую минуту)">
+      <bpmn:documentation>Cron-задача запускается каждую минуту (R/PT1M). Сканирует все лицевые счета владельцев.</bpmn:documentation>
+      <bpmn:outgoing>Flow_S1</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeCycle>R/PT1M</bpmn:timeCycle>
+      </bpmn:timerEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_CheckAccounts" name="Проверить все лицевые счета">
+      <bpmn:documentation>Для каждого OwnerAccount проверить balance &gt; 0. Сформировать список счетов с положительным остатком.</bpmn:documentation>
+      <bpmn:incoming>Flow_S1</bpmn:incoming>
+      <bpmn:outgoing>Flow_S2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_HasBalance" name="Есть остаток?">
+      <bpmn:documentation>balance &gt; 0? Нет — завершить цикл. Да — получить задолженности владельца.</bpmn:documentation>
+      <bpmn:incoming>Flow_S2</bpmn:incoming>
+      <bpmn:outgoing>Flow_S3_No</bpmn:outgoing>
+      <bpmn:outgoing>Flow_S3_Yes</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_GetDebts" name="Получить задолженности">
+      <bpmn:documentation>Получить все Accrual (начисления) по участкам владельца со статусом applied. Сортировать по приоритету ContributionType.</bpmn:documentation>
+      <bpmn:incoming>Flow_S3_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_S4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_HasDebts" name="Есть долги?">
+      <bpmn:documentation>Есть неоплаченные начисления? Нет — конец цикла. Да — списывать по приоритетам.</bpmn:documentation>
+      <bpmn:incoming>Flow_S4</bpmn:incoming>
+      <bpmn:outgoing>Flow_S5_No</bpmn:outgoing>
+      <bpmn:outgoing>Flow_S5_Yes</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_PayElectricity" name="Оплатить электричество&#10;(приоритет 1)">
+      <bpmn:documentation>Списать со счёта владельца на начисления по электроэнергии. Создать Payment для каждого Accrual. Высший приоритет.</bpmn:documentation>
+      <bpmn:incoming>Flow_S5_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_S6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_PayMembership" name="Оплатить членские взносы&#10;(приоритет 2)">
+      <bpmn:documentation>Списать остаток на членские взносы. Частичная оплата допустима — сколько хватит средств.</bpmn:documentation>
+      <bpmn:incoming>Flow_S6</bpmn:incoming>
+      <bpmn:outgoing>Flow_S7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_PayTarget" name="Оплатить целевые взносы&#10;(приоритет 3)">
+      <bpmn:documentation>Списать на целевые взносы (дороги, забор и т.д.). Нижайший приоритет.</bpmn:documentation>
+      <bpmn:incoming>Flow_S7</bpmn:incoming>
+      <bpmn:outgoing>Flow_S8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_UpdateBalance" name="Обновить баланс участка">
+      <bpmn:documentation>Пересчёт баланса LandPlot: сумма Accrual − сумма Payment. Обновить отображаемую задолженность.</bpmn:documentation>
+      <bpmn:incoming>Flow_S8</bpmn:incoming>
+      <bpmn:outgoing>Flow_S9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_End_Cycle" name="Цикл завершён">
+      <bpmn:documentation>Все списания выполнены. Ожидание следующего запуска по таймеру (через 1 мин).</bpmn:documentation>
+      <bpmn:incoming>Flow_S9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_End_NoBalance" name="Нет остатка">
+      <bpmn:documentation>На счёте нет денег!!!. Пропустить этого владельца, перейти к следующему.</bpmn:documentation>
+      <bpmn:incoming>Flow_S3_No</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_End_NoDebts" name="Нет долгов">
+      <bpmn:documentation>Задолженностей нет. Деньги остаются на счёте до появления новых начислений.</bpmn:documentation>
+      <bpmn:incoming>Flow_S5_No</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_S1" sourceRef="Event_Timer" targetRef="Task_CheckAccounts" />
+    <bpmn:sequenceFlow id="Flow_S2" sourceRef="Task_CheckAccounts" targetRef="Gateway_HasBalance" />
+    <bpmn:sequenceFlow id="Flow_S3_No" name="Нет" sourceRef="Gateway_HasBalance" targetRef="Event_End_NoBalance" />
+    <bpmn:sequenceFlow id="Flow_S3_Yes" name="Да" sourceRef="Gateway_HasBalance" targetRef="Task_GetDebts" />
+    <bpmn:sequenceFlow id="Flow_S4" sourceRef="Task_GetDebts" targetRef="Gateway_HasDebts" />
+    <bpmn:sequenceFlow id="Flow_S5_No" name="Нет" sourceRef="Gateway_HasDebts" targetRef="Event_End_NoDebts" />
+    <bpmn:sequenceFlow id="Flow_S5_Yes" name="Да" sourceRef="Gateway_HasDebts" targetRef="Task_PayElectricity" />
+    <bpmn:sequenceFlow id="Flow_S6" sourceRef="Task_PayElectricity" targetRef="Task_PayMembership" />
+    <bpmn:sequenceFlow id="Flow_S7" sourceRef="Task_PayMembership" targetRef="Task_PayTarget" />
+    <bpmn:sequenceFlow id="Flow_S8" sourceRef="Task_PayTarget" targetRef="Task_UpdateBalance" />
+    <bpmn:sequenceFlow id="Flow_S9" sourceRef="Task_UpdateBalance" targetRef="Event_End_Cycle" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_Payment">
+      <bpmndi:BPMNShape id="Participant_Bank_di" bpmnElement="Participant_Bank" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1200" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_Treasurer_di" bpmnElement="Participant_Treasurer" isHorizontal="true">
+        <dc:Bounds x="160" y="180" width="1200" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_Start_Receipt_di" bpmnElement="Event_Start_Receipt">
+        <dc:Bounds x="232" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="212" y="305" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_OpenReceipt_di" bpmnElement="Task_OpenReceipt">
+        <dc:Bounds x="320" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CheckAmount_di" bpmnElement="Task_CheckAmount">
+        <dc:Bounds x="470" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_IdentifyOwner_di" bpmnElement="Task_IdentifyOwner">
+        <dc:Bounds x="620" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Deposit_di" bpmnElement="Task_Deposit">
+        <dc:Bounds x="770" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_End_Deposited_di" bpmnElement="Event_End_Deposited">
+        <dc:Bounds x="922" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="906" y="305" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_T1_di" bpmnElement="Flow_T1">
+        <di:waypoint x="268" y="280" />
+        <di:waypoint x="320" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_T2_di" bpmnElement="Flow_T2">
+        <di:waypoint x="420" y="280" />
+        <di:waypoint x="470" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_T3_di" bpmnElement="Flow_T3">
+        <di:waypoint x="570" y="280" />
+        <di:waypoint x="620" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_T4_di" bpmnElement="Flow_T4">
+        <di:waypoint x="720" y="280" />
+        <di:waypoint x="770" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_T5_di" bpmnElement="Flow_T5">
+        <di:waypoint x="870" y="280" />
+        <di:waypoint x="922" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_BankToTreasurer_di" bpmnElement="Flow_BankToTreasurer">
+        <di:waypoint x="250" y="140" />
+        <di:waypoint x="250" y="262" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="165" y="193" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_System_di" bpmnElement="Participant_System" isHorizontal="true">
+        <dc:Bounds x="160" y="420" width="1200" height="300" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_Timer_di" bpmnElement="Event_Timer">
+        <dc:Bounds x="232" y="542" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="220" y="585" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CheckAccounts_di" bpmnElement="Task_CheckAccounts">
+        <dc:Bounds x="320" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_HasBalance_di" bpmnElement="Gateway_HasBalance" isMarkerVisible="true">
+        <dc:Bounds x="470" y="535" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="454" y="595" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_GetDebts_di" bpmnElement="Task_GetDebts">
+        <dc:Bounds x="570" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_HasDebts_di" bpmnElement="Gateway_HasDebts" isMarkerVisible="true">
+        <dc:Bounds x="720" y="535" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="711" y="595" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PayElectricity_di" bpmnElement="Task_PayElectricity">
+        <dc:Bounds x="820" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PayMembership_di" bpmnElement="Task_PayMembership">
+        <dc:Bounds x="970" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PayTarget_di" bpmnElement="Task_PayTarget">
+        <dc:Bounds x="1120" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_UpdateBalance_di" bpmnElement="Task_UpdateBalance">
+        <dc:Bounds x="820" y="630" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_End_Cycle_di" bpmnElement="Event_End_Cycle">
+        <dc:Bounds x="722" y="652" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="702" y="695" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_End_NoBalance_di" bpmnElement="Event_End_NoBalance">
+        <dc:Bounds x="477" y="462" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="463" y="440" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_End_NoDebts_di" bpmnElement="Event_End_NoDebts">
+        <dc:Bounds x="727" y="462" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="717" y="440" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_S1_di" bpmnElement="Flow_S1">
+        <di:waypoint x="268" y="560" />
+        <di:waypoint x="320" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_S2_di" bpmnElement="Flow_S2">
+        <di:waypoint x="420" y="560" />
+        <di:waypoint x="470" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_S3_No_di" bpmnElement="Flow_S3_No">
+        <di:waypoint x="495" y="535" />
+        <di:waypoint x="495" y="498" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="501" y="513" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_S3_Yes_di" bpmnElement="Flow_S3_Yes">
+        <di:waypoint x="520" y="560" />
+        <di:waypoint x="570" y="560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="539" y="542" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_S4_di" bpmnElement="Flow_S4">
+        <di:waypoint x="670" y="560" />
+        <di:waypoint x="720" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_S5_No_di" bpmnElement="Flow_S5_No">
+        <di:waypoint x="745" y="535" />
+        <di:waypoint x="745" y="498" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="751" y="513" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_S5_Yes_di" bpmnElement="Flow_S5_Yes">
+        <di:waypoint x="770" y="560" />
+        <di:waypoint x="820" y="560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="789" y="542" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_S6_di" bpmnElement="Flow_S6">
+        <di:waypoint x="920" y="560" />
+        <di:waypoint x="970" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_S7_di" bpmnElement="Flow_S7">
+        <di:waypoint x="1070" y="560" />
+        <di:waypoint x="1120" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_S8_di" bpmnElement="Flow_S8">
+        <di:waypoint x="1170" y="600" />
+        <di:waypoint x="1170" y="670" />
+        <di:waypoint x="920" y="670" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_S9_di" bpmnElement="Flow_S9">
+        <di:waypoint x="820" y="670" />
+        <di:waypoint x="758" y="670" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_DepositTrigger_di" bpmnElement="Flow_DepositTrigger">
+        <di:waypoint x="820" y="320" />
+        <di:waypoint x="820" y="370" />
+        <di:waypoint x="250" y="370" />
+        <di:waypoint x="250" y="542" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="463" y="336" width="84" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

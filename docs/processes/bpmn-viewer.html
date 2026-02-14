@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BPMN Viewer - КОНТРОЛЛИНГ</title>
+  
+  <!-- bpmn-js styles -->
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js@18.10.1/dist/assets/bpmn-js.css">
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js@18.10.1/dist/assets/diagram-js.css">
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js@18.10.1/dist/assets/bpmn-font/css/bpmn-embedded.css">
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+    
+    #header {
+      background: #2c3e50;
+      color: white;
+      padding: 15px 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    #header h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+    
+    #save-status-banner {
+      padding: 8px 20px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #save-status-banner.warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+    #save-status-banner.ok {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    #controls {
+      background: white;
+      padding: 10px 20px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    #controls label {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+    
+    #controls select {
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    #controls button {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f8f9fa;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    
+    #controls button:hover {
+      background: #e9ecef;
+    }
+    
+    #btn-save-project {
+      background: #27ae60;
+      color: white;
+      border-color: #1e8449;
+    }
+    #btn-save-project:hover {
+      background: #2ecc71;
+    }
+    
+    #controls button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    #controls .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-overlay.visible {
+      display: flex;
+    }
+    
+    .modal {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      min-width: 400px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow: auto;
+    }
+    
+    .modal textarea {
+      width: 100%;
+      min-height: 200px;
+      font-family: monospace;
+      font-size: 12px;
+      margin: 10px 0;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+    
+    #load-file-input {
+      display: none;
+    }
+    
+    #panel-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      margin-left: auto;
+    }
+    
+    #panel-toggle input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    
+    #main {
+      display: flex;
+      height: calc(100vh - 120px);
+    }
+    
+    #canvas {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    /* Боковая панель с деталями элемента */
+    #details-panel {
+      width: 320px;
+      min-width: 280px;
+      background: #fafafa;
+      border-left: 1px solid #ddd;
+      padding: 16px;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.5;
+      transition: width 0.3s ease, min-width 0.3s ease, padding 0.3s ease, border 0.3s ease;
+    }
+    
+    #details-panel.hidden {
+      width: 0;
+      min-width: 0;
+      padding: 0;
+      border-left: none;
+      overflow: hidden;
+    }
+    
+    #details-panel.empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+    }
+    
+    #details-panel .panel-title {
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    #details-panel .detail-row {
+      margin-bottom: 10px;
+    }
+    
+    #details-panel .detail-label {
+      color: #666;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+    
+    #details-panel .detail-value {
+      color: #333;
+    }
+    
+    #details-panel .documentation {
+      margin-top: 12px;
+      padding: 12px;
+      background: white;
+      border-radius: 4px;
+      border: 1px solid #eee;
+      white-space: pre-wrap;
+    }
+    
+    .error {
+      color: #e74c3c;
+      padding: 20px;
+      background: #ffe6e6;
+      margin: 20px;
+      border-radius: 4px;
+    }
+    
+    .djs-element:hover {
+      cursor: pointer;
+    }
+    
+    /* Подсветка выбранного элемента — видно, к какому процессу относится комментарий */
+    .djs-element.selected {
+      filter: drop-shadow(0 0 12px rgba(52, 152, 219, 0.9));
+    }
+    
+    .djs-element.selected .djs-visual path,
+    .djs-element.selected .djs-visual rect,
+    .djs-element.selected .djs-visual circle,
+    .djs-element.selected .djs-visual polygon {
+      stroke: #3498db !important;
+      stroke-width: 2.5px !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>🏡 КОНТРОЛЛИНГ — BPMN Процессы</h1>
+    <div id="save-status-banner" class="warning" style="display:none;">
+      Для сохранения в проект запустите: <code>cd docs/processes</code> и <code>python server.py</code>
+    </div>
+  </div>
+  
+  <div id="controls">
+    <label for="diagram-select">Выберите процесс:</label>
+    <select id="diagram-select">
+      <option value="">-- Выберите диаграмму --</option>
+      <option value="payments/process-payment-owner-account.bpmn">Оплата через лицевой счёт владельца</option>
+    </select>
+    <div class="btn-group">
+      <button type="button" id="btn-save-project" title="Сохранить в файл проекта (нужен server.py)">💾 Сохранить в проект</button>
+      <button type="button" id="btn-download" title="Скачать текущую диаграмму как .bpmn">Скачать .bpmn</button>
+      <button type="button" id="btn-download-backup" title="Скачать с timestamp для _history">Скачать как backup</button>
+      <button type="button" id="btn-copy-xml" title="Скопировать XML в буфер">Скопировать XML</button>
+      <input type="file" id="load-file-input" accept=".bpmn,application/xml,text/xml">
+      <button type="button" id="btn-load" title="Загрузить .bpmn файл">Загрузить файл</button>
+      <button type="button" id="btn-paste" title="Вставить XML из буфера">Вставить XML</button>
+      <button type="button" id="btn-rollback" title="Откатить к предыдущей версии (до 5 в сессии)">Откатить</button>
+    </div>
+    <label id="panel-toggle">
+      <input type="checkbox" id="panel-toggle-cb">
+      Показать панель описаний
+    </label>
+  </div>
+  
+  <div id="paste-modal" class="modal-overlay">
+    <div class="modal">
+      <h3 style="margin:0 0 10px 0">Вставить XML</h3>
+      <p style="margin:0;color:#666;font-size:13px">Вставьте BPMN 2.0 XML в поле ниже:</p>
+      <textarea id="paste-xml-area" placeholder="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;bpmn:definitions ...&gt;"></textarea>
+      <div class="modal-actions">
+        <button type="button" id="paste-cancel">Отмена</button>
+        <button type="button" id="paste-ok">Импортировать</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="copy-fallback-modal" class="modal-overlay">
+    <div class="modal" style="max-width:90vw;min-width:500px">
+      <h3 style="margin:0 0 10px 0">Скопировать XML вручную</h3>
+      <p style="margin:0;color:#666;font-size:13px">Автокопирование не сработало. Выделите весь текст (Ctrl+A) и скопируйте (Ctrl+C):</p>
+      <textarea id="copy-fallback-area" readonly style="min-height:300px;font-size:11px"></textarea>
+      <div class="modal-actions">
+        <button type="button" id="copy-fallback-close">Закрыть</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="main">
+    <div id="canvas"></div>
+    <div id="details-panel" class="empty hidden">
+      <span>Дважды кликните на элемент диаграммы, чтобы открыть панель</span>
+    </div>
+  </div>
+  
+  <!-- bpmn-js library -->
+  <script src="https://unpkg.com/bpmn-js@18.10.1/dist/bpmn-navigated-viewer.development.js"></script>
+  
+  <script>
+    // Создаём вьювер с навигацией (zoom, pan)
+    const viewer = new BpmnJS({
+      container: '#canvas'
+    });
+    
+    // Последний загруженный XML (fallback, если saveXML отсутствует)
+    let lastLoadedXml = null;
+    // Имя файла при загрузке через «Загрузить» (для скачивания)
+    let lastLoadedFileName = null;
+    
+    const HISTORY_KEY_PREFIX = 'bpmn_history_';
+    const HISTORY_MAX = 5;
+    
+    function getHistoryKey() {
+      if (lastLoadedFileName) return HISTORY_KEY_PREFIX + 'file';
+      const sel = document.getElementById('diagram-select');
+      const path = sel && sel.value ? sel.value.replace(/\.bpmn$/i, '') : 'file';
+      return HISTORY_KEY_PREFIX + path;
+    }
+    
+    function getHistory() {
+      try {
+        const raw = sessionStorage.getItem(getHistoryKey());
+        return raw ? JSON.parse(raw) : [];
+      } catch (_) { return []; }
+    }
+    
+    function setHistory(arr) {
+      sessionStorage.setItem(getHistoryKey(), JSON.stringify(arr.slice(-HISTORY_MAX)));
+    }
+    
+    function pushHistory(xml) {
+      if (!xml || xml.trim().length === 0) return;
+      const arr = getHistory();
+      arr.push(xml);
+      setHistory(arr);
+    }
+    
+    function popHistory() {
+      const arr = getHistory();
+      if (arr.length === 0) return null;
+      const xml = arr.pop();
+      setHistory(arr);
+      return xml;
+    }
+    
+    async function getCurrentXml() {
+      try {
+        if (typeof viewer.saveXML === 'function') {
+          const { xml } = await viewer.saveXML({ format: true });
+          return xml || lastLoadedXml;
+        }
+      } catch (_) {}
+      return lastLoadedXml;
+    }
+    
+    /** XML для копирования: всегда lastLoadedXml — источник из файла, без потерь при сериализации */
+    function getXmlForCopy() {
+      return lastLoadedXml;
+    }
+    
+    async function importXmlWithHistory(xml, skipHistoryPush) {
+      if (!xml || xml.trim().length === 0) {
+        alert('Пустой XML');
+        return false;
+      }
+      try {
+        const current = await getCurrentXml();
+        if (current && !skipHistoryPush) pushHistory(current);
+        await viewer.importXML(xml);
+        lastLoadedXml = xml;
+        const canvas = viewer.get('canvas');
+        canvas.zoom('fit-viewport');
+        return true;
+      } catch (err) {
+        console.error('Ошибка импорта XML:', err);
+        alert('Ошибка импорта: ' + (err.message || err));
+        return false;
+      }
+    }
+    
+    function getFilename(baseOnly) {
+      if (lastLoadedFileName) {
+        const name = lastLoadedFileName.endsWith('.bpmn') ? lastLoadedFileName : lastLoadedFileName + '.bpmn';
+        if (baseOnly) return name.replace(/\.bpmn$/i, '');
+        return name;
+      }
+      const sel = document.getElementById('diagram-select');
+      const val = sel && sel.value ? sel.value : 'diagram.bpmn';
+      const name = val.split('/').pop() || 'diagram.bpmn';
+      if (baseOnly) return name.replace(/\.bpmn$/i, '');
+      return name;
+    }
+    
+    /** Путь для сохранения в проект (payments/xxx.bpmn). null если неизвестен. */
+    function getSavePath() {
+      const sel = document.getElementById('diagram-select');
+      if (sel && sel.value) return sel.value;
+      if (lastLoadedFileName && sel) {
+        const fname = lastLoadedFileName.endsWith('.bpmn') ? lastLoadedFileName : lastLoadedFileName + '.bpmn';
+        for (const opt of sel.options) {
+          if (opt.value && opt.value.endsWith('/' + fname)) return opt.value;
+        }
+      }
+      return null;
+    }
+    
+    function downloadXml(xml, filename) {
+      if (!xml) return;
+      const blob = new Blob([xml], { type: 'application/xml' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+    
+    // Обновить боковую панель с деталями (без всплывающих окон)
+    function showElementDetails(element, panel) {
+      const businessObject = element.businessObject;
+      
+      let html = `<div class="panel-title">${businessObject.name || 'Элемент'}</div>`;
+      html += `<div class="detail-row"><div class="detail-label">Тип</div><div class="detail-value">${getElementTypeName(element.type)}</div></div>`;
+      
+      // Документация (комментарии из процесса) — главное для пользователя
+      const doc = businessObject.documentation && businessObject.documentation[0];
+      if (doc && doc.text) {
+        html += `<div class="detail-row"><div class="detail-label">Описание</div><div class="documentation">${escapeHtml(doc.text)}</div></div>`;
+      } else {
+        // Если документации нет — показываем подсказку
+        html += `<div class="detail-row"><div class="detail-label">Описание</div><div class="detail-value" style="color:#999;font-style:italic">Нет дополнительного описания. Добавьте &lt;documentation&gt; в BPMN-файл.</div></div>`;
+      }
+      
+      // Информация о таймере
+      if (businessObject.eventDefinitions) {
+        businessObject.eventDefinitions.forEach(def => {
+          if (def.$type === 'bpmn:TimerEventDefinition' && def.timeCycle) {
+            html += `<div class="detail-row"><div class="detail-label">Таймер</div><div class="detail-value">${escapeHtml(def.timeCycle.body)}</div></div>`;
+          }
+        });
+      }
+      
+      panel.innerHTML = html;
+      panel.classList.remove('empty');
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // Получить читаемое имя типа элемента
+    function getElementTypeName(type) {
+      const typeNames = {
+        'bpmn:StartEvent': 'Событие начала',
+        'bpmn:EndEvent': 'Событие завершения',
+        'bpmn:UserTask': 'Задача пользователя (ручная)',
+        'bpmn:ServiceTask': 'Задача системы (автоматическая)',
+        'bpmn:ExclusiveGateway': 'Развилка (шлюз)',
+        'bpmn:Participant': 'Участник процесса',
+        'bpmn:SequenceFlow': 'Последовательный поток',
+        'bpmn:MessageFlow': 'Поток сообщений'
+      };
+      return typeNames[type] || type;
+    }
+    
+    // Функция загрузки BPMN файла
+    async function loadDiagram(path) {
+      const sel = document.getElementById('diagram-select');
+      if (!path) {
+        viewer.clear();
+        lastLoadedXml = null;
+        lastLoadedFileName = null;
+        if (sel) sel.value = '';
+        return;
+      }
+      lastLoadedFileName = null;
+      if (sel) sel.value = path;
+      
+      try {
+        const response = await fetch(path);
+        if (!response.ok) {
+          throw new Error(`Файл не найден: ${path}`);
+        }
+        
+        const xml = await response.text();
+        await importXmlWithHistory(xml, false);
+        
+        // Центрируем диаграмму
+        const canvas = viewer.get('canvas');
+        canvas.zoom('fit-viewport');
+        
+        // Зум колёсиком мыши (без Ctrl) — скролл над диаграммой меняет масштаб
+        const canvasContainer = document.getElementById('canvas');
+        const zoomHandler = (e) => {
+          if (!canvasContainer.contains(e.target)) return;
+          e.preventDefault();
+          e.stopPropagation();
+          const vb = canvas.viewbox();
+          const factor = e.deltaY > 0 ? 0.9 : 1.1;
+          const newScale = Math.max(0.25, Math.min(4, vb.scale * factor));
+          canvas.zoom(newScale);
+        };
+        canvasContainer.removeEventListener('wheel', zoomHandler, { passive: false });
+        canvasContainer.addEventListener('wheel', zoomHandler, { passive: false });
+        
+        // Панель скрыта по умолчанию. Двойной клик — открыть панель. Далее — одиночный клик показывает описание.
+        const eventBus = viewer.get('eventBus');
+        const detailsPanel = document.getElementById('details-panel');
+        const panelCheckbox = document.getElementById('panel-toggle-cb');
+        let lastClick = { id: null, time: 0 };
+        const DBL_CLICK_MS = 400;
+        
+        function isPanelVisible() {
+          return panelCheckbox.checked;
+        }
+        
+        function openPanelAndShow(element) {
+          panelCheckbox.checked = true;
+          detailsPanel.classList.remove('hidden');
+          showElementDetails(element, detailsPanel);
+          detailsPanel.classList.remove('empty');
+        }
+        
+        eventBus.on('element.click', (event) => {
+          const element = event.element;
+          const ignore = ['bpmn:Process', 'bpmn:Collaboration', 'label', 'bpmn:SequenceFlow', 'bpmn:MessageFlow'];
+          if (ignore.includes(element.type)) {
+            if (isPanelVisible()) {
+              detailsPanel.innerHTML = '<span>Кликните на задачу, событие или развилку</span>';
+              detailsPanel.classList.add('empty');
+            }
+            return;
+          }
+          
+          const now = Date.now();
+          const isDoubleClick = lastClick.id === element.id && (now - lastClick.time) < DBL_CLICK_MS;
+          lastClick = { id: element.id, time: now };
+          
+          if (isPanelVisible()) {
+            // Панель уже открыта — одиночный клик показывает описание
+            showElementDetails(element, detailsPanel);
+            detailsPanel.classList.remove('empty');
+          } else if (isDoubleClick) {
+            // Панель скрыта — двойной клик открывает её и показывает описание
+            openPanelAndShow(element);
+          }
+          
+          // Выделение при каждом клике
+          const prev = window._bpmnSelectedId;
+          if (prev) canvas.removeMarker(prev, 'selected');
+          canvas.addMarker(element.id, 'selected');
+          window._bpmnSelectedId = element.id;
+        });
+        
+        console.log('Диаграмма загружена:', path);
+      } catch (error) {
+        console.error('Ошибка загрузки:', error);
+        document.getElementById('canvas').innerHTML = 
+          `<div class="error">
+            <strong>Ошибка загрузки диаграммы</strong><br>
+            ${error.message}
+          </div>`;
+      }
+    }
+    
+    // Обработчик выбора диаграммы
+    document.getElementById('diagram-select').addEventListener('change', (e) => {
+      loadDiagram(e.target.value);
+    });
+    
+    // Переключатель панели описаний
+    document.getElementById('panel-toggle-cb').addEventListener('change', (e) => {
+      const panel = document.getElementById('details-panel');
+      if (e.target.checked) {
+        panel.classList.remove('hidden');
+      } else {
+        panel.classList.add('hidden');
+      }
+    });
+    
+    // === Кнопки экспорта/импорта/версионирования ===
+    
+    document.getElementById('btn-save-project').addEventListener('click', async () => {
+      const xml = await getCurrentXml();
+      if (!xml) { alert('Нет загруженной диаграммы'); return; }
+      const path = getSavePath();
+      if (!path) {
+        alert('Неизвестный путь. Выберите процесс из списка или загрузите файл из docs/processes/');
+        return;
+      }
+      const btn = document.getElementById('btn-save-project');
+      btn.disabled = true;
+      btn.textContent = 'Сохранение…';
+      try {
+        const res = await fetch('/api/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path, xml })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) {
+          alert('Сохранено: ' + path);
+        } else if (res.status === 404 || res.status === 501 || res.status === 405) {
+          alert('Сервер не поддерживает сохранение. Запустите:\ncd docs/processes\npython server.py');
+        } else {
+          alert('Ошибка: ' + (data.error || res.statusText || res.status));
+        }
+      } catch (err) {
+        alert('Ошибка сети: ' + (err.message || err));
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Сохранить в проект';
+      }
+    });
+    
+    document.getElementById('btn-download').addEventListener('click', async () => {
+      const xml = await getCurrentXml();
+      if (!xml) { alert('Нет загруженной диаграммы'); return; }
+      downloadXml(xml, getFilename());
+    });
+    
+    document.getElementById('btn-download-backup').addEventListener('click', async () => {
+      const xml = await getCurrentXml();
+      if (!xml) { alert('Нет загруженной диаграммы'); return; }
+      const now = new Date();
+      const ts = now.getFullYear() +
+        String(now.getMonth() + 1).padStart(2, '0') +
+        String(now.getDate()).padStart(2, '0') + '_' +
+        String(now.getHours()).padStart(2, '0') +
+        String(now.getMinutes()).padStart(2, '0') +
+        String(now.getSeconds()).padStart(2, '0');
+      const base = getFilename(true);
+      downloadXml(xml, base + '_' + ts + '.bpmn');
+    });
+    
+    document.getElementById('btn-copy-xml').addEventListener('click', async () => {
+      const xml = getXmlForCopy();
+      if (!xml || xml.trim().length === 0) {
+        alert('Нет загруженной диаграммы');
+        return;
+      }
+      const len = xml.length;
+      const hasCollaboration = /bpmn:collaboration|bpmn:participant/i.test(xml);
+      const hasMultipleProcesses = (xml.match(/bpmn:process\s/g) || []).length >= 2;
+      try {
+        await navigator.clipboard.writeText(xml);
+        const details = hasCollaboration && hasMultipleProcesses
+          ? ' (схема с участниками и процессами)'
+          : '';
+        alert(`XML скопирован в буфер обмена\n${len} символов${details}`);
+      } catch (err) {
+        document.getElementById('copy-fallback-area').value = xml;
+        document.getElementById('copy-fallback-modal').classList.add('visible');
+        document.getElementById('copy-fallback-area').focus();
+        document.getElementById('copy-fallback-area').select();
+      }
+    });
+    
+    document.getElementById('copy-fallback-close').addEventListener('click', () => {
+      document.getElementById('copy-fallback-modal').classList.remove('visible');
+    });
+    document.getElementById('copy-fallback-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'copy-fallback-modal') document.getElementById('copy-fallback-modal').classList.remove('visible');
+    });
+    
+    document.getElementById('btn-load').addEventListener('click', () => {
+      document.getElementById('load-file-input').click();
+    });
+    
+    document.getElementById('load-file-input').addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      e.target.value = '';
+      if (!file) return;
+      lastLoadedFileName = file.name;
+      try {
+        const xml = await file.text();
+        await importXmlWithHistory(xml, false);
+      } catch (err) {
+        alert('Ошибка чтения файла: ' + (err.message || err));
+        lastLoadedFileName = null;
+      }
+    });
+    
+    document.getElementById('btn-paste').addEventListener('click', () => {
+      document.getElementById('paste-modal').classList.add('visible');
+      document.getElementById('paste-xml-area').value = '';
+      document.getElementById('paste-xml-area').focus();
+    });
+    
+    document.getElementById('paste-cancel').addEventListener('click', () => {
+      document.getElementById('paste-modal').classList.remove('visible');
+    });
+    
+    document.getElementById('paste-ok').addEventListener('click', async () => {
+      const xml = document.getElementById('paste-xml-area').value.trim();
+      if (await importXmlWithHistory(xml, false)) {
+        document.getElementById('paste-modal').classList.remove('visible');
+      }
+    });
+    
+    document.getElementById('paste-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'paste-modal') document.getElementById('paste-modal').classList.remove('visible');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.getElementById('paste-modal').classList.remove('visible');
+        document.getElementById('copy-fallback-modal').classList.remove('visible');
+      }
+    });
+    
+    document.getElementById('btn-rollback').addEventListener('click', async () => {
+      const xml = popHistory();
+      if (!xml) {
+        alert('Нет сохранённых версий для отката');
+        return;
+      }
+      await importXmlWithHistory(xml, true);
+    });
+    
+    // Проверка: поддерживает ли сервер сохранение
+    (async function checkSaveSupport() {
+      const banner = document.getElementById('save-status-banner');
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.saveSupported) {
+          banner.style.display = 'none';
+        } else {
+          banner.style.display = 'flex';
+          banner.className = 'warning';
+        }
+      } catch (_) {
+        banner.style.display = 'flex';
+        banner.className = 'warning';
+      }
+    })();
+    
+    // Автозагрузка первой диаграммы
+    loadDiagram('payments/process-payment-owner-account.bpmn');
+  </script>
+</body>
+</html>
