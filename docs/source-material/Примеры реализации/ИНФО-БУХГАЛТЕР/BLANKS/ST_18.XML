@@ -1,0 +1,921 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.888</format>
+    <title> 5.05. Поступление платы (импорт из Клиент-банка)</title>
+    <alt_title> 5.05. Поступление платы (импорт из Клиент-банка)</alt_title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 5. Касса</alt_part>
+    <autorun state="true"/>
+    <hidden state="false"/>
+    <noprint1st state="false"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <init_validate state="false"/>
+    <archive>ST_18.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>700</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="100"/>
+      <orientation album="true"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="true"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+  </header>
+  <text>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="output field" expression="&quot;Импорт платежных документов&quot;">
+      <location X="48" Y="1" Width="47" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-21</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="output field" expression="&quot;из системы 'Клиент-Банк'/Реестра платежей&quot;">
+      <location X="39" Y="3" Width="70" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-21</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="output field" expression="&quot;Организация:&quot;">
+      <location X="5" Y="5" Width="14" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="НаименОрг">
+      <location X="19" Y="5" Width="68" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>PL\PL_IMP.IBL</library>
+      <function>PL_IMP_ОбрВыбОрг</function>
+      <param_type>string</param_type>
+      <refresh state="true"/>
+      <reload state="false"/>
+      <reread state="true"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="Кнопка19">
+      <location X="90" Y="5" Width="10" Height="1"/>
+      <text>Cброс</text>
+      <comment></comment>
+      <event_name>СобСбросОрг</event_name>
+    </object>
+    <object type="output field" expression="&quot;Банк:&quot;">
+      <location X="6" Y="7" Width="7" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="НаимБанк">
+      <location X="14" Y="7" Width="73" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>PL\PL_IMP.IBL</library>
+      <function>PL_IMP_ОбрВыбБнкОрг</function>
+      <param_type>string</param_type>
+      <refresh state="true"/>
+      <reload state="false"/>
+      <reread state="true"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="output field" expression="&quot;ИНН:&quot;">
+      <location X="89" Y="7" Width="6" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="банкинн">
+      <location X="95" Y="7" Width="20" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="output field" expression="&quot;КПП:&quot;">
+      <location X="116" Y="7" Width="6" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="банккпп">
+      <location X="122" Y="7" Width="20" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="output field" expression="&quot;ИНН налоговой:&quot;">
+      <location X="6" Y="9" Width="16" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="налогинн">
+      <location X="23" Y="9" Width="20" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="output field" expression="&quot;Настройки счетов:&quot;">
+      <location X="5" Y="11" Width="28" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="output field" expression="&quot;Счет кассы:&quot;">
+      <location X="7" Y="12" Width="13" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="счКассы">
+      <location X="21" Y="12" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>PL\PL_IMP.IBL</library>
+      <function>PL_IMP_ОбрВыбСчКассыОрг</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Счет нашего банка:&quot;">
+      <location X="56" Y="12" Width="20" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="счБанка">
+      <location X="76" Y="12" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>account</input_type>
+      <last_level state="true"/>
+      <comment_as_title state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Счет операционных расходов:&quot;">
+      <location X="7" Y="14" Width="29" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="СчОперРасх">
+      <location X="37" Y="14" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>account</input_type>
+      <last_level state="true"/>
+      <comment_as_title state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Регистр налогового учета: (доходы от реализации...)&quot;">
+      <location X="69" Y="14" Width="29" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="кред_нал_1">
+      <location X="98" Y="14" Width="20" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>account</input_type>
+      <last_level state="true"/>
+      <comment_as_title state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Счет ГНИ:&quot;">
+      <location X="7" Y="16" Width="11" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="СЧЕТ_ГНИ">
+      <location X="18" Y="16" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>account</input_type>
+      <last_level state="true"/>
+      <comment_as_title state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="button" name="Кнопка20">
+      <location X="5" Y="18" Width="27" Height="1"/>
+      <text>Настройка видов платежей</text>
+      <comment></comment>
+      <event_name>СобНастрВидПлат</event_name>
+    </object>
+    <object type="button" name="Кнопка21">
+      <location X="33" Y="18" Width="23" Height="1"/>
+      <text>Пересоздать настройки</text>
+      <comment>Пересоздает настройки по умолчанию для видов платежей</comment>
+      <event_name>СобПересоздНастрТипПлат</event_name>
+    </object>
+    <object type="output field" expression="&quot;Настройки, используемые для идентификации платежей с целью определения cчетов организаций(физ.лиц) для проводок и различных параметров платежа.&quot;">
+      <location X="5" Y="19" Width="161" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="button" name="Кнопка23">
+      <location X="5" Y="21" Width="20" Height="1"/>
+      <text>Счета плательщиков</text>
+      <comment>Родительские счета для счетов плательщиков</comment>
+      <event_name>СобСчПлат</event_name>
+    </object>
+    <object type="button" name="Кнопка24">
+      <location X="26" Y="21" Width="21" Height="1"/>
+      <text>Счета получателей</text>
+      <comment>Родительские счета для счетов получателей</comment>
+      <event_name>СобСчПол</event_name>
+    </object>
+    <object type="button" name="Кнопка26">
+      <location X="48" Y="21" Width="20" Height="1"/>
+      <text>Счета физ. лиц</text>
+      <comment>Родительские счета для счетов физических лиц</comment>
+      <event_name>СобСчФизЛица</event_name>
+    </object>
+    <object type="output field" expression="&quot;Родительские счета по умолчанию, используемые для определения счетов организаций(физ.лиц) для проводок. Применяются, если не удалось идентифицировать &quot;">
+      <location X="5" Y="22" Width="160" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="output field" expression="&quot;платеж с помощью настроек видов платежей.&quot;">
+      <location X="5" Y="23" Width="79" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="button" name="Кнопка25">
+      <location X="5" Y="25" Width="22" Height="1"/>
+      <text>Счета организаций</text>
+      <comment>Настройка счетов организаций как плательщиков и получателей</comment>
+      <event_name>СобСчОрг</event_name>
+    </object>
+    <object type="output field" expression="&quot;Настройки счетов конкретных организаций для исходящих и/или входящих платежей, либо для видов платежей. Имеют самый высокий приоритет.&quot;">
+      <location X="5" Y="26" Width="155" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="4" Y="28" Width="153" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="&quot;Файл импорта:&quot;">
+      <location X="5" Y="29" Width="16" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="Графа0">
+      <location X="21" Y="29" Width="82" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>PL\PL_IMP.IBL</library>
+      <function>PL_IMP_ОбрВыбФайла</function>
+      <param_type>string</param_type>
+      <refresh state="true"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="false"/>
+    </object>
+    <object type="checkbox" variable="оп_ПровПоНачислению">
+      <location X="118" Y="29" Width="38" Height="1"/>
+      <text>формировать хоз. оп. по начислению</text>
+      <comment>формирование операций по начислению на суммы оплат (только для СНТ)</comment>
+      <event_name>ИзменениеОпция22</event_name>
+    </object>
+    <object type="checkbox" variable="оп_СодОперацииПоШаблону">
+      <location X="118" Y="30" Width="36" Height="1"/>
+      <text>содержание операции по шаблонам</text>
+      <comment>содержание операции будет заполнено по шаблонам, а не из файла импорта (только для СНТ)</comment>
+      <event_name>ИзменениеОпция21</event_name>
+    </object>
+    <object type="output field" expression="&quot;Импортировать как:&quot;">
+      <location X="6" Y="31" Width="20" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="ТипИмпорта">
+      <location X="27" Y="31" Width="20" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>PL\PL_IMP.IBL</library>
+      <function>PL_IMP_ОбрТипИмпортФайла</function>
+      <param_type>string</param_type>
+      <refresh state="true"/>
+      <reload state="false"/>
+      <reread state="true"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="Кнопка3">
+      <location X="51" Y="31" Width="27" Height="1"/>
+      <text>Настройка шаблона импорта</text>
+      <comment>Настройка шаблона импорта данных из клиент-банка/реестра платежей</comment>
+      <event_name>СобНастрШаблИмпРП</event_name>
+    </object>
+    <object type="button" name="Кнопка6">
+      <location X="78" Y="31" Width="28" Height="1"/>
+      <text>Пересоздать шаблон импорта</text>
+      <comment>Пересоздание шаблона импорта с настройками по умолчанию</comment>
+      <event_name>СобЗапШаблПоУмолч</event_name>
+    </object>
+    <object type="checkbox" variable="оп_показДолгов">
+      <location X="118" Y="31" Width="35" Height="1"/>
+      <text>показывать долги по взносам</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция25</event_name>
+    </object>
+    <object type="checkbox" variable="оп_обработкаПлатежейЮрЛица">
+      <location X="118" Y="32" Width="43" Height="1"/>
+      <text>Обработка входящих платежей по юр. лицам</text>
+      <comment>стандартный режим обработки входящих платежей (не для СНТ)</comment>
+      <event_name>ИзменениеОпция16</event_name>
+    </object>
+    <object type="output field" expression="&quot;Настройки импорта:&quot;">
+      <location X="5" Y="33" Width="21" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="output field" expression="&quot;Искать организации в справочнике по: &quot;">
+      <location X="7" Y="34" Width="40" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="ИдентОргПо">
+      <location X="48" Y="34" Width="11" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>PL\PL_IMP.IBL</library>
+      <function>PL_IMP_ОбрПоискОргПо</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="checkbox" variable="ОпцДобНовОрг">
+      <location X="7" Y="35" Width="44" Height="1"/>
+      <text>Добавлять в справочник новые организации</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция1</event_name>
+    </object>
+    <object type="checkbox" variable="АвтоСоздСчНовОрг">
+      <location X="52" Y="35" Width="37" Height="1"/>
+      <text>Создавать новые счета организаций</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция15</event_name>
+    </object>
+    <object type="output field" expression="&quot;Идентифицировать исходящие платежи по&quot;">
+      <location X="7" Y="36" Width="40" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="ПровПлателПо">
+      <location X="47" Y="36" Width="9" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>MN\MN_PLIM.IBL</library>
+      <function>MN_PLIM_ПровПлателИсхПлат</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="output field" expression="&quot;плательщика&quot;">
+      <location X="57" Y="36" Width="13" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="output field" expression="&quot;(ВНИМАНИЕ: Для идентификации сравниваются значения ИНН,КПП организации (из справочника или реквизитов) со значениями атрибутов 'ПлательщикИНН',ПлательщикКПП' из файла)&quot;">
+      <location X="7" Y="37" Width="145" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="output field" expression="&quot;Настройки формирования хоз. операций:&quot;">
+      <location X="5" Y="40" Width="40" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="button" name="Кнопка22">
+      <location X="7" Y="41" Width="31" Height="1"/>
+      <text>Реквизиты даты хоз. операции</text>
+      <comment>Список реквизитов, значения которых могут быть интепретированы как дата хоз. операции(только для Клиент-Банка)</comment>
+      <event_name>СобДатаХозОпер</event_name>
+    </object>
+    <object type="checkbox" variable="АвтоФормХозОпер">
+      <location X="7" Y="42" Width="45" Height="1"/>
+      <text>Автоматическое формирование хоз. операций</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция14</event_name>
+    </object>
+    <object type="checkbox" variable="ОпцВклНаимПлатХО">
+      <location X="7" Y="43" Width="74" Height="1"/>
+      <text>Включать наименование плательщика в содержание хозяйственной операции</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция6</event_name>
+    </object>
+    <object type="checkbox" variable="ОпцВклНаимПолХО">
+      <location X="7" Y="44" Width="74" Height="1"/>
+      <text>Включать наименование получателя в содержание хозяйственной операции</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция6</event_name>
+    </object>
+    <object type="checkbox" variable="ОпцПровКомБанка">
+      <location X="7" Y="45" Width="77" Height="1"/>
+      <text>Формировать бухгалтерскую проводку по комиссии банка(для Реестра платежей)</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция4</event_name>
+    </object>
+    <object type="checkbox" variable="ОпцНалПровОР">
+      <location X="7" Y="46" Width="73" Height="1"/>
+      <text>Формировать налоговую проводку по комиссии банка(для Реестра платежей)</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция7</event_name>
+    </object>
+    <object type="output field" expression="&quot;Онлайн-касса:&quot;">
+      <location X="5" Y="48" Width="15" Height="1"/>
+      <comment>Онлайн-касса</comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="button" name="Кнопка1">
+      <location X="7" Y="49" Width="17" Height="1"/>
+      <text>Печать чека</text>
+      <comment>Печать чеков по безналичным платежам от физических лиц</comment>
+      <event_name>СобПечЧекаБезнПлатФЛ</event_name>
+    </object>
+    <object type="button" name="Кнопка10">
+      <location X="26" Y="49" Width="16" Height="1"/>
+      <text>Настройки ККМ</text>
+      <comment></comment>
+      <event_name>СобНастрККМ</event_name>
+    </object>
+  </objects>
+  <events>
+    <event name="СобПечЧекаБезнПлатФЛ">
+      <handler>
+        <library>SF\SF_BLANK.IBL</library>
+        <function>KKM_СобПечатьЧекаДлгККМБезнПлат</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="СобНастрШаблИмпРП">
+      <handler>
+        <library>PL\PL_IMP.IBL</library>
+        <function>PL_IMP_СобРедШаблИмп</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="СобНастрККМ">
+      <handler>
+        <library>SF\SF_BLANK.IBL</library>
+        <function>KKM_СобНастрДлгККМ</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="СобСбросОрг">
+      <handler>
+        <library>PL\PL_IMP.IBL</library>
+        <function>PL_IMP_СбросОрг</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="СобЗапШаблПоУмолч">
+      <handler>
+        <library>PL\PL_IMP.IBL</library>
+        <function>PL_IMP_СобПересоздШаблИмп</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="СобНастрВидПлат">
+      <handler>
+        <library>PL\PL_IMP.IBL</library>
+        <function>PL_IMP_СобРедНастрВидПлат</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="СобПересоздНастрТипПлат">
+      <handler>
+        <library>PL\PL_IMP.IBL</library>
+        <function>PL_IMP_СобПересоздНастрВидПлУм</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="СобДатаХозОпер">
+      <handler>
+        <library>PL\PL_IMP.IBL</library>
+        <function>PL_IMP_СобРедРеквДатаХозОпер</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="СобСчПол">
+      <handler>
+        <library>PL\PL_IMP.IBL</library>
+        <function>PL_IMP_СобРедОбщСчетаПолуч</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="СобСчПлат">
+      <handler>
+        <library>PL\PL_IMP.IBL</library>
+        <function>PL_IMP_СобРедОбщСчетаПлат</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="СобСчФизЛица">
+      <handler>
+        <library>PL\PL_IMP.IBL</library>
+        <function>PL_IMP_СобРедОбщСчетаФЛ</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="СобСчОрг">
+      <handler>
+        <library>PL\PL_IMP.IBL</library>
+        <function>PL_IMP_СобРедСчОрг</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+  </events>
+  <formulae>
+    <line>//Бланк импорта данных платежного поручения в формате клиент-банк/реестра платежей</line>
+    <line></line>
+    <line>  ИСПОЛЬЗОВАТЬ("IB_STR")</line>
+    <line>  ИСПОЛЬЗОВАТЬ("IB_FILE")</line>
+    <line>  ИСПОЛЬЗОВАТЬ("ORGANIZ")</line>
+    <line>  ИСПОЛЬЗОВАТЬ("PL\PL_IMP")</line>
+    <line></line>
+    <line>  ИСПОЛЬЗОВАТЬ("ST\ST_CONST")</line>
+    <line>  ИСПОЛЬЗОВАТЬ("ST_GSK\ST_GSK_PL_IMP")</line>
+    <line></line>
+    <line>  PL_IMP_ОпредПути</line>
+    <line>  ЕСЛИ НЕ PL_IMP_БылПересчетБланка ТО</line>
+    <line>   PL_IMP_СчитДанныеОрг</line>
+    <line>   PL_IMP_ИнитДанные</line>
+    <line>   ЕСЛИ НЕ IB_FILE_ЕстьНастр("Количество видов платежей") ТО</line>
+    <line>    PL_IMP_ИнитНастрВидПлатПоУмолч</line>
+    <line>    PL_IMP_ЗаписатьНастрВидПлат</line>
+    <line>   КОНЕЦ_ЕСЛИ</line>
+    <line>   PL_IMP_БылПересчетБланка = ДА</line>
+    <line>   //СТОП_ВСЕ</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line>  STG_ИниИмпортКБ</line>
+    <line></line>
+    <line>  PL_IMP_ИнитДанные</line>
+    <line>  КОМАНДА_БЛАНКА("REFRESH")</line>
+    <line></line>
+    <line>  PL_IMP_СчитатьНастрВидПлат</line>
+    <line>  PL_IMP_СчитатьНастрСчетов</line>
+    <line>  PL_IMP_СчитатьНастрРеквДатаХО</line>
+    <line></line>
+    <line>//Создаем временную таблицу для импорта платежных поручений</line>
+    <line>  СОЗДАТЬ_ДИР(PL_IMP_Папка)</line>
+    <line>  СОЗДАТЬ(СП,ТИП_СПИСОК)</line>
+    <line>  НовыйИмпорт = ДА</line>
+    <line>  ЕСЛИ СУЩ_ФАЙЛ(PL_IMP_ТабИмпорта) И PL_IMP_ПровСтруктТабИмп ТО</line>
+    <line>   СП.ДОБАВИТЬ("SELECT S FROM")</line>
+    <line>   СП.ДОБАВИТЬ("'"+PL_IMP_ТабИмпорта+"'")</line>
+    <line>   СП.ДОБАВИТЬ("WHERE S = 'F'")</line>
+    <line>   т = SQL_ЗАПРОС(СП)</line>
+    <line>   ЕСЛИ т.ВСЕГО &gt; 0  ТО</line>
+    <line>    НовыйИмпорт = ВОПРОС("Не все платежи предыдущего импорта данных были обработаны.Вы уверены,что хотите произвести новый импорт данных?")</line>
+    <line>   КОНЕЦ_ЕСЛИ</line>
+    <line>   т.ЗАКРЫТЬ</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line>  //ОТЛАДКА(НовыйИмпорт)</line>
+    <line>  ЕСЛИ НовыйИмпорт ТО</line>
+    <line>   IB_FILE_ФайлУдалить(PL_IMP_ТабИмпорта)</line>
+    <line>   PL_IMP_СоздТабИмпПлат</line>
+    <line>   ЦИКЛ ПОКА(ДА)</line>
+    <line>    ИдФормат = PL_IMP_ИдентФормат(Графа0)</line>
+    <line>    ЕСЛИ ИдФормат = 0 ТО</line>
+    <line>     СообВопр = ?(Графа0 = "","Файл импорта не выбран.Выбрать файл?","Файл импорта " + Графа0 + " не существует.Выбрать другой файл?")</line>
+    <line>     ЕСЛИ НЕ ВОПРОС(СообВопр) ТО</line>
+    <line>      СТОП_ВСЕ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>     PL_IMP_ОбрВыбФайла(Графа0)</line>
+    <line>    ИНАЧЕ</line>
+    <line>     СТОП</line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line>   КОНЕЦ_ЦИКЛА</line>
+    <line>   ЕСЛИ ТипИмпорта = "Файл Клиент-Банка"  ТО</line>
+    <line>    ЕСЛИ ИдФормат = 1 ТО //формат обмена Клиент-банка</line>
+    <line>     PL_IMP_СчитатьДанныеИмпКБ(Графа0)</line>
+    <line>    ИНАЧЕ</line>
+    <line>     ЕСЛИ ВОПРОС("Файл не соответствует формату обмена системы Клиент-банка.Продолжить обработку файла?") ТО</line>
+    <line>      PL_IMP_СчитатьДанныеИмпКБ(Графа0)</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line>    ЕСЛИ банкинн = "" ТО</line>
+    <line>     ЕСЛИ PL_IMP_ИдОрг &gt; 0 И PL_IMP_ИдБнк &gt; 0 ТО</line>
+    <line>      ЕСЛИ ВОПРОС("Графы ИНН и КПП банка не заполнены в справочнике банков. Внутренние платежи с банком могут быть не идентифицированы при импорте.Заполнить?") ТО</line>
+    <line>       парамстр = ""</line>
+    <line>       PL_IMP_ОбрВыбБнкОрг(парамстр)</line>
+    <line>       КОМАНДА_БЛАНКА("REFRESH")</line>
+    <line>      КОНЕЦ_ЕСЛИ</line>
+    <line>     ИНАЧЕ</line>
+    <line>      ЕСЛИ ВОПРОС("Графы ИНН и КПП банка не заполнены. Внутренние платежи с банком могут быть не идентифицированы при импорте.Заполнить?") ТО</line>
+    <line>       ФОКУС("банкинн")</line>
+    <line>       СТОП_ВСЕ</line>
+    <line>      КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>    ЕСЛИ налогинн = ""  ТО</line>
+    <line>     ЕСЛИ ВОПРОС("Графа ИНН налоговой не заполнена. Платежи по страховым взносам или уплате налогов могут быть не идентфицированы при импорте.Заполнить?") ТО</line>
+    <line>      ФОКУС("налогинн")</line>
+    <line>      СТОП_ВСЕ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line>   ИНАЧЕ</line>
+    <line>    ЕСЛИ ИдФормат &lt;&gt; 1 ТО</line>
+    <line>     PL_IMP_СчитатьДанныеИмпРП(Графа0)</line>
+    <line>    ИНАЧЕ</line>
+    <line>     ЕСЛИ ВОПРОС("Файл соответствует формату обмена системы Клиент-банка. Продолжить обработку файла в формате Клиент-Банка?") ТО</line>
+    <line>      ТипИмпорта = "Файл Клиент-Банка"</line>
+    <line>      КОМАНДА_БЛАНКА("REFRESH")</line>
+    <line>      PL_IMP_СчитатьДанныеИмпКБ(Графа0)</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line>   КОНЕЦ_ЕСЛИ</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line>  ЕСЛИ ПровПлателПо = "" ТО</line>
+    <line>   ПровПлателПо="ИНН и КПП"</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line>  //ОТЛАДКА(Графа0)</line>
+    <line>  //ОТЛАДКА(СУЩ_ФАЙЛ(Графа0))</line>
+    <line>  //СТОП_ВСЕ</line>
+    <line>//---------------------------------------------------------------------------------------//</line>
+    <line></line>
+    <line>  PL_IMP_ОбработатьПлатежи</line>
+    <line></line>
+    <line>  PL_IMP_ПодготДанныеКонтраг</line>
+    <line>  ЕСЛИ ОпцДобНовОрг ТО</line>
+    <line>   PL_IMP_РедНовыхКонтраг</line>
+    <line>   PL_IMP_ДобНовыхКонтрагВСпр</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line>  PL_IMP_ОбновДанныеКонтрТабИмп</line>
+    <line></line>
+    <line>  PL_IMP_ОпредСчетаКонтраг</line>
+    <line>  ЕСЛИ АвтоСоздСчНовОрг ТО</line>
+    <line>   PL_IMP_ПодгСписокНовыхСчКонтр</line>
+    <line>   PL_IMP_РедНовСчетовКонтр</line>
+    <line>   //СТОП_ВСЕ</line>
+    <line>   PL_IMP_СоздатьНовСчетаКонтр</line>
+    <line>   PL_IMP_ОбновСчКонтрТабИмпПлат</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>//---------------------------------------------------------------------------------------//</line>
+    <line></line>
+    <line> IB_FILE_ИнитФайлНастр(PL_IMP_ТабНастр)</line>
+    <line> ПоляСорт = IB_FILE_СчитатьНастр("Поля сортировки")</line>
+    <line></line>
+    <line> ЕСЛИ оп_обработкаПлатежейЮрЛица ТО</line>
+    <line>   PL_IMP_РедИмпПлат(ПоляСорт)</line>
+    <line> ИНАЧЕ</line>
+    <line>   STG_PL_IMP_РедИмпПлат(ПоляСорт, НовыйИмпорт)</line>
+    <line> КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line> IB_FILE_ОбновитьНастр("Поля сортировки", АТРИБУТ("$PL_IMP_РедИмпПлат_ПоляСорт"))</line>
+    <line></line>
+    <line>//  //Редактор входящих платежей</line>
+    <line>//  PL_IMP_РедВхПлат</line>
+    <line>//</line>
+    <line>//  //Редактор исходящих платежей</line>
+    <line>//  PL_IMP_РедИсхПлат</line>
+    <line>//</line>
+    <line>//  //Редактор внутренних платежей с банком</line>
+    <line>//  PL_IMP_РедВнутрПлатБнк</line>
+    <line></line>
+    <line>  //записываем данные по организации в таблицу настроек</line>
+    <line>  PL_IMP_ЗапДанныеОрг</line>
+  </formulae>
+</blank>

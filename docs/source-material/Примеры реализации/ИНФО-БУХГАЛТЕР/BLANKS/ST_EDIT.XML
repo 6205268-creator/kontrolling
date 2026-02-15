@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.898</format>
+    <title> 1.02. Ввод исходных данных</title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 1. Настройки и исходные данные</alt_part>
+    <autorun state="true"/>
+    <hidden state="false"/>
+    <noprint1st state="false"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <init_validate state="false"/>
+    <archive></archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="100"/>
+      <orientation album="false"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="true"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="7"/>
+    <help file="*ST_EDIT" topic="0"/>
+  </header>
+  <text>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line>          Справочники                 Справочник взносов и тарифов</line>
+    <line>                                     Справочник улиц</line>
+    <line></line>
+    <line>                                     Справочник владельцев</line>
+    <line></line>
+    <line>                                     Справочник общих счётчиков</line>
+    <line>                                     Справочник ИПУ</line>
+    <line></line>
+    <line></line>
+    <line>          Редакторы сумм              Внесение исходных остатков</line>
+    <line>                                     Редактор начислений</line>
+    <line>                                     Редактор оплат</line>
+    <line>                                     Редактор возвратов</line>
+    <line>                                     Закрытие долгов по взносам</line>
+    <line></line>
+    <line></line>
+    <line>         Служебные операции           Установка целевых взносов</line>
+    <line>                                     Привязать общий счетчик к ИПУ</line>
+    <line></line>
+    <line></line>
+    <line>         Настройки                    Настройки счетов</line>
+    <line>                                     Настройки блока</line>
+    <line>                                     Настройки формирования ПД</line>
+    <line>                                     Настройки расчета пени</line>
+    <line>                                     Настройки соц. нормы ЭЭ</line>
+    <line>                                     Настройка доп. корр. счетов</line>
+    <line>                                     Диапазоны объемов потребления ЭЭ</line>
+    <line>                                     Анализ структуры базы данных</line>
+    <line></line>
+    <line></line>
+    <line>         Сайт                         Синхронизация БД с сайтом</line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="output field" expression="&quot;САДОВОДЧЕСКИЕ ТОВАРИЩЕСТВА - &quot; + гр_версияБДБлока">
+      <location X="7" Y="2" Width="67" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="9" Y="3" Width="1" Height="33"/>
+      <width>3</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_НастрТариф">
+      <location X="73" Y="5" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="9" Y="6" Width="30" Height="0"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="6" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="6" Width="1" Height="6"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="ред3">
+      <location X="73" Y="6" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\SPR\ST_GSK_LOCATIONS.IBL</library>
+      <function>STG_СправочникРасположений</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="7" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="&quot;Справочник &quot;+?(г_блокСНТ,&quot;участков&quot;,&quot;гаражей&quot;)">
+      <location X="40" Y="7" Width="22" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="ред2">
+      <location X="73" Y="7" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\SPR\ST_GSK_AREA.IBL</library>
+      <function>STG_СпрУчастковГаражей</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="8" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="ред4">
+      <location X="73" Y="8" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\SPR\ST_GSK_OWNERS.IBL</library>
+      <function>STG_СправочникВладельцев</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="9" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_ОбщСч">
+      <location X="73" Y="10" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="11" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_ИндСч">
+      <location X="73" Y="11" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="12" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_ИсхОст">
+      <location X="73" Y="14" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="9" Y="15" Width="30" Height="0"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="15" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="15" Width="1" Height="4"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_РедакторНачислений">
+      <location X="73" Y="15" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="16" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_РедакторОплат">
+      <location X="73" Y="16" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="17" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_РедакторВозвратов">
+      <location X="73" Y="17" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="18" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_закрытиеДолгов">
+      <location X="73" Y="18" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="19" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_УстановкаЦлВз">
+      <location X="73" Y="21" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="9" Y="22" Width="30" Height="0"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="22" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="22" Width="1" Height="1"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_Привязка">
+      <location X="73" Y="22" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="23" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_настройкаСчетов">
+      <location X="73" Y="25" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="9" Y="26" Width="30" Height="0"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="26" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="26" Width="1" Height="7"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_настройкиБлока">
+      <location X="73" Y="26" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="27" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_НастройкиПечатиПД">
+      <location X="73" Y="27" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="28" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_настрПени">
+      <location X="73" Y="28" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="29" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_настройкиСНЭЭ">
+      <location X="73" Y="29" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="30" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_докКоррСчета">
+      <location X="73" Y="30" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\SPR\ST_GSK_ADDS_CORR_ACC.IBL</library>
+      <function>STG_СпрДопКоррСчетов</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="31" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_диапОбъемовЭЭ">
+      <location X="73" Y="31" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\SPR\ST_GSK_VOLUME_RANGE.IBL</library>
+      <function>STG_СпрДиапОбъемовЭЭ</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="32" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_анализСтруктурыБД">
+      <location X="73" Y="32" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_EDIT.IBL</library>
+      <function>ST_BLW_ВыборТО</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="33" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="гр_синхронизация">
+      <location X="73" Y="35" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_SITE_SYNC.IBL</library>
+      <function>STG_СинхронизацияССайтом</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="9" Y="36" Width="30" Height="0"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="38" Y="36" Width="36" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+  </objects>
+  <events/>
+  <formulae>
+    <line>ИСПОЛЬЗОВАТЬ("IB_CONF")</line>
+    <line>ИСПОЛЬЗОВАТЬ("ST\ST_CONST")</line>
+    <line>ИСПОЛЬЗОВАТЬ("ST_GSK\BLW\ST_GSK_EDIT")</line>
+    <line></line>
+    <line>  IB_PROF_УстТекЛокПрофиль(к_СНТПрофВнесениеИсхДанных)</line>
+    <line>  STG_ЗаполнитьГрафуВерсийБлока(гр_версияБДБлока)</line>
+    <line>  г_спрВладельцевРежимСпр = ДА</line>
+  </formulae>
+</blank>

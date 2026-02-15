@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.888</format>
+    <title> 4.02. Расчет земельного налога (ЗОП)</title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 4. Земельный налог</alt_part>
+    <autorun state="false"/>
+    <hidden state="false"/>
+    <noprint1st state="true"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <init_validate state="false"/>
+    <archive>ST_ZN_ZOP.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="90"/>
+      <orientation album="false"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="false"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>ГодРас</ident>
+      <ident>КадрСт</ident>
+      <ident>СтавЗемНал</ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+    <help file="*ST_ZN_ZOP" topic="0"/>
+  </header>
+  <text>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="output field" expression="&quot;Расчет земельного налога за&quot;">
+      <location X="16" Y="1" Width="36" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-16</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="input field" variable="гр_Год">
+      <location X="52" Y="1" Width="4" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <input_type>number</input_type>
+      <dec_places>-1</dec_places>
+      <null_pad state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;год&quot;">
+      <location X="57" Y="1" Width="7" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-16</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="output field" expression="&quot;на земли общего пользования (ЗОП)&quot;">
+      <location X="18" Y="2" Width="44" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-16</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="output field" expression="&quot;Метод распределение суммы по участкам:&quot;">
+      <location X="1" Y="4" Width="40" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_Метод">
+      <location X="41" Y="4" Width="43" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбМетодаРаспрЗН</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="output field" expression="&quot;Удельный показатель кадастровой стоимости, руб/кв.м.:&quot;">
+      <location X="1" Y="5" Width="55" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_УдПокСт">
+      <location X="69" Y="5" Width="15" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>number</input_type>
+      <dec_places>2</dec_places>
+      <null_pad state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Ставка земельного налога, %:&quot;">
+      <location X="26" Y="6" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_СтавкаЗН">
+      <location X="69" Y="6" Width="15" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>number</input_type>
+      <dec_places>2</dec_places>
+      <null_pad state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Сумма вычета, руб.:&quot;">
+      <location X="35" Y="7" Width="21" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_ВычетЗН">
+      <location X="69" Y="7" Width="15" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>number</input_type>
+      <dec_places>2</dec_places>
+      <null_pad state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Площадь в &quot;+&quot;&quot;&quot;&quot;+&quot;сотках&quot;+&quot;&quot;&quot;:&quot;">
+      <location X="2" Y="8" Width="22" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="checkbox" variable="гр_ПлВСотках">
+      <location X="24" Y="8" Width="3" Height="1"/>
+      <text></text>
+      <comment></comment>
+      <event_name>переклПлВСотках</event_name>
+    </object>
+    <object type="output field" expression="&quot;Суммарная площадь участков:&quot;">
+      <location X="27" Y="8" Width="29" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_ПлощУч">
+      <location X="69" Y="8" Width="15" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_LIB01.IBL</library>
+      <function>STG_ПлощадьУчастков</function>
+      <param_type>number</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Формировать проводки:&quot;">
+      <location X="2" Y="9" Width="22" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="checkbox" variable="делатьПроводки">
+      <location X="24" Y="9" Width="3" Height="1"/>
+      <text></text>
+      <comment></comment>
+      <event_name>переклДелатьПров</event_name>
+    </object>
+    <object type="output field" expression="&quot;Площадь ЗОП:&quot;">
+      <location X="42" Y="9" Width="14" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_ПлощЗОП">
+      <location X="69" Y="9" Width="15" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>number</input_type>
+      <dec_places>2</dec_places>
+      <null_pad state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Дата операции:&quot;">
+      <location X="9" Y="10" Width="15" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="датаОперации">
+      <location X="24" Y="10" Width="12" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+  </objects>
+  <events/>
+  <formulae>
+    <line>ИСПОЛЬЗОВАТЬ("ST\ST_CONST")</line>
+    <line>ИСПОЛЬЗОВАТЬ("ST_GSK\BLW\ST_GSK_BLW")</line>
+    <line></line>
+    <line>  ЕСЛИ гр_Год &lt; 1980 ИЛИ гр_Год &gt; 2077 ТО</line>
+    <line>    СООБЩЕНИЕ("Неверно указан год")</line>
+    <line>    СТОП_ВСЕ</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>  STG_УстТекстБлока</line>
+    <line>  STG_R_НастройкиСчетов</line>
+    <line>  ТипСч = "ЗН"</line>
+    <line>  г_КодСтатьиНачисления = ТипСч</line>
+    <line>  ЕСЛИ гр_Метод = "" ТО</line>
+    <line>    гр_Метод = "Равными долями между всеми участками"</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>  СОЗДАТЬ(СП,ТИП_СПИСОК)</line>
+    <line>  СП.ДОБАВИТЬ("SELECT DISTINCT * FROM")</line>
+    <line>  СП.ДОБАВИТЬ("'"+ф_СпрУчастковГаражей+"' ")</line>
+    <line>  sql = SQL_ЗАПРОС(СП)</line>
+    <line>  ЕСЛИ sql.ВСЕГО &gt; 0 ТО</line>
+    <line>    ЕСЛИ гр_Метод = "Долями, пропорциональными площадям участков" ТО</line>
+    <line>      Доля = гр_ПлощЗОП/гр_ПлощУч</line>
+    <line>    ИНАЧЕ</line>
+    <line>      Доля = гр_ПлощЗОП/sql.ВСЕГО</line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line>    Ставка = гр_СтавкаЗН/100</line>
+    <line>    КадСтЗОП = (гр_УдПокСт * гр_ПлощЗОП - гр_ВычетЗН) * ?(гр_ПлВСотках,100,1)</line>
+    <line>    STG_ПарамВыводаТаблиц</line>
+    <line>    ЦИКЛ ДЛЯ (и=1,sql.ВСЕГО)</line>
+    <line>      sql.ПЕРЕЙТИ(и)</line>
+    <line>      ЕСЛИ гр_Метод = "Долями, пропорциональными площадям участков" ТО</line>
+    <line>        ПлощДляУч = Доля*sql.ПОЛЕ("SQUARE")</line>
+    <line>      ИНАЧЕ</line>
+    <line>        ПлощДляУч = Доля</line>
+    <line>      КОНЕЦ_ЕСЛИ</line>
+    <line>      ВсегоСтр++</line>
+    <line>      Данные!ВсегоСтр!"A" = и</line>
+    <line>      Данные!ВсегоСтр!"B" = sql.ПОЛЕ("N_AREA") + " / " + sql.ПОЛЕ("FIO")</line>
+    <line>      Данные!ВсегоСтр!"C" = sql.ПОЛЕ("SQUARE")</line>
+    <line>      Данные!ВсегоСтр!"D" = ПлощДляУч</line>
+    <line>      Данные!ВсегоСтр!"E" = КадСтЗОП * ПлощДляУч * Ставка/гр_ПлощЗОП //?(гр_Метод = "Долями, пропорциональными площадям участков", гр_ПлощЗОП, 1)</line>
+    <line>      цл_КодУл = sql.ПОЛЕ("CODS")</line>
+    <line>      цл_КодУчГарПольз = sql.ПОЛЕ("N_AREA")</line>
+    <line>      STG_ФПРОВ(Данные!ВсегоСтр!"E", СТР(гр_Год), sql.ПОЛЕ("FIO"))</line>
+    <line>    КОНЕЦ_ЦИКЛА</line>
+    <line>    ЗАП_ОПЕР</line>
+    <line>    ШирЯч!1=5;     ПредЯч!1=0;     НаимЯч!1="№"</line>
+    <line>    ШирЯч!2=55;    ПредЯч!2=0;     НаимЯч!2="Участок / Ф.И.О."</line>
+    <line>    ШирЯч!3=10;    ПредЯч!3=0;     НаимЯч!3="Площадь участка"</line>
+    <line>    ШирЯч!4=16;    ПредЯч!4=0;     НаимЯч!4="Площадь ЗОП для участка"</line>
+    <line>    ШирЯч!5=16;    ПредЯч!5=0;     НаимЯч!5="Сумма налога, руб."</line>
+    <line>    КолЯч = 5</line>
+    <line>    НачСтр = 12</line>
+    <line>    Итоги!"E" = ДА</line>
+    <line>    ЦИКЛ ДЛЯ(и=3,5)</line>
+    <line>      Дроб!ЛИТЕР(и) = 2</line>
+    <line>    КОНЕЦ_ЦИКЛА</line>
+    <line>    СтрЛист = 65</line>
+    <line>    ЕСЛИ ВсегоСтр &gt; 0 ТО</line>
+    <line>      ПЕЧАТЬ_ШАПКИ</line>
+    <line>      ПЕЧАТЬ_ТАБЛИЦЫ</line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line>    СБРОС_ТАБЛИЦ(ДА)</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>  КОНЕЦ_СТРАНИЦЫ(11)</line>
+    <line></line>
+  </formulae>
+</blank>

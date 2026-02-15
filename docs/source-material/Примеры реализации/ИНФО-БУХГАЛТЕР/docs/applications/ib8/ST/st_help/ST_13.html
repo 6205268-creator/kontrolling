@@ -1,0 +1,98 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//RU" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ru">
+
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="content-type">
+<meta chapter="Прикладные компоненты\Инфо-Бухгалтер 8\Блоки\СНТ">
+<meta help-id="ST_13">
+<title>7.02. "Реестр участков/собственников"</title>
+<link href="../../../../_assets/css/bloki.css" rel="stylesheet">
+<link rel="icon" href="../../../../_assets/img/favicon.ico" type="image/ico">
+</head>
+
+<body>
+
+<div class="header reset">
+	<div class="header_inner">
+		<p class="brand">
+		<img class="ib-header-image" src="../../../../_assets/img/idn.png" align="left" alt="Центр помощи">
+		</p>
+	</div>
+</div>
+<div class="main_column">
+	<!-- ===================== САМ ТЕКСТ ========================= -->
+	<h1>Бланк &quot;Реестр участков/собственников&quot;</h1>
+	<p>Данный бланк предназначен для отображения внесенных данных по участкам или 
+	собственникам (рис. 1). </p>
+	<div align="center">
+		<img class="screenshot" src="images/st_13.png"> Рис. 1. Бланк &quot;Реестр участков/собственников&quot;</div>
+	<br>
+	<table style="width: 100%; border-style: solid; border-width: 0px 0px 0px 10px; padding: 4px; margin: 1px auto; vertical-align: middle; text-align: middle;">
+		<tr>
+			<td height="auto" width="45px">
+			<p class="middle">
+			<img class="middle" src="images/lightbulb.png" height="30" width="30"></p>
+			</td>
+			<td style="vertical-align: middle;">
+			<p class="left">Бланк содержит графы множественного выбора. Подробное 
+			описание работы с данными графами находится
+			<a href="ST_MULTISEL.html">тут</a>.</p>
+			</td>
+		</tr>
+	</table>
+	<p>Рассмотрим поля, доступные для заполнения:</p>
+	<ul>
+		<li>
+		<p><strong>Улицы</strong> - выбираются улицы, по которым необходимо выполнить 
+		расчет. Возможен выбор произвольного количества улиц. Если оставить графу 
+		пустой, то отбор будет осуществляться по всем улицам.</p>
+		</li>
+		<li>
+		<p><strong>Участки</strong> - выбираются участки, по которым необходимо 
+		расчет. Возможен выбор произвольного количества участков. Если оставить 
+		графу пустой, то отбор будет осуществляться по всем участкам.</p>
+		</li>
+		<li>
+		<p><strong>Отчёт</strong> - выбирается тип отчёта - по участкам или собственникам.</p>
+		</li>
+		<li>
+		<p><strong>Настройка вывода</strong>- указывается, какие данные необходимо 
+		вывести в таблицу. <br>
+		Присутствуют две настройки вывода столбцов - для реестра собственников и 
+		для реестра участков. Чтобы получить доступ к конкретной настройке, необходимо 
+		указать тип отчёта в графе <strong>Выбор отчёта</strong> и только после 
+		этого производить настройку вывода столбцов.</p>
+		</li>
+		<li>
+		<p><strong>Участок используется</strong> - выбирается признак использования 
+		участка. Если графа не заполнена, то в выборку попадут все участки.</p>
+		</li>
+		<li>
+		<p><strong>выгрузить ... в формате ...</strong> - позволяет 
+		выгрузить на диск таблицу через указанное приложение в указанном формате.</p>
+		</li>
+	</ul>
+	<p>После заполнения полей, влияющих на расчет, необходимо пересчитать бланк. 
+	Для этого нажмите кнопку
+	<img class="middle" src="images/F9.png" height="25" width="25"> на панели инструментов, 
+	клавишу <strong>F9</strong>, или комбинацию клавиш <strong>Ctrl + Enter</strong>.</p>
+	<p>После пересчета на экране отобразится таблица с данными по участкам или собственникам.</p>
+	<!-- ===================== КОНЕЦ ТЕКСТА ========================= -->
+</div>
+<div class="footer_wrapper reset">
+	<div class="footer">
+		<div class="ib_slogan">
+			<p>Многолетний опыт автоматизации бухучета и отчетности</p>
+		</div>
+		<div class="ib_logo">
+			<h1><a href="#"><b>Инфо-Бухгалтер</b> ©</a></h1>
+		</div>
+	</div>
+</div>
+<script src="../../../../_assets/js/jquery.js" type="text/javascript"></script>
+<script src="../../../../_assets/js/highlight.pack.js" type="text/javascript"></script>
+<script src="../../../../_assets/js/ib_platform_all.js" type="text/javascript"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0"?>
+<dirinfo>
+	<event timestamp="06.12.2024;22:55:58" operation="Install" version="8.8103" type="I_UsnStDemo" tag="Усн" subtag="демоснт">
+		<dir>e:\!_РАБОТА\КонтроллингСТ\Примеры реализации\ИНФО-БУХГАЛТЕР</dir>
+		<archive name="U_BLOKI\STDOC.PAK" title="СНТ 2.0: документы" />
+		<archive name="U_BLOKI\STDATA.PAK" title="СНТ 2.0: база данных" />
+		<archive name="U_BLOKI\STDATA_USN.PAK" title="СНТ 2.0: база данных УСН" />
+		<archive name="U_BLOKI\STDATADEMO.PAK" title="СНТ 2.0: примеры базы данных" />
+		<archive name="U_BLOKI\STDATADEMO_USN.PAK" title="СНТ 2.0: примеры базы данных УСН" />
+	</event>
+</dirinfo>

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.720</format>
+    <title> 5.07. Кассовая книга (титульный лист)</title>
+    <alt_title> 5.07. Кассовая книга (титульный лист)</alt_title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 5. Касса</alt_part>
+    <autorun state="false"/>
+    <hidden state="false"/>
+    <noprint1st state="false"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <archive>ST_KASS_TIT.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="100"/>
+      <orientation album="false"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="false"/>
+    </print_settings>
+    <archive_ident date="false" time="false">
+      <ident>Период</ident>
+      <ident>год</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+    <help file="*KASS_TIT" topic="0"/>
+  </header>
+  <text>
+    <line>                                                     Унифицированная форма № КО-4</line>
+    <line>                                                     Утвержденная постановлением Госкомстата</line>
+    <line>                                                     России от 18.08.98 № 88</line>
+    <line></line>
+    <line></line>
+    <line>                                                                                  Код</line>
+    <line>                                                              Форма по ОКУД     0310004</line>
+    <line>   по ОКПО</line>
+    <line>                            организация</line>
+    <line></line>
+    <line>                     структурное подразделение</line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="frame">
+      <location X="77" Y="6" Width="17" Height="5"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="77" Y="7" Width="17" Height="4"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="Предприят1">
+      <location X="2" Y="8" Width="65" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="77" Y="8" Width="17" Height="1"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="ОКПО">
+      <location X="81" Y="8" Width="9" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="1" Y="9" Width="67" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="Подразделение">
+      <location X="2" Y="10" Width="74" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="input field" variable="ПолеВвода">
+      <location X="78" Y="10" Width="15" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="frame">
+      <location X="1" Y="11" Width="76" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="&quot;КАССОВАЯ КНИГА&quot;">
+      <location X="36" Y="16" Width="34" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-19</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="output field" expression="&quot;на&quot;">
+      <location X="36" Y="18" Width="2" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="Номер">
+      <location X="39" Y="18" Width="2" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>number</input_type>
+      <dec_places>0</dec_places>
+      <null_pad state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="input field" variable="Период">
+      <location X="42" Y="18" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>PL\PAY_DOC.IBL</library>
+      <function>ПЕРИОД</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="год">
+      <location X="53" Y="18" Width="4" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>number</input_type>
+      <dec_places>0</dec_places>
+      <null_pad state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;г.&quot;">
+      <location X="58" Y="18" Width="2" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+  </objects>
+  <events/>
+  <formulae>
+    <line>ПерСтр=""</line>
+    <line>Ош="Неверно задан период"</line>
+    <line></line>
+    <line>Предприят1 = ["IB_STR.ibl"].IB_STR_ЦЕНТРИРОВАТЬ(Предприят,65)</line>
+    <line>ЕСЛИ Период="" ТО</line>
+    <line>    СООБЩЕНИЕ(Ош); СТОП_ВСЕ</line>
+    <line>КОНЕЦ_ЕСЛИ</line>
+    <line>ЕСЛИ Период="год" ТО</line>
+    <line>  ПерСтр="на "+СТР(год)+" год"</line>
+    <line>КОНЕЦ_ЕСЛИ</line>
+    <line>ЕСЛИ Период="месяц" ТО</line>
+    <line>  ЕСЛИ (Номер&lt;1) ИЛИ (Номер&gt;12) ТО</line>
+    <line>    СООБЩЕНИЕ(Ош); СТОП_ВСЕ</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line>  ПерСтр="на "+МЕСП(Номер)+" "+СТР(год)+" г."</line>
+    <line>КОНЕЦ_ЕСЛИ</line>
+    <line>ЕСЛИ Период="квартал" ТО</line>
+    <line>  ЕСЛИ (Номер&lt;1) ИЛИ (Номер&gt;4) ТО</line>
+    <line>    СООБЩЕНИЕ(Ош); СТОП_ВСЕ</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line>  ПерСтр="на "+СТР(Номер)+" квартал "+СТР(год)+" г."</line>
+    <line>КОНЕЦ_ЕСЛИ</line>
+    <line>ЕСЛИ Период="полугодие" ТО</line>
+    <line>  ЕСЛИ (Номер&lt;1) ИЛИ (Номер&gt;2) ТО</line>
+    <line>    СООБЩЕНИЕ(Ош); СТОП_ВСЕ</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line>  ПерСтр="на "+СТР(Номер)+" полугодие "+СТР(год)+" г."</line>
+    <line>КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>ВЫВЕСТИ(36, 18, ПерСтр, ДА)</line>
+  </formulae>
+</blank>

@@ -1,6 +1,0 @@
-fastapi
-uvicorn[standard]
-SQLAlchemy
-alembic
-pydantic
-pydantic-settings

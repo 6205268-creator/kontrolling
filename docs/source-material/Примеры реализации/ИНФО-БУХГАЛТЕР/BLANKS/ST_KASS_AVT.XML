@@ -1,0 +1,1477 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.822</format>
+    <title> 5.08. Кассовая книга</title>
+    <alt_title> 5.08. Кассовая книга</alt_title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 5. Касса</alt_part>
+    <autorun state="false"/>
+    <hidden state="false"/>
+    <noprint1st state="false"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <archive>ST_KASS_AVT.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="92"/>
+      <orientation album="false"/>
+      <fields left="10" right="0" top="0" bottom="0"/>
+      <page_numbers state="false"/>
+    </print_settings>
+    <archive_ident date="false" time="false">
+      <ident>Касса</ident>
+      <ident>Дата</ident>
+      <ident>Лист</ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="7"/>
+    <help file="*KASS_AVT" topic="0"/>
+  </header>
+  <text>
+    <line></line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="output field" expression="&quot;Касса&quot;">
+      <location X="1" Y="1" Width="7" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="Касса">
+      <location X="9" Y="1" Width="18" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>account</input_type>
+      <last_level state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;с&quot;">
+      <location X="29" Y="1" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>0</dec_places>
+    </object>
+    <object type="input field" variable="ДатаН">
+      <location X="32" Y="1" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;по&quot;">
+      <location X="44" Y="1" Width="2" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>0</dec_places>
+    </object>
+    <object type="input field" variable="ДатаК">
+      <location X="48" Y="1" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Лист&quot;">
+      <location X="61" Y="1" Width="5" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>0</dec_places>
+    </object>
+    <object type="input field" variable="Лист">
+      <location X="66" Y="1" Width="5" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>number</input_type>
+      <dec_places>-1</dec_places>
+      <null_pad state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="input field" variable="Вид_кн">
+      <location X="3" Y="2" Width="15" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="true"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>PL\PAY_DOC.IBL</library>
+      <function>ВИД_КАСС_КН</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="false"/>
+    </object>
+    <object type="checkbox" variable="ОпцияШапкаСтраница">
+      <location X="22" Y="2" Width="3" Height="1"/>
+      <text></text>
+      <comment></comment>
+      <event_name>ИзменениеОпция1</event_name>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-11</lfHeight>
+        <lfWeight>400</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="output field" expression="&quot;Выводить шапку на каждой странице&quot;">
+      <location X="26" Y="2" Width="31" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-12</lfHeight>
+        <lfWeight>400</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+  </objects>
+  <events/>
+  <formulae>
+    <line>/////////////////////////////////////////////////////////</line>
+    <line>///  Разработчик: Егоркин Михаил</line>
+    <line>///</line>
+    <line>///  Дата последнего изменения: 04.2010 г.     Харламов Р.Б.     ///</line>
+    <line>///                 КАССОВАЯ КНИГА                     ///</line>
+    <line>///  04.09.2009 г. - перевод в TBLPRINT                ///</line>
+    <line>///  09.09.2009 г. - TBLPRINT                          ///</line>
+    <line>///  19.01.2010 г. - TBLPRINT                          ///</line>
+    <line>///  16.05.2017 - Кирилов С.А. - Один по или ро - одна ///</line>
+    <line>///  строка в таблице                                  ///</line>
+    <line>///                                                    ///</line>
+    <line>///                                                    ///</line>
+    <line>//////////////////////////////////////////////////////////</line>
+    <line></line>
+    <line>ИСПОЛЬЗОВАТЬ ("VL\v_k_val")</line>
+    <line>ИСПОЛЬЗОВАТЬ("TBLPRINT")</line>
+    <line>//////////////////////////////////////////////////////////</line>
+    <line></line>
+    <line>// Инициализация констант</line>
+    <line>показывать_зп=ДА        //показывать остатки на зарплату</line>
+    <line>использовать_фильтр=НЕТ //альтернативный метод рассчета</line>
+    <line>разделить_пров_зп=НЕТ   //разделять проводки по зарплате</line>
+    <line>// Вы можете изменить число строк на листе. (LPP)</line>
+    <line>// LPP,FPH,SPH не должны быть четными числами</line>
+    <line>// Если Вы будете менять "шапки" (FPH,SPH,SPF,LPF), то не забудьте это</line>
+    <line>// сделать в самом бланке, иначе распечатка на листе может не поместиться</line>
+    <line>LPP=55 // Lines Per Page - число строк на листе (для печати)</line>
+    <line>FPH=5    // First Page Header; (заголовок 1 страницы)</line>
+    <line>SPH=2    // Second Page Header; (заголовок 2 страницы)</line>
+    <line>LPF=10   // Last Page Footer; (нижний колонтитул последней страницы)</line>
+    <line>LV=0     // коэффициент числа экранных строк на на 1 строку таблицы</line>
+    <line>i=0</line>
+    <line>P=0</line>
+    <line>p=1 // кол-во листов для даты</line>
+    <line>Pg=0</line>
+    <line>a=3 // позиция шапки для TBLPRINT</line>
+    <line>a1 = 3</line>
+    <line>колконцов=0</line>
+    <line>LastDayofMonth=НЕТ</line>
+    <line>LastDayofYear=НЕТ</line>
+    <line>StartLine=3</line>
+    <line>PlaceForGet=0</line>
+    <line>cntpagesM=0</line>
+    <line>cntpagesJ=0</line>
+    <line>//CurLine=1;</line>
+    <line>cntpagesBM=1</line>
+    <line>cntPages = 0 // Cчетчик печатаемых листов</line>
+    <line>ЕСЛИ Касса="" ТО Касса="50" КОНЕЦ_ЕСЛИ</line>
+    <line>ПодсчКассы=ПОДСЧ(Касса,1)</line>
+    <line>Дл=ДЛИНА(Касса)</line>
+    <line>оп=1</line>
+    <line>ВалКасса=НЕТ</line>
+    <line>ЕСЛИ ФИЛЬТР_ВКЛ ТО</line>
+    <line>   ф_вкл = ДА</line>
+    <line>   ВЫКЛ_ФИЛЬТР</line>
+    <line>ИНАЧЕ</line>
+    <line>   ф_вкл = НЕТ</line>
+    <line>КОНЕЦ_ЕСЛИ</line>
+    <line>ЕСЛИ использовать_фильтр ТО</line>
+    <line> СОЗДАТЬ(Ф1,ТИП_ФИЛЬТР) //</line>
+    <line> Ф1.СЧИТАТЬ             // сохраняем старый фильтр</line>
+    <line> СОЗДАТЬ(Ф2,ТИП_ФИЛЬТР) //</line>
+    <line> Ф2.корр=Касса+"*"      // устанавливаем параметры фильтра</line>
+    <line> Ф2.исключать=НЕТ       //</line>
+    <line> Ф2.действ_отч=ДА       //</line>
+    <line> Ф2.реж_выкл=2</line>
+    <line>// Ф2.дата1=ДатаН-1</line>
+    <line>// Ф2.дата2=ДатаК+1</line>
+    <line>// Ф2.исп_период=ДА</line>
+    <line> Ф2.ПРИМЕНИТЬ</line>
+    <line> ВКЛ_ФИЛЬТР</line>
+    <line>КОНЕЦ_ЕСЛИ</line>
+    <line>month=МЕС(ДатаН)</line>
+    <line>jear = ГОД(ДатаН)</line>
+    <line>LastM=month</line>
+    <line>колвсч=0</line>
+    <line>ЕдВал!0=""</line>
+    <line>ОКРУГЛЕНИЕ(2) // 18.01.2010 г.</line>
+    <line>КС = НЕТ</line>
+    <line>ЦИКЛ СЧЕТА (Сч=Касса+"*")</line>
+    <line>        ЕСЛИ НЕ (ЕСТЬ_СУБСЧ(Сч)) ТО</line>
+    <line>                ЕСЛИ СЧЕТ_КОЛ(Сч) ТО</line>
+    <line>                        КС = ДА</line>
+    <line>                КОНЕЦ_ЕСЛИ</line>
+    <line>        КОНЕЦ_ЕСЛИ</line>
+    <line>КОНЕЦ_ЦИКЛА</line>
+    <line></line>
+    <line></line>
+    <line>ЦИКЛ СЧЕТА (Сч=Касса+"*")</line>
+    <line>   ЕСЛИ НЕ (ЕСТЬ_СУБСЧ(Сч)) ТО</line>
+    <line>        ЕСЛИ КС ТО</line>
+    <line>                ЕСЛИ СЧЕТ_КОЛ(Сч) ТО</line>
+    <line>                        колвсч++</line>
+    <line>                        СчВал!колвсч=Сч</line>
+    <line>                        НазвВал!колвсч=НАЗВ(Сч)</line>
+    <line>                        ЕдВал!колвсч=ЕДИН(Сч)</line>
+    <line>                        КурсРазн!колвсч=0</line>
+    <line>                        ВалКасса=ДА</line>
+    <line>                        FPH=FPH+2</line>
+    <line>                        LPF=LPF+3</line>
+    <line>                КОНЕЦ_ЕСЛИ</line>
+    <line>        ИНАЧЕ</line>
+    <line>                ЕСЛИ (СЧЕТ_СУЩ("В/"+Сч)) ТО</line>
+    <line>                        колвсч++</line>
+    <line>                        СчВал!колвсч=Сч</line>
+    <line>                        НазвВал!колвсч=НАЗВ(Сч)</line>
+    <line>                        ЕдВал!колвсч=ЕДИН("В\"+Сч)</line>
+    <line>                        КурсРазн!колвсч=0</line>
+    <line>                        ВалКасса=ДА</line>
+    <line>                        FPH=FPH+2</line>
+    <line>                        LPF=LPF+3</line>
+    <line>                КОНЕЦ_ЕСЛИ</line>
+    <line>        КОНЕЦ_ЕСЛИ</line>
+    <line>   КОНЕЦ_ЕСЛИ</line>
+    <line>КОНЕЦ_ЦИКЛА</line>
+    <line></line>
+    <line>// последний день месяца или года?</line>
+    <line>answer = ВВЕСТИ_ЗНАЧЕНИЕ("Выберите,что необходимо ввести дополнительно",</line>
+    <line>                          ["Ничего",</line>
+    <line>                          "Количество листов за месяц",</line>
+    <line>                          "Количество листов за год",</line>
+    <line>                          "Количество листов за месяц и год"],1)</line>
+    <line>ЕСЛИ answer=2 ТО // подсчет листов кассы за месяц</line>
+    <line>     cntpagesBM = ВВЕСТИ_ЗНАЧЕНИЕ("Введите номер листа на начало месяца "</line>
+    <line>     + МЕСП(month) + ":", 1, 1, 10000)</line>
+    <line>     LPF = LPF + 2</line>
+    <line>ИНАЧЕ</line>
+    <line>     ЕСЛИ answer=3 ТО // подсчет листов кассы за год</line>
+    <line>     //cntpagesJ = ВВЕСТИ_ЗНАЧЕНИЕ("Введите количество листов за год:", 1, 1, 100000)</line>
+    <line>     //ЛистЗаМес = "Общее количество листов кассовой книги за " + СТР(jear)</line>
+    <line>     //               +" год "+" - "+СТР(cntpagesJ))</line>
+    <line>     LPF = LPF + 2</line>
+    <line>     ИНАЧЕ</line>
+    <line>           ЕСЛИ answer=4 ТО // подсчет листов кассы за месяц и год</line>
+    <line>           cntpagesBM = ВВЕСТИ_ЗНАЧЕНИЕ("Введите номер листа на начало месяца "</line>
+    <line>                                  + МЕСП(month) + ":", 1, 1, 10000)</line>
+    <line>           //cntpagesJ = ВВЕСТИ_ЗНАЧЕНИЕ("Введите количество листов за год:", 1, 1, 100000)</line>
+    <line>           //ЛистЗаМес = "Общее количество листов кассовой книги за месяц "</line>
+    <line>           //            + МЕСП(month) + " - " + СТР(cntpagesM)</line>
+    <line>           //ЛистЗаГод = "Общее количество листов кассовой книги за "</line>
+    <line>           //            + СТР(jear) +" год "+" - " + СТР(cntpagesJ)</line>
+    <line>           LPF = LPF + 3</line>
+    <line>           КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>КОНЕЦ_ЕСЛИ</line>
+    <line>FirstPage=cntpagesBM-Лист+1</line>
+    <line>// расчет листов кассовой книги</line>
+    <line></line>
+    <line>ЕСЛИ ( (LPP - FPH - LPF) &lt;= 0 ) ТО</line>
+    <line> СООБЩЕНИЕ("Установите большее число печатаемых строк на листе (LPP).")</line>
+    <line> СТОП</line>
+    <line>КОНЕЦ_ЕСЛИ</line>
+    <line>Дата=ДатаН</line>
+    <line>//----------------------------------------------------------------------------------------------</line>
+    <line>ЦИКЛ ПОКА (Дата&lt;=ДатаК) //&lt;</line>
+    <line> p = 1</line>
+    <line> Датаост=Дата+1</line>
+    <line> ЕСЛИ (МЕС(Дата)&lt;&gt;МЕС(Дата+1)) ТО</line>
+    <line>  LastDayofMonth=ДА</line>
+    <line> ИНАЧЕ</line>
+    <line>  LastDayofMonth=НЕТ</line>
+    <line> КОНЕЦ_ЕСЛИ</line>
+    <line> ЕСЛИ ГОД(Дата)&lt;&gt;ГОД(Дата+1) ТО</line>
+    <line>  LastDayofYear=ДА</line>
+    <line> ИНАЧЕ</line>
+    <line>  LastDayofYear=НЕТ</line>
+    <line> КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line> ЛистЗаМес = ""</line>
+    <line> ЛистЗаГод = ""</line>
+    <line> КурсРазнРасх=0</line>
+    <line> КурсРазнПрих=0</line>
+    <line> //Вычисление остатков на начало текущего дня</line>
+    <line> ЕСЛИ НЕ ВалКасса ТО</line>
+    <line>   ОстНач!0="Остаток на начало дня"</line>
+    <line>   ОстКон!0="Остаток на конец дня"</line>
+    <line>   ост_н!0=ОСД(Касса,Дата)</line>
+    <line>   иприх=0; ирасх=0; ост_к!0=ост_н!0; кп=0; кр=0; п=""; i=0</line>
+    <line> ИНАЧЕ</line>
+    <line>   ОстНач!0="Остаток на начало дня: в т.ч. Российская валюта (Рубль)"</line>
+    <line>   ОстКон!0="Остаток на конец дня: в т.ч. Российская валюта (Рубль)"</line>
+    <line>   ост_н!0=ОСД(Касса,Дата)</line>
+    <line>   иприх=0; ирасх=0; кп=0; кр=0; п=""; i=0</line>
+    <line>   ост_нвал!0=0</line>
+    <line>   ост_к!0=ост_н!0 //ОСД(Касса,Датаост)</line>
+    <line>   ост_квал!0=0</line>
+    <line>   КурсРазн!0=0</line>
+    <line>   ЦИКЛ ДЛЯ (кв=1,колвсч)</line>
+    <line>     КурсРазн!кв=0</line>
+    <line>     ОстНач!кв="в том числе иностранная валюта ("+НазвВал!кв+")"</line>
+    <line>     ОстКон!кв="в том числе иностранная валюта ("+НазвВал!кв+")"</line>
+    <line>     ост_н!кв=ОСД(СчВал!кв,Дата)</line>
+    <line>     ЕСЛИ КС ТО</line>
+    <line>       ост_нвал!кв=ОСД_К(СчВал!кв,Дата)     //Подсчет остатков по кс учету</line>
+    <line>     ИНАЧЕ</line>
+    <line>       ост_нвал!кв=ОСД("В/"+СчВал!кв,Дата)  //Подсчет остатков по забаланс.  учету</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>     иприх=0; ирасх=0;</line>
+    <line>     ост_к!кв=ОСД(СчВал!кв,Датаост)</line>
+    <line>     кп=0; кр=0; п=""; i=0</line>
+    <line>     ЕСЛИ КС ТО</line>
+    <line>       ост_квал!кв=ОСД_К(СчВал!кв,Датаост)     //Подсчет остатков по кс учету</line>
+    <line>     ИНАЧЕ</line>
+    <line>       ост_квал!кв=ОСД("В/"+СчВал!кв,Датаост)  //Подсчет остатков по забаланс.  учету</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>   КОНЕЦ_ЦИКЛА</line>
+    <line> КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line> prn=п</line>
+    <line> п=НАЗВ(Касса)+ " за " + ДАТАП(Дата)</line>
+    <line> Salary=НЕТ</line>
+    <line> ОКРУГЛЕНИЕ(2)    // 18.01.2010 г.</line>
+    <line></line>
+    <line> ЕСЛИ использовать_фильтр ТО</line>
+    <line>  ЦИКЛ ДЛЯ(оп=1,ОПЕР_ВСЕГО)</line>
+    <line>   СОЗДАТЬ(ОП, ТИП_ОПЕРАЦИЯ)</line>
+    <line>   ОП.СЧИТАТЬ(оп)</line>
+    <line>   до=ОП.дата</line>
+    <line>   прих!0=0; расх!0=0</line>
+    <line>   естьПроводки = НЕТ</line>
+    <line>   добПрих = НЕТ</line>
+    <line>   добРасх = НЕТ</line>
+    <line>   ЕСЛИ до=Дата ТО</line>
+    <line>     опд=ОП.документ; вз_расх=0; вз_кс=""; вз_расх76=0; вз_кс76=""</line>
+    <line>     Salary=НЕТ</line>
+    <line>     ЦИКЛ ДЛЯ(пр=1,ОП.КОЛ_ПРОВ)  // Проводки все</line>
+    <line>       СОЗДАТЬ(ПР, ТИП_ПРОВОДКА)</line>
+    <line>       ПР.СЧИТАТЬ(ОП, пр)</line>
+    <line>      //ЕСЛИ ПодсчКассы="50" ТО</line>
+    <line>      //  пр_д=ПОДСЧ(ПР.дебет,1); пр_к=ПОДСЧ(ПР.кредит,1)</line>
+    <line>      //ИНАЧЕ</line>
+    <line>       пр_д=ПР.дебет; пр_к=ПР.кредит</line>
+    <line>      //КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>       ЕСЛИ (ПОДСТР(пр_д,1,Дл)=Касса ИЛИ ПОДСТР(пр_к,1,Дл)=Касса) И (НЕ ПР.выкл) ТО</line>
+    <line>      //ЕСЛИ (ПОДСЧ(пр_д,1)=ПодсчКассы ИЛИ ПОДСЧ(пр_к,1)=ПодсчКассы) И (НЕ ПР.выкл) ТО</line>
+    <line></line>
+    <line>//------------------------- Выдача зарплаты ---------------------------------------------------</line>
+    <line></line>
+    <line>         ЕСЛИ ПОДСЧ(пр_к,1)=ПодсчКассы И (ПОДСЧ(пр_д,1)="70" ИЛИ (ПОДСЧ(пр_д,1)="76" И Salary)) ТО  // Выдача зарплаты</line>
+    <line>          ЕСЛИ ПОДСЧ(пр_д,1)="70"ТО</line>
+    <line>           вз_кс="70"; расх!0=расх!0 + ПР.сумма; вз_расх=?(разделить_пров_зп,ПР.сумма,вз_расх+ПР.сумма)</line>
+    <line>           ост_к!0=ост_к!0-расх!0</line>
+    <line>           Salary=ДА;</line>
+    <line>          ИНАЧЕ</line>
+    <line>           вз_кс76="76"; расх!0=расх!0 + ПР.сумма; вз_расх76=?(разделить_пров_зп,ПР.сумма,вз_расх76+ПР.сумма)</line>
+    <line>           ост_к!0=ост_к!0-расх!0</line>
+    <line>          КОНЕЦ_ЕСЛИ</line>
+    <line>         ИНАЧЕ</line>
+    <line>           ЕСЛИ НЕ ВалКасса ТО</line>
+    <line>             ЕСЛИ ПОДСТР(пр_д,1,Дл)=Касса ТО</line>
+    <line>             //ЕСЛИ ПОДСЧ(пр_д,1)=ПодсчКассы ТО</line>
+    <line>                кс=ПОДСЧ(пр_к,1); прих!0=прих!0+ПР.сумма; иприх=иприх+ПР.сумма; добПрих = ДА //кп=кп+1</line>
+    <line>             КОНЕЦ_ЕСЛИ</line>
+    <line>             ЕСЛИ ПОДСТР(пр_к,1,Дл)=Касса ТО</line>
+    <line>             //ИНАЧЕ</line>
+    <line>               кс=ПОДСЧ(пр_д,1); расх!0=расх!0 + ПР.сумма; ирасх=ирасх+ПР.сумма; добРасх = ДА //кр=кр+1</line>
+    <line>             КОНЕЦ_ЕСЛИ</line>
+    <line>           ИНАЧЕ</line>
+    <line>             ЕСЛИ ПОДСТР(пр_д,1,Дл)=Касса ТО</line>
+    <line>             //ЕСЛИ ПОДСЧ(пр_д,1)=ПодсчКассы ТО</line>
+    <line>               //ЕСЛИ пр_к&lt;&gt;Сч_курс_разн ТО</line>
+    <line>               ЕСЛИ (пр_к&lt;&gt;СЧ_КУРС_РЗ_О) И (пр_к&lt;&gt;СЧ_КУРС_РЗ_П) ТО</line>
+    <line>                 кс=ПОДСЧ(пр_к,1); прих!0=прих!0+ПР.сумма; иприх=иприх+ПР.сумма; добПрих = ДА //кп=кп+1</line>
+    <line>               ИНАЧЕ</line>
+    <line>                 кс=ПОДСЧ(пр_к,1); прих!0=прих!0+ПР.сумма; иприх=иприх+ПР.сумма;</line>
+    <line>//               КурсРазнПрих=КурсРазнПрих+прих!0</line>
+    <line>                 ЦИКЛ ДЛЯ (св=1,колвсч)</line>
+    <line>                   ЕСЛИ пр_д=СчВал!св ТО КурсРазн!св=КурсРазн!св+ПР.сумма КОНЕЦ_ЕСЛИ</line>
+    <line>                 КОНЕЦ_ЦИКЛА</line>
+    <line>               КОНЕЦ_ЕСЛИ</line>
+    <line>             КОНЕЦ_ЕСЛИ</line>
+    <line>             ЕСЛИ ПОДСТР(пр_к,1,Дл)=Касса ТО</line>
+    <line>             //ИНАЧЕ</line>
+    <line>               //ЕСЛИ пр_к&lt;&gt;Сч_курс_разн ТО</line>
+    <line>               ЕСЛИ (пр_к&lt;&gt;СЧ_КУРС_РЗ_О) И (пр_к&lt;&gt;СЧ_КУРС_РЗ_П) ТО</line>
+    <line>                 кс=ПОДСЧ(пр_д,1); расх!0=расх!0+ПР.сумма; ирасх=ирасх+ПР.сумма; добРасх = ДА //кр=кр+1</line>
+    <line>               ИНАЧЕ</line>
+    <line>                 кс=ПОДСЧ(пр_д,1); расх!0=расх!0+ПР.сумма; ирасх=ирасх+ПР.сумма</line>
+    <line>//                КурсРазнРасх=КурсРазнРасх+расх!0</line>
+    <line>                 ЦИКЛ ДЛЯ (св=1,колвсч)</line>
+    <line>                   ЕСЛИ пр_к=СчВал!св ТО КурсРазн!св=КурсРазн!св+ПР.сумма КОНЕЦ_ЕСЛИ</line>
+    <line>                 КОНЕЦ_ЦИКЛА</line>
+    <line>               КОНЕЦ_ЕСЛИ</line>
+    <line>             КОНЕЦ_ЕСЛИ</line>
+    <line>           КОНЕЦ_ЕСЛИ</line>
+    <line>         КОНЕЦ_ЕСЛИ // Выдача з/п</line>
+    <line>         естьПроводки = ДА</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЦИКЛА  // Проводки все</line>
+    <line></line>
+    <line>     ЕСЛИ естьПроводки ТО</line>
+    <line>         ЕСЛИ добРасх ТО</line>
+    <line>           кр++</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>         ЕСЛИ добПрих ТО</line>
+    <line>           кп++</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>         ЕСЛИ (НЕ Salary) И (НЕ ВалКасса) ТО</line>
+    <line>           ост_к!0=ост_к!0+прих!0-расх!0</line>
+    <line>           i=i+1; Num!i=опд; Cont!i=СТР(ОП.название)</line>
+    <line>           kz!i=кс; prix!i=прих!0; rasx!i=расх!0</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>         ЕСЛИ (НЕ Salary) И ВалКасса ТО</line>
+    <line>           ост_к!0=ост_к!0+прих!0-расх!0</line>
+    <line>           i=i+1; Num!i=опд; Cont!i=СТР(ОП.название)</line>
+    <line>           kz!i=кс; prix!i=прих!0; rasx!i=расх!0</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>         ЕСЛИ разделить_пров_зп ТО</line>
+    <line>           ЕСЛИ вз_кс&lt;&gt;"" И вз_расх&lt;&gt;0 ТО // Была выдача з/п</line>
+    <line>             ирасх=ирасх+вз_расх; кр=кр+1; кс="70"; расх!0=вз_расх; прих!0=0</line>
+    <line>             i=i+1; Num!i=опд; Cont!i=СТР(ОП.название)</line>
+    <line>             kz!i=кс; prix!i=прих!0; rasx!i=расх!0</line>
+    <line>           КОНЕЦ_ЕСЛИ  // выдача з/п</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>     ЕСЛИ НЕ разделить_пров_зп ТО</line>
+    <line>       ЕСЛИ вз_кс&lt;&gt;"" И вз_расх&lt;&gt;0 ТО // Если была выдача з/п, то в сумме</line>
+    <line>         ирасх=ирасх+вз_расх; кр=кр+1; кс="70"; расх!0=вз_расх; прих!0=0</line>
+    <line>         i=i+1; Num!i=опд; Cont!i=СТР(ОП.название)</line>
+    <line>         kz!i=кс; prix!i=прих!0; rasx!i=расх!0</line>
+    <line>       КОНЕЦ_ЕСЛИ  // выдача з/п</line>
+    <line>       ЕСЛИ вз_кс76&lt;&gt;"" И вз_расх76&lt;&gt;0 ТО // Если была выдача з/п, то в сумме</line>
+    <line>         ирасх=ирасх+вз_расх76; кр=кр+1; кс="76"; расх!0=вз_расх76; прих!0=0</line>
+    <line>         i=i+1; Num!i=опд; Cont!i=СТР(ОП.название)</line>
+    <line>         kz!i=кс; prix!i=прих!0; rasx!i=расх!0</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>   КОНЕЦ_ЕСЛИ</line>
+    <line>  КОНЕЦ_ЦИКЛА</line>
+    <line> ИНАЧЕ      //фильтр</line>
+    <line>//-----------------------------------------------------------------------------------------------------------------</line>
+    <line>  ЦИКЛ ДЛЯ(оп=ОПЕР_ОТ(Дата),ОПЕР_ОТ(Датаост)-1)</line>
+    <line>    СОЗДАТЬ(ОП, ТИП_ОПЕРАЦИЯ)</line>
+    <line>    ОП.СЧИТАТЬ(оп)</line>
+    <line>    до=ОП.дата</line>
+    <line>    прих!0=0; расх!0=0</line>
+    <line>    естьПроводки = НЕТ</line>
+    <line>    добПрих = НЕТ</line>
+    <line>    добРасх = НЕТ</line>
+    <line>//  ЕСЛИ до&lt;&gt;Дата ТО СТОП КОНЕЦ_ЕСЛИ</line>
+    <line>    ЕСЛИ до=Дата ТО</line>
+    <line>     опд=ОП.документ; вз_расх=0; вз_расх76=0; вз_кс=""; вз_кс76=""</line>
+    <line>     Salary=НЕТ              //</line>
+    <line></line>
+    <line>     ЦИКЛ ДЛЯ(пр=1,ОП.КОЛ_ПРОВ)  // Проводки все</line>
+    <line>       СОЗДАТЬ(ПР, ТИП_ПРОВОДКА)</line>
+    <line>       ПР.СЧИТАТЬ(ОП, пр)</line>
+    <line>      //ЕСЛИ ПодсчКассы="50" ТО</line>
+    <line>      // пр_д=ПОДСЧ(ПРОВ_ДЕБ(оп,пр),1); пр_к=ПОДСЧ(ПРОВ_КРЕД(оп,пр),1);</line>
+    <line>      //ИНАЧЕ</line>
+    <line>       пр_д=ПР.дебет; пр_к=ПР.кредит</line>
+    <line>      //КОНЕЦ_ЕСЛИ</line>
+    <line>       ЕСЛИ (ПОДСТР(пр_д,1,Дл)=Касса ИЛИ ПОДСТР(пр_к,1,Дл)=Касса) И (НЕ ПР.выкл) ТО</line>
+    <line>      //ЕСЛИ ПОДСЧ(пр_д,1)=ПодсчКассы ИЛИ ПОДСЧ(пр_к,1)=ПодсчКассы ТО</line>
+    <line>         //прих!0=0; расх!0=0</line>
+    <line>//------------------------- Выдача зарплаты ---------------------------------------------------</line>
+    <line></line>
+    <line>        ЕСЛИ ПОДСЧ(пр_к,1)=ПодсчКассы И (ПОДСЧ(пр_д,1)="70" ИЛИ (ПОДСЧ(пр_д,1)="76" И Salary))  ТО  // Выдача зарплаты</line>
+    <line>           ЕСЛИ ПОДСЧ(пр_д,1)="70" ТО</line>
+    <line>            вз_кс="70"; расх!0=расх!0+ПР.сумма; вз_расх=?(разделить_пров_зп,ПР.сумма,вз_расх+ПР.сумма)</line>
+    <line>            ост_к!0=ост_к!0-ПР.сумма</line>
+    <line>            Salary=ДА;</line>
+    <line>           КОНЕЦ_ЕСЛИ</line>
+    <line>           ЕСЛИ ПОДСЧ(пр_д,1)="76" ТО  // Выдача зарплаты</line>
+    <line>            вз_кс76="76"; расх!0=расх!0+ПР.сумма;вз_расх76=?(разделить_пров_зп,ПР.сумма,вз_расх76+ПР.сумма)</line>
+    <line>            ост_к!0=ост_к!0-ПР.сумма</line>
+    <line>           КОНЕЦ_ЕСЛИ</line>
+    <line>        ИНАЧЕ</line>
+    <line>           ЕСЛИ НЕ ВалКасса ТО</line>
+    <line>             ЕСЛИ ПОДСТР(пр_д,1,Дл)=Касса ТО</line>
+    <line>             //ЕСЛИ ПОДСЧ(пр_д,1)=ПодсчКассы ТО</line>
+    <line>               кс=ПОДСЧ(пр_к,1); прих!0=прих!0+ПР.сумма; иприх=иприх+ПР.сумма; добПрих = ДА //кп=кп+1</line>
+    <line>             КОНЕЦ_ЕСЛИ</line>
+    <line>             ЕСЛИ ПОДСТР(пр_к,1,Дл)=Касса ТО</line>
+    <line>             //ИНАЧЕ</line>
+    <line>               кс=ПОДСЧ(пр_д,1); расх!0=расх!0+ПР.сумма; ирасх=ирасх+ПР.сумма; добРасх = ДА //кр=кр+1</line>
+    <line>             КОНЕЦ_ЕСЛИ</line>
+    <line>           ИНАЧЕ</line>
+    <line>             ЕСЛИ ПОДСТР(пр_д,1,Дл)=Касса ТО</line>
+    <line>             //ЕСЛИ ПОДСЧ(пр_д,1)=ПодсчКассы ТО</line>
+    <line>               //ЕСЛИ пр_к&lt;&gt;Сч_курс_разн ТО</line>
+    <line>               ЕСЛИ (пр_к&lt;&gt;СЧ_КУРС_РЗ_О) И (пр_к&lt;&gt;СЧ_КУРС_РЗ_П) ТО</line>
+    <line>                 кс=ПОДСЧ(пр_к,1); прих!0=прих!0+ПР.сумма; иприх=иприх+ПР.сумма; добПрих = ДА //кп=кп+1</line>
+    <line>               ИНАЧЕ</line>
+    <line>                 кс=ПОДСЧ(пр_к,1); прих!0=прих!0+ПР.сумма; иприх=иприх+ПР.сумма</line>
+    <line>//               КурсРазнПрих=КурсРазнПрих+прих!0</line>
+    <line>                 ЦИКЛ ДЛЯ (св=1,колвсч)</line>
+    <line>                   ЕСЛИ пр_д=СчВал!св ТО КурсРазн!св=КурсРазн!св+ПР.сумма КОНЕЦ_ЕСЛИ</line>
+    <line>                 КОНЕЦ_ЦИКЛА</line>
+    <line>               КОНЕЦ_ЕСЛИ</line>
+    <line>             КОНЕЦ_ЕСЛИ</line>
+    <line>             ЕСЛИ ПОДСТР(пр_к,1,Дл)=Касса ТО</line>
+    <line>             //ИНАЧЕ</line>
+    <line>               //ЕСЛИ пр_к&lt;&gt;Сч_курс_разн ТО</line>
+    <line>               ЕСЛИ (пр_к&lt;&gt;СЧ_КУРС_РЗ_О) И (пр_к&lt;&gt;СЧ_КУРС_РЗ_П) ТО</line>
+    <line>                 кс=ПОДСЧ(пр_д,1); расх!0=расх!0+ПР.сумма; ирасх=ирасх+ПР.сумма; добРасх = ДА //кр=кр+1</line>
+    <line>               ИНАЧЕ</line>
+    <line>                 кс=ПОДСЧ(пр_д,1); расх!0=расх!0+ПР.сумма; ирасх=ирасх+ПР.сумма</line>
+    <line>//                 КурсРазнРасх=КурсРазнРасх+расх!0</line>
+    <line>                 ЦИКЛ ДЛЯ (св=1,колвсч)</line>
+    <line>                   ЕСЛИ пр_к=СчВал!св ТО КурсРазн!св=КурсРазн!св+ПР.сумма КОНЕЦ_ЕСЛИ</line>
+    <line>                 КОНЕЦ_ЦИКЛА</line>
+    <line>               КОНЕЦ_ЕСЛИ</line>
+    <line>             КОНЕЦ_ЕСЛИ</line>
+    <line>           КОНЕЦ_ЕСЛИ</line>
+    <line>         КОНЕЦ_ЕСЛИ // Выдача з/п</line>
+    <line>         естьПроводки = ДА</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЦИКЛА  // Проводки все</line>
+    <line></line>
+    <line>     ЕСЛИ естьПроводки ТО</line>
+    <line>         ЕСЛИ добРасх ТО</line>
+    <line>           кр++</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>         ЕСЛИ добПрих ТО</line>
+    <line>           кп++</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>         ЕСЛИ (НЕ Salary) И (НЕ ВалКасса) ТО</line>
+    <line>           ост_к!0=ост_к!0+прих!0-расх!0</line>
+    <line>           i=i+1; Num!i=опд; Cont!i=СТР(ОП.название)</line>
+    <line>           kz!i=кс; prix!i=прих!0; rasx!i=расх!0</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>         ЕСЛИ (НЕ Salary) И ВалКасса ТО</line>
+    <line>           ост_к!0=ост_к!0+прих!0-расх!0</line>
+    <line>           i=i+1; Num!i=опд; Cont!i=СТР(ОП.название)</line>
+    <line>           kz!i=кс; prix!i=прих!0; rasx!i=расх!0</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>         ЕСЛИ разделить_пров_зп ТО</line>
+    <line>           ЕСЛИ вз_кс&lt;&gt;"" И вз_расх&lt;&gt;0 ТО // Была выдача з/п</line>
+    <line>             ирасх=ирасх+вз_расх; кр=кр+1; кс="70"; расх!0=вз_расх; прих!0=0</line>
+    <line>             i=i+1; Num!i=опд; Cont!i=СТР(ОП.название)</line>
+    <line>             kz!i=кс; prix!i=прих!0; rasx!i=расх!0</line>
+    <line>           КОНЕЦ_ЕСЛИ  // выдача з/п</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>     ЕСЛИ НЕ разделить_пров_зп ТО</line>
+    <line>       ЕСЛИ вз_кс&lt;&gt;"" И вз_расх&lt;&gt;0 ТО // Если была выдача з/п, то в сумме</line>
+    <line>         ирасх=ирасх+вз_расх; кр=кр+1; кс="70"; расх!0=вз_расх; прих!0=0</line>
+    <line>         i=i+1; Num!i=опд; Cont!i=СТР(ОП.название)</line>
+    <line>         kz!i=кс; prix!i=прих!0; rasx!i=расх!0</line>
+    <line>       КОНЕЦ_ЕСЛИ  // выдача з/п</line>
+    <line>       ЕСЛИ вз_кс76&lt;&gt;"" И вз_расх76&lt;&gt;0 ТО // Если была выдача з/п, то в сумме</line>
+    <line>         ирасх=ирасх+вз_расх76; кр=кр+1; кс="76"; расх!0=вз_расх76; прих!0=0</line>
+    <line>         i=i+1; Num!i=опд; Cont!i=СТР(ОП.название)</line>
+    <line>         kz!i=кс; prix!i=прих!0; rasx!i=расх!0</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line>  КОНЕЦ_ЦИКЛА</line>
+    <line> КОНЕЦ_ЕСЛИ  //фильтр</line>
+    <line></line>
+    <line> TotalPages = СТР(cntPages)</line>
+    <line> cntpagesJ = cntPages //Лист + cntPages - 1     // Егоркин М.А. 15.02.2010г.</line>
+    <line> ЕСЛИ answer = 2 ТО</line>
+    <line>   ЕСЛИ LastDayofMonth ТО</line>
+    <line>     LastPage=cntPages                //0                    //2</line>
+    <line>     // СООБЩЕНИЕ("cntPages="+СТР(cntPages)+"FirstPage"+СТР(FirstPage))</line>
+    <line>     ЕСЛИ i=0 ТО</line>
+    <line>//ОТЛАДКА(PlaceForGet)</line>
+    <line>       ЛистЗаМес = "Общее количество листов кассовой книги за месяц "</line>
+    <line>       + МЕСП(МЕС(Дата)) + " - " + СТР(LastPage-FirstPage+1)</line>
+    <line>       ЕСЛИ (LastPage&gt;=FirstPage) ТО ВЫВЕСТИ(4,PlaceForGet-3,ЛистЗаМес); КОНЕЦ_ЕСЛИ//ВЫВЕСТИ(4,PlaceForGet,ЛистЗаМес); КОНЕЦ_ЕСЛИ //Харламов</line>
+    <line>         ЛистЗаМес=""</line>
+    <line>         FirstPage=LastPage+1</line>
+    <line>       ИНАЧЕ</line>
+    <line>         LastPage++</line>
+    <line>         ЕСЛИ (LastPage&gt;=FirstPage) ТО</line>
+    <line>           ЛистЗаМес = "Общее количество листов кассовой книги за месяц "</line>
+    <line>           + МЕСП(МЕС(Дата)) + " - " + СТР(LastPage-FirstPage+1)</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>         FirstPage=LastPage+1</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>   КОНЕЦ_ЕСЛИ</line>
+    <line>   ЕСЛИ answer = 3 ТО</line>
+    <line>     ЕСЛИ LastDayofYear ТО</line>
+    <line>       ЕСЛИ i=0 ТО</line>
+    <line>         ЛистЗаГод = "Общее количество листов кассовой книги за " + СТР(ГОД(Дата))</line>
+    <line>         +" год "+" - "+СТР(cntpagesJ)</line>
+    <line>         ВЫВЕСТИ(4,PlaceForGet+1,ЛистЗаГод);</line>
+    <line>         ЛистЗаГод=""</line>
+    <line>       ИНАЧЕ</line>
+    <line>         ЛистЗаГод = "Общее количество листов кассовой книги за " + СТР(ГОД(Дата))</line>
+    <line>         +" год "+" - "+СТР(cntpagesJ+1)</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>   КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>   ЕСЛИ answer = 4 ТО//И cntPages&lt;&gt;0 ТО</line>
+    <line>     ЕСЛИ LastDayofMonth ТО</line>
+    <line>       LastPage=cntPages</line>
+    <line>       ЕСЛИ i=0 ТО</line>
+    <line>         ЛистЗаМес = "Общее количество листов кассовой книги за месяц "</line>
+    <line>        + МЕСП(МЕС(Дата)) + " - " + СТР(LastPage-FirstPage+1)</line>
+    <line>         ЕСЛИ (LastPage&gt;=FirstPage) ТО ВЫВЕСТИ(4,PlaceForGet-3,ЛистЗаМес); КОНЕЦ_ЕСЛИ//ВЫВЕСТИ(4,PlaceForGet,ЛистЗаМес); КОНЕЦ_ЕСЛИ//Харламов Р.Б.</line>
+    <line>           ЛистЗаМес=""</line>
+    <line>           FirstPage=LastPage+1</line>
+    <line>         ИНАЧЕ</line>
+    <line>           LastPage++</line>
+    <line>           ЕСЛИ (LastPage&gt;=FirstPage) ТО</line>
+    <line>             ЛистЗаМес  = "Общее количество листов кассовой книги за месяц "</line>
+    <line>             + МЕСП(МЕС(Дата)) + " - " + СТР(LastPage-FirstPage+1)</line>
+    <line>           КОНЕЦ_ЕСЛИ</line>
+    <line>             FirstPage=LastPage+1</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>       ЕСЛИ LastDayofYear ТО</line>
+    <line>         ЕСЛИ i=0 ТО</line>
+    <line>          ЛистЗаГод = "Общее количество листов кассовой книги за " + СТР(ГОД(Дата))</line>
+    <line>          +" год "+" - "+СТР(cntpagesJ)</line>
+    <line>          ВЫВЕСТИ(4,PlaceForGet+1,ЛистЗаГод);</line>
+    <line>          ЛистЗаГод=""</line>
+    <line>         ИНАЧЕ</line>
+    <line>          ЛистЗаГод = "Общее количество листов кассовой книги за " + СТР(ГОД(Дата))</line>
+    <line>          +" год "+" - "+СТР(cntpagesJ+1)</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line> ЕСЛИ i &lt;&gt; 0 ТО</line>
+    <line>///////////// Определение переменных TABLPRINT  //////////////</line>
+    <line>   TBLPRINT_СБРОС_ШАПКИ(ДА)</line>
+    <line>   ШапкаПоз = a</line>
+    <line>   НизСтр = 3</line>
+    <line>   НачСтр = 3</line>
+    <line>//   ШапкаСтраница = 25</line>
+    <line>   //РазбСтр=ДА    // Разбивать на страницы</line>
+    <line>   НомЛист=НЕТ    // Печатать номера листов</line>
+    <line>   ШапкаЛист=НЕТ</line>
+    <line>   а=7</line>
+    <line>   б=46</line>
+    <line>   в=4</line>
+    <line>   г=14</line>
+    <line>   д=14</line>
+    <line>/// вывод заголовка, количества листов и т.д.</line>
+    <line>//  ЕСЛИ cntPages &lt;&gt; 0 ТО</line>
+    <line>//   LPP=42</line>
+    <line>   ОКРУГЛЕНИЕ(3)</line>
+    <line>//</line>
+    <line>   LV=0</line>
+    <line>   //кол_страниц=1</line>
+    <line>   /*ЦИКЛ ДЛЯ (ж=1,i)</line>
+    <line>     длина = (ДЛИНА(Cont!ж)/б)</line>
+    <line>     ЕСЛИ ДРОБ(длина)&gt;0 ТО длина=длина+1-ДРОБ(длина) КОНЕЦ_ЕСЛИ</line>
+    <line>     LV=LV+длина</line>
+    <line>   КОНЕЦ_ЦИКЛА</line>
+    <line>   FPPR=LPP-FPH-LPF-LV</line>
+    <line>   ЕСЛИ FPPR&lt;0 ТО</line>
+    <line>     p=p+1</line>
+    <line>     кол_страниц=(FPH+LPF+LV)/LPP</line>
+    <line>     ЕСЛИ ДРОБ(кол_страниц)&gt;0 ТО кол_страниц=кол_страниц+1-ДРОБ(кол_страниц) КОНЕЦ_ЕСЛИ</line>
+    <line>   КОНЕЦ_ЕСЛИ*/</line>
+    <line>   ТекПечСтрНаСтрн=0</line>
+    <line>   СтрНаСтрн!0=0</line>
+    <line>   КолРазбСтр!0=0</line>
+    <line>   ПечСтрНаЗап!0=0</line>
+    <line>   кол_страниц=0</line>
+    <line>  // ОТЛАДКА(i)</line>
+    <line>   ЦИКЛ ДЛЯ(и=1,i)</line>
+    <line>    ПечСтрНаЗап!и= ПОДСЧЕТ_СТРОК(Cont!и,б,ДА)</line>
+    <line>    КолРазбСтр!и=ПечСтрНаЗап!и</line>
+    <line>    ЕСЛИ кол_страниц &gt;= 1 ТО</line>
+    <line>     ЕСЛИ и &lt; i ТО</line>
+    <line>      ЕСЛИ ТекПечСтрНаСтрн+ПечСтрНаЗап!и &gt; LPP-SPH-?(ОпцияШапкаСтраница,3,1) ТО</line>
+    <line>       кол_страниц++</line>
+    <line>       СтрНаСтрн[кол_страниц+1]=1</line>
+    <line>       ТекПечСтрНаСтрн=ПечСтрНаЗап!и</line>
+    <line>      ИНАЧЕ</line>
+    <line>       ЕСЛИ НЕ СУЩ_ПЕРЕМ(СтрНаСтрн[кол_страниц+1]) ТО</line>
+    <line>        СтрНаСтрн[кол_страниц+1]=0</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>       СтрНаСтрн[кол_страниц+1]=СтрНаСтрн[кол_страниц+1]+1</line>
+    <line>       ТекПечСтрНаСтрн=ТекПечСтрНаСтрн+ПечСтрНаЗап!и</line>
+    <line>      КОНЕЦ_ЕСЛИ</line>
+    <line>     ИНАЧЕ</line>
+    <line>      ЕСЛИ ТекПечСтрНаСтрн+ПечСтрНаЗап!и &gt; LPP-LPF-?(ОпцияШапкаСтраница,3,1) ТО</line>
+    <line>       СтрНаСтрн[кол_страниц+2]=1</line>
+    <line>       кол_страниц=кол_страниц+2 //на последней странице одна  запись, поэтому +2(текущая и последняя страницы)</line>
+    <line>      ИНАЧЕ</line>
+    <line>       ЕСЛИ НЕ СУЩ_ПЕРЕМ(СтрНаСтрн[кол_страниц+1]) ТО</line>
+    <line>        СтрНаСтрн[кол_страниц+1]=0</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>       СтрНаСтрн[кол_страниц+1]=СтрНаСтрн[кол_страниц+1]+1</line>
+    <line>       кол_страниц++</line>
+    <line>      КОНЕЦ_ЕСЛИ</line>
+    <line>      ТекПечСтрНаСтрн=ТекПечСтрНаСтрн+ПечСтрНаЗап!и</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>    ИНАЧЕ</line>
+    <line>     ЕСЛИ ТекПечСтрНаСтрн+ПечСтрНаЗап!и &gt; LPP/*-FPH*/ ТО //нашли первую старницу</line>
+    <line>      ЕСЛИ и=i ТО</line>
+    <line>       кол_страниц=2</line>
+    <line>       ТекПечСтрНаСтрн=ТекПечСтрНаСтрн+ПечСтрНаЗап!и</line>
+    <line>      ИНАЧЕ</line>
+    <line>       кол_страниц=1</line>
+    <line>       ТекПечСтрНаСтрн=ПечСтрНаЗап!и</line>
+    <line>      КОНЕЦ_ЕСЛИ</line>
+    <line>      СтрНаСтрн[2]=1</line>
+    <line>     ИНАЧЕ</line>
+    <line>      ЕСЛИ и=i ТО</line>
+    <line>       //кол_страниц=1</line>
+    <line>       ЕСЛИ ТекПечСтрНаСтрн+ПечСтрНаЗап!и &gt; LPP/*-FPH*/-LPF/*-?(ОпцияШапкаСтраница,3,1)*/ ТО</line>
+    <line>        кол_страниц=2</line>
+    <line>        СтрНаСтрн[2]=1</line>
+    <line>       ИНАЧЕ</line>
+    <line>        кол_страниц=1</line>
+    <line>        ЕСЛИ НЕ СУЩ_ПЕРЕМ(СтрНаСтрн[1]) ТО</line>
+    <line>         СтрНаСтрн[1]=0</line>
+    <line>        КОНЕЦ_ЕСЛИ</line>
+    <line>        СтрНаСтрн[1]=СтрНаСтрн[1]+1</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>      ИНАЧЕ</line>
+    <line>       ЕСЛИ НЕ СУЩ_ПЕРЕМ(СтрНаСтрн[1]) ТО</line>
+    <line>        СтрНаСтрн[1]=0</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>       СтрНаСтрн[1]=СтрНаСтрн[1]+1</line>
+    <line>      КОНЕЦ_ЕСЛИ</line>
+    <line>      ТекПечСтрНаСтрн=ТекПечСтрНаСтрн+ПечСтрНаЗап!и</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line>   КОНЕЦ_ЦИКЛА</line>
+    <line> //СТОП_ВСЕ</line>
+    <line></line>
+    <line>/////////// Рисую шапку /////////////</line>
+    <line>   ШапкаИмя!1 = ""</line>
+    <line>   ДлинаШапкаЗначение!1 = 30</line>
+    <line>   ДобШапкаИмя!1 = ДА         //наличие дополнительных граф в строке</line>
+    <line>   КолДобШапкаИмя!1 = 1       //количество дополнительных граф в строке</line>
+    <line>   ШапкаШрифтЕсть!1 = ДА</line>
+    <line>   ШапкаШрифтРазмер!1 = 11</line>
+    <line>   ШапкаШрифтЖ!1 = ДА</line>
+    <line>// Вывод ОТЧЕТ КАССИРА/ВКЛАДНОЙ ЛИСТ</line>
+    <line>   ШапкаИмя[100001] = СТР(Вид_кн)</line>
+    <line>   ДлинаШапкаЗначение[100001] = 20</line>
+    <line>   ШапкаШрифтЕсть[100001] = ДА</line>
+    <line>   ШапкаШрифтРазмер[100001] = 11</line>
+    <line>   ШапкаШрифтЖ[100001] = ДА</line>
+    <line>//далее пойдем инкрементной переменной заполняя шапку</line>
+    <line>   и=2</line>
+    <line>   ШапкаИмя!и = п      // "касса за "дата" "</line>
+    <line>   ДлинаШапкаЗначение!и = 65</line>
+    <line>   ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>   КолДобШапкаИмя!и = 2       //количество дополнительных граф в строке</line>
+    <line>   ШапкаВыводРамки!и = НЕТ</line>
+    <line></line>
+    <line>   ШапкаИмя[200001] = "Лист"</line>
+    <line>   ДлинаШапкаЗначение[200001] = 4</line>
+    <line>   ШапкаВыводРамки[200001] = НЕТ</line>
+    <line></line>
+    <line>   ШапкаИмя[200002] = СТР(Лист+cntPages)</line>
+    <line>   ДлинаШапкаЗначение[200002] = 4</line>
+    <line>   ШапкаВыводРамки[200002] = ДА</line>
+    <line>   ШапкаРамкаВысота[200002] = 0</line>
+    <line></line>
+    <line>   и++</line>
+    <line>   ШапкаИмя!и = "Всего листов за указанную дату:"            //первая графа будет пустая, для отступа слева</line>
+    <line>   ДлинаШапкаЗначение!и = 31  //величина отступа</line>
+    <line>   ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>   КолДобШапкаИмя!и = 1       //количество дополнительных граф в строке</line>
+    <line></line>
+    <line>   ШапкаИмя[300001] = СТР(кол_страниц)</line>
+    <line>   ДлинаШапкаЗначение[300001] = 4</line>
+    <line>// вывод основной шапки таблицы</line>
+    <line>   и++</line>
+    <line>   ШапкаИмя!и = "Номер докум."</line>
+    <line>   ДлинаШапкаЗначение!и = а</line>
+    <line>   ШапкаВыводРамки!и = ДА</line>
+    <line>   ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>   КолДобШапкаИмя!и = 4       //количество дополнительных граф в строке</line>
+    <line>   ШапкаТекстЦент!и = "Ц"</line>
+    <line>   ШапкаКлеить!и = ДА</line>
+    <line>   ШапкаРамкиЗначение!и = ДА</line>
+    <line></line>
+    <line>   ШапкаИмя[и*100000+1] = "От кого получено или кому выдано"</line>
+    <line>   ДлинаШапкаЗначение[и*100000+1] = б</line>
+    <line>   ШапкаВыводРамки[и*100000+1] = ДА</line>
+    <line>   ШапкаТекстЦент[и*100000+1] = "Ц"</line>
+    <line>   ШапкаКлеить[и*100000+1] = ДА</line>
+    <line>   ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line></line>
+    <line>   ШапкаИмя[и*100000+2] = "Кор. счет"            //делаем ещё отступ между графами строки</line>
+    <line>   ДлинаШапкаЗначение[и*100000+2] = в</line>
+    <line>   ШапкаВыводРамки[и*100000+2] = ДА</line>
+    <line>   ШапкаТекстЦент[и*100000+2] = "Ц"</line>
+    <line>   ШапкаКлеить[и*100000+2] = ДА</line>
+    <line>   ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line></line>
+    <line>   ШапкаИмя[и*100000+3] = "Приход руб. коп."</line>
+    <line>   ДлинаШапкаЗначение[и*100000+3] = г</line>
+    <line>   ШапкаВыводРамки[и*100000+3] = ДА</line>
+    <line>   ШапкаТекстЦент[и*100000+3] = "Ц"</line>
+    <line>   ШапкаКлеить[и*100000+3] = ДА</line>
+    <line>   ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line></line>
+    <line>   ШапкаИмя[и*100000+4] = "Расход руб. коп."</line>
+    <line>   ДлинаШапкаЗначение[и*100000+4] = д</line>
+    <line>   ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>   ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>   ШапкаТекстЦент[и*100000+4] = "Ц"</line>
+    <line>   ШапкаКлеить[и*100000+4] = ДА</line>
+    <line>   ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>//вывод остатка на начало дня</line>
+    <line>   и++</line>
+    <line>   ШапкаИмя!и = ""</line>
+    <line>   ДлинаШапкаЗначение!и = а</line>
+    <line>   ШапкаВыводРамки!и = ДА</line>
+    <line>   ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>   КолДобШапкаИмя!и = 4       //количество дополнительных граф в строке</line>
+    <line>   ШапкаКлеить!и = ДА</line>
+    <line>   ШапкаРамкиЗначение!и = ДА</line>
+    <line>   ШапкаРамкаВыделение!и = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>   ШапкаИмя[и*100000+1] = "Остаток на начало дня"</line>
+    <line>   ДлинаШапкаЗначение[и*100000+1] = б</line>
+    <line>   ШапкаВыводРамки[и*100000+1] = ДА</line>
+    <line>   ШапкаТекстЦент[и*100000+1] = "Ц"</line>
+    <line>   ШапкаКлеить[и*100000+1] = ДА</line>
+    <line>   ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line>   ШапкаРамкаВыделение[и*100000+1] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>   ШапкаИмя[и*100000+2] = ""            //делаем ещё отступ между графами строки</line>
+    <line>   ДлинаШапкаЗначение[и*100000+2] = в</line>
+    <line>   ШапкаВыводРамки[и*100000+2] = ДА</line>
+    <line>   ШапкаКлеить[и*100000+2] = ДА</line>
+    <line>   ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line>   ШапкаРамкаВыделение[и*100000+2] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>   ШапкаДроб[и*100000+3] = 2//Харламов</line>
+    <line>   ШапкаИмя[и*100000+3] = ост_н!0</line>
+    <line>   ДлинаШапкаЗначение[и*100000+3] = г</line>
+    <line>   ШапкаВыводРамки[и*100000+3] = ДА</line>
+    <line>   ШапкаКлеить[и*100000+3] = ДА</line>
+    <line>   ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>   ШапкаРамкаВыделение[и*100000+3] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>   ШапкаИмя[и*100000+4] = ""</line>
+    <line>   ДлинаШапкаЗначение[и*100000+4] = д</line>
+    <line>   ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>   ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>   ШапкаКлеить[и*100000+4] = ДА</line>
+    <line>   ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>   ШапкаРамкаВыделение[и*100000+4] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>//   КОНЕЦ_ЕСЛИ</line>
+    <line>   ОКРУГЛЕНИЕ(2);</line>
+    <line>//</line>
+    <line>   j=1</line>
+    <line>   Tile=0</line>
+    <line>   First=ДА</line>
+    <line>   One=НЕТ</line>
+    <line>   Last=НЕТ</line>
+    <line>   ЕСЛИ кол_страниц=1 ТО</line>
+    <line>        One=ДА</line>
+    <line>   ИНАЧЕ</line>
+    <line>        One=НЕТ</line>
+    <line>   КОНЕЦ_ЕСЛИ</line>
+    <line>   Last=НЕТ</line>
+    <line>   ЦИКЛ ДЛЯ (н=1,кол_страниц)</line>
+    <line>     ЕСЛИ кол_страниц=н ТО Last=ДА КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>     ЕСЛИ ОпцияШапкаСтраница И н&gt;1 ТО</line>
+    <line>      и++</line>
+    <line>      ШапкаИмя!и = "Номер докум."</line>
+    <line>      ДлинаШапкаЗначение!и = а</line>
+    <line>      ШапкаВыводРамки!и = ДА</line>
+    <line>      ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>      КолДобШапкаИмя!и = 4       //количество дополнительных граф в строке</line>
+    <line>      ШапкаТекстЦент!и = "Ц"</line>
+    <line>      ШапкаКлеить!и = ДА</line>
+    <line>      ШапкаРамкиЗначение!и = ДА</line>
+    <line></line>
+    <line>      ШапкаИмя[и*100000+1] = "От кого получено или кому выдано"</line>
+    <line>      ДлинаШапкаЗначение[и*100000+1] = б</line>
+    <line>      ШапкаВыводРамки[и*100000+1] = ДА</line>
+    <line>      ШапкаТекстЦент[и*100000+1] = "Ц"</line>
+    <line>      ШапкаКлеить[и*100000+1] = ДА</line>
+    <line>      ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line></line>
+    <line>      ШапкаИмя[и*100000+2] = "Кор. счет"            //делаем ещё отступ между графами строки</line>
+    <line>      ДлинаШапкаЗначение[и*100000+2] = в</line>
+    <line>      ШапкаВыводРамки[и*100000+2] = ДА</line>
+    <line>      ШапкаТекстЦент[и*100000+2] = "Ц"</line>
+    <line>      ШапкаКлеить[и*100000+2] = ДА</line>
+    <line>      ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line></line>
+    <line>      ШапкаИмя[и*100000+3] = "Приход руб. коп."</line>
+    <line>      ДлинаШапкаЗначение[и*100000+3] = г</line>
+    <line>      ШапкаВыводРамки[и*100000+3] = ДА</line>
+    <line>      ШапкаТекстЦент[и*100000+3] = "Ц"</line>
+    <line>      ШапкаКлеить[и*100000+3] = ДА</line>
+    <line>      ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line></line>
+    <line>      ШапкаИмя[и*100000+4] = "Расход руб. коп."</line>
+    <line>      ДлинаШапкаЗначение[и*100000+4] = д</line>
+    <line>      ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>      ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>      ШапкаТекстЦент[и*100000+4] = "Ц"</line>
+    <line>      ШапкаКлеить[и*100000+4] = ДА</line>
+    <line>      ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>     /*ЕСЛИ One=ДА ТО</line>
+    <line>          Tile=i</line>
+    <line>     ИНАЧЕ</line>
+    <line>          ЕСЛИ Last=ДА ТО</line>
+    <line>               Tile=i</line>
+    <line>          ИНАЧЕ</line>
+    <line>               ЕСЛИ First = ДА ТО</line>
+    <line>                    T=LPP-FPH</line>
+    <line>               ИНАЧЕ</line>
+    <line>                    T=LPP</line>
+    <line>               КОНЕЦ_ЕСЛИ</line>
+    <line>          КОНЕЦ_ЕСЛИ</line>
+    <line>     КОНЕЦ_ЕСЛИ</line>
+    <line>     Tl=T</line>
+    <line>     ЕСЛИ One=НЕТ И Last=НЕТ ТО</line>
+    <line>       ЦИКЛ ДЛЯ (ж=j,i)</line>
+    <line>         дл = (ДЛИНА(Cont!ж)/б)</line>
+    <line>         ЕСЛИ ДРОБ(дл)&gt;0 ТО дл=дл+1-ДРОБ(дл) КОНЕЦ_ЕСЛИ</line>
+    <line>         Tl=Tl-дл</line>
+    <line>         ЕСЛИ Tl&gt;0 ТО</line>
+    <line>              Tile=Tile+1</line>
+    <line>        //      СООБЩЕНИЕ(СТР(Tile))</line>
+    <line>        // ИНАЧЕ</line>
+    <line>        //      СООБЩЕНИЕ(СТР(Tile))</line>
+    <line>        //      СТОП</line>
+    <line>         КОНЕЦ_ЕСЛИ</line>
+    <line>       КОНЕЦ_ЦИКЛА</line>
+    <line>     КОНЕЦ_ЕСЛИ*/</line>
+    <line>//</line>
+    <line>     Tile=Tile+СтрНаСтрн[н]</line>
+    <line>    // ОТЛАДКА(СтрНаСтрн[н])</line>
+    <line>     ОКРУГЛЕНИЕ(2)</line>
+    <line>     // вывод строк таблицы...</line>
+    <line>     ЦИКЛ ДЛЯ (e = j, Tile)  // Вывод строк</line>
+    <line>        и++</line>
+    <line>        ШапкаИмя!и = Num!e</line>
+    <line>        ДлинаШапкаЗначение!и = а</line>
+    <line>        ШапкаВыводРамки!и = ДА</line>
+    <line>        ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>        КолДобШапкаИмя!и = 4       //количество дополнительных граф в строке</line>
+    <line>        ШапкаКлеить!и = ДА</line>
+    <line>        ШапкаРамкиЗначение!и = ДА</line>
+    <line></line>
+    <line>        Cont!e = ЗАМ(СИМВ(13),СТР(Cont!e),СИМВ(32))</line>
+    <line>        ШапкаИмя[и*100000+1] = СТР(Cont!e)</line>
+    <line>        ДлинаШапкаЗначение[и*100000+1] = б</line>
+    <line>        ШапкаВыводРамки[и*100000+1] = ДА</line>
+    <line>        ШапкаКлеить[и*100000+1] = ДА</line>
+    <line>        ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line></line>
+    <line>        ШапкаИмя[и*100000+2] = kz!e            //делаем ещё отступ между графами строки</line>
+    <line>        ДлинаШапкаЗначение[и*100000+2] = в</line>
+    <line>        ШапкаВыводРамки[и*100000+2] = ДА</line>
+    <line>        ШапкаКлеить[и*100000+2] = ДА</line>
+    <line>        ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line>        ШапкаДроб[и*100000+3] = 2//Харламов</line>
+    <line>        ШапкаИмя[и*100000+3] = prix!e</line>
+    <line>        ДлинаШапкаЗначение[и*100000+3] = г</line>
+    <line>        ШапкаВыводРамки[и*100000+3] = ДА</line>
+    <line>        ШапкаКлеить[и*100000+3] = ДА</line>
+    <line>        ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line></line>
+    <line>        ШапкаДроб[и*100000+4] = 2//Харламов</line>
+    <line>        ШапкаИмя[и*100000+4] = rasx!e</line>
+    <line>        ДлинаШапкаЗначение[и*100000+4] = д</line>
+    <line>        ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>        ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>        ШапкаКлеить[и*100000+4] = ДА</line>
+    <line>        ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>        ии = и</line>
+    <line>        j = j + 1</line>
+    <line>      КОНЕЦ_ЦИКЛА</line>
+    <line></line>
+    <line>      First=НЕТ</line>
+    <line>      //СтрокВшапке = и</line>
+    <line>      //TBLPRINT_ПЕЧАТЬ_ШАПКИ</line>
+    <line></line>
+    <line>      ЕСЛИ Last=НЕТ И One=НЕТ ТО</line>
+    <line>        СтрокВшапке = и</line>
+    <line>        TBLPRINT_ПЕЧАТЬ_ШАПКИ</line>
+    <line>        //cntPages++</line>
+    <line>        a = a + КолВстрок + 1</line>
+    <line>//        КОНЕЦ_СТРАНИЦЫ(a)</line>
+    <line>        колконцов++</line>
+    <line>        конец!колконцов = a</line>
+    <line>       // СООБЩЕНИЕ("1 напечатали " + СТР(a))</line>
+    <line>        //СООБЩЕНИЕ("КолВстрок = "+СТР(КолВстрок))</line>
+    <line>        //СООБЩЕНИЕ("а = "+СТР(a))</line>
+    <line>        TBLPRINT_СБРОС_ШАПКИ(ДА)</line>
+    <line>        ШапкаПоз = a</line>
+    <line>        НизСтр = 3</line>
+    <line>        НачСтр = 3</line>
+    <line>        //РазбСтр=ДА    // Разбивать на страницы</line>
+    <line>        НомЛист=НЕТ    // Печатать номера листов</line>
+    <line>        ШапкаЛист=НЕТ</line>
+    <line>        а=7</line>
+    <line>        б=46//44</line>
+    <line>        в=4</line>
+    <line>        г=14</line>
+    <line>        д=14</line>
+    <line>        и=0</line>
+    <line></line>
+    <line>      КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>    КОНЕЦ_ЦИКЛА</line>
+    <line>    СБРОС(СтрНаСтрн,ПечСтрНаЗап,КолРазбСтр)</line>
+    <line>      k = cntPages+1</line>
+    <line>      NumPages!k=1</line>
+    <line></line>
+    <line>      ОКРУГЛЕНИЕ(2)</line>
+    <line>      z1="х и "; z2="х получил"; q1=КОП(кп/100); q2=КОП(кр/100);</line>
+    <line>      ЕСЛИ q1&lt;&gt;11 ТО ЕСЛИ (КОП(q1/10)=10) ТО z1="й и " КОНЕЦ_ЕСЛИ; КОНЕЦ_ЕСЛИ;</line>
+    <line>      ЕСЛИ q2&lt;&gt;11 ТО ЕСЛИ (КОП(q2/10)=10) ТО z2="й получил" КОНЕЦ_ЕСЛИ; КОНЕЦ_ЕСЛИ;</line>
+    <line>      prn=СУММАП(кп)+"приходны"+z1+СУММАП(кр)+"расходны"+z2;</line>
+    <line>      ЕСЛИ Salary ТО</line>
+    <line>        ЕСЛИ (ОБК("70",Дата,Дата+1)-ОБД("70",Дата,Дата+1))=0 ТО</line>
+    <line>          на_зп=0</line>
+    <line>        ИНАЧЕ</line>
+    <line>         ост_зп=МИН(ОСД(Касса,Дата),ОСК("70",Дата)-ОСД("70",Дата)-ОБД("70",Дата,Дата+1)+ОБК("70",Дата,Дата+1))</line>
+    <line>          ЕСЛИ ост_зп&lt;0 ТО на_зп=0</line>
+    <line>          ИНАЧЕ</line>
+    <line>           на_зп=ост_зп</line>
+    <line>//          на_зп=МИН((ОБК("70",Дата,Дата+1)-ОБД("70",Дата,Дата+1)),ОСД(Касса,Дата+1))</line>
+    <line>          КОНЕЦ_ЕСЛИ</line>
+    <line>        КОНЕЦ_ЕСЛИ  //</line>
+    <line>      ИНАЧЕ на_зп=0</line>
+    <line>      КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>      ЕСЛИ НЕ ВалКасса ТО</line>
+    <line>         и = ии</line>
+    <line>         и++</line>
+    <line>         ШапкаИмя!и = ""</line>
+    <line>         ДлинаШапкаЗначение!и = а</line>
+    <line>         ШапкаВыводРамки!и = ДА</line>
+    <line>         ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>         КолДобШапкаИмя!и = 4       //количество дополнительных граф в строке</line>
+    <line>         ШапкаКлеить!и = ДА</line>
+    <line>         ШапкаРамкиЗначение!и = ДА</line>
+    <line>         ШапкаРамкиЗначение!и = ДА</line>
+    <line>         ШапкаРамкаВыделение!и = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+1] = "Итого за день"</line>
+    <line>         ДлинаШапкаЗначение[и*100000+1] = б</line>
+    <line>         ШапкаВыводРамки[и*100000+1] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+1] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+1] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+2] = ""            //делаем ещё отступ между графами строки</line>
+    <line>         ДлинаШапкаЗначение[и*100000+2] = в</line>
+    <line>         ШапкаВыводРамки[и*100000+2] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+2] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+2] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>         ШапкаДроб[и*100000+3] = 2//Харламов</line>
+    <line>         ШапкаИмя[и*100000+3] =иприх</line>
+    <line>         ДлинаШапкаЗначение[и*100000+3] = г</line>
+    <line>         ШапкаВыводРамки[и*100000+3] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+3] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>        ШапкаДроб[и*100000+4] = 2//Харламов</line>
+    <line>         ШапкаИмя[и*100000+4] = ирасх</line>
+    <line>         ДлинаШапкаЗначение[и*100000+4] = д</line>
+    <line>         ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>         ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+4] = 2    //шапку выделим жирной рамкой</line>
+    <line>       ИНАЧЕ</line>
+    <line>         и = ии</line>
+    <line>         и++</line>
+    <line>         ШапкаИмя!и = ""</line>
+    <line>         ДлинаШапкаЗначение!и = а</line>
+    <line>         ШапкаВыводРамки!и = ДА</line>
+    <line>         ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>         КолДобШапкаИмя!и = 4       //количество дополнительных граф в строке</line>
+    <line>         ШапкаКлеить!и = ДА</line>
+    <line>         ШапкаРамкиЗначение!и = ДА</line>
+    <line>         ШапкаРамкиЗначение!и = ДА</line>
+    <line>         ШапкаРамкаВыделение!и = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+1] = "Итого за день"</line>
+    <line>         ДлинаШапкаЗначение[и*100000+1] = б</line>
+    <line>         ШапкаВыводРамки[и*100000+1] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+1] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+1] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+2] = ""            //делаем ещё отступ между графами строки</line>
+    <line>         ДлинаШапкаЗначение[и*100000+2] = в</line>
+    <line>         ШапкаВыводРамки[и*100000+2] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+2] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+2] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>         ШапкаДроб[и*100000+3] = 2//Харламов</line>
+    <line>         ШапкаИмя[и*100000+3] =иприх</line>
+    <line>         ДлинаШапкаЗначение[и*100000+3] = г</line>
+    <line>         ШапкаВыводРамки[и*100000+3] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+3] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>         ШапкаДроб[и*100000+4] = 2//Харламов</line>
+    <line>         ШапкаИмя[и*100000+4] = ирасх</line>
+    <line>         ДлинаШапкаЗначение[и*100000+4] = д</line>
+    <line>         ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>         ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+4] = 2    //шапку выделим жирной рамкой</line>
+    <line>         // Вывод "курсовой разницы"</line>
+    <line>         длр=2</line>
+    <line>         стр1 = "В т.ч. курсовая разница: "</line>
+    <line>         ЦИКЛ ДЛЯ(кв=1,колвсч)</line>
+    <line>          ЕСЛИ КурсРазн!кв&lt;&gt;0 ТО</line>
+    <line>           и++</line>
+    <line>           ШапкаИмя!и = ""</line>
+    <line>           ДлинаШапкаЗначение!и = а</line>
+    <line>           ШапкаВыводРамки!и = ДА</line>
+    <line>           ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>           КолДобШапкаИмя!и = 4       //количество дополнительных граф в строке</line>
+    <line>           ШапкаКлеить!и = ДА</line>
+    <line>           ШапкаРамкиЗначение!и = ДА</line>
+    <line>           ШапкаРамкиЗначение!и = ДА</line>
+    <line>           ШапкаРамкаВыделение!и = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>           ШапкаИмя[и*100000+1] =стр1</line>
+    <line>           ДлинаШапкаЗначение[и*100000+1] = б</line>
+    <line>           ШапкаВыводРамки[и*100000+1] = ДА</line>
+    <line>           ШапкаКлеить[и*100000+1] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line>           ШапкаРамкаВыделение[и*100000+1] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>           ШапкаИмя[и*100000+2] = ""            //делаем ещё отступ между графами строки</line>
+    <line>           ДлинаШапкаЗначение[и*100000+2] = в</line>
+    <line>           ШапкаВыводРамки[и*100000+2] = ДА</line>
+    <line>           ШапкаКлеить[и*100000+2] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line>           ШапкаРамкаВыделение[и*100000+2] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>           ШапкаИмя[и*100000+3] = НазвВал!кв</line>
+    <line>           ДлинаШапкаЗначение[и*100000+3] = г</line>
+    <line>           ШапкаВыводРамки[и*100000+3] = ДА</line>
+    <line>           ШапкаКлеить[и*100000+3] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>           ШапкаРамкаВыделение[и*100000+3] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>           ШапкаИмя[и*100000+4] = КурсРазн!кв</line>
+    <line>           ДлинаШапкаЗначение[и*100000+4] = д</line>
+    <line>           ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>           ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>           ШапкаКлеить[и*100000+4] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>           ШапкаРамкаВыделение[и*100000+4] = 2    //шапку выделим жирной рамкой</line>
+    <line>           стр1 = ""</line>
+    <line>          КОНЕЦ_ЕСЛИ</line>
+    <line>         КОНЕЦ_ЦИКЛА</line>
+    <line>      КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>        ЕСЛИ НЕ ВалКасса ТО</line>
+    <line>         и++</line>
+    <line>         ШапкаИмя!и = ""</line>
+    <line>         ДлинаШапкаЗначение!и = а</line>
+    <line>         ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>         КолДобШапкаИмя!и = 4       //количество дополнительных граф в строке</line>
+    <line>         ШапкаКлеить!и = ДА</line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+1] = "Остаток на конец дня"</line>
+    <line>         ДлинаШапкаЗначение[и*100000+1] = б</line>
+    <line>         ШапкаКлеить[и*100000+1] = ДА</line>
+    <line></line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+2] = ""            //делаем ещё отступ между графами строки</line>
+    <line>         ДлинаШапкаЗначение[и*100000+2] = в</line>
+    <line>         ШапкаКлеить[и*100000+2] = ДА</line>
+    <line></line>
+    <line>         ШапкаДроб[и*100000+3] = 2//Харламов</line>
+    <line>         ШапкаИмя[и*100000+3] = ост_к!0</line>
+    <line>         ДлинаШапкаЗначение[и*100000+3] = г</line>
+    <line>         ШапкаВыводРамки[и*100000+3] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+3] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+4] = "Х"</line>
+    <line>         ДлинаШапкаЗначение[и*100000+4] = д</line>
+    <line>         ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+4] = 2    //шапку выделим жирной рамкой</line>
+    <line>         ШапкаТекстЦент[и*100000+4] = "Ц"</line>
+    <line>      ИНАЧЕ</line>
+    <line>         и++</line>
+    <line>         ШапкаИмя!и = ""</line>
+    <line>         ДлинаШапкаЗначение!и = а</line>
+    <line>         ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>         КолДобШапкаИмя!и = 4       //количество дополнительных граф в строке</line>
+    <line>         ШапкаКлеить!и = ДА</line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+1] = "Остаток на конец дня"</line>
+    <line>         ДлинаШапкаЗначение[и*100000+1] = б</line>
+    <line>         ШапкаКлеить[и*100000+1] = ДА</line>
+    <line></line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+2] = ""            //делаем ещё отступ между графами строки</line>
+    <line>         ДлинаШапкаЗначение[и*100000+2] = в</line>
+    <line>         ШапкаКлеить[и*100000+2] = ДА</line>
+    <line></line>
+    <line>         ШапкаДроб[и*100000+3] = 2</line>
+    <line>         ШапкаИмя[и*100000+3] = ост_к!0</line>
+    <line>         ДлинаШапкаЗначение[и*100000+3] = г</line>
+    <line>         ШапкаВыводРамки[и*100000+3] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+3] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+4] = "Х"</line>
+    <line>         ДлинаШапкаЗначение[и*100000+4] = д</line>
+    <line>         ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+4] = 2    //шапку выделим жирной рамкой</line>
+    <line>         ШапкаТекстЦент[и*100000+4] = "Ц"</line>
+    <line>         // Вывод "валюты"</line>
+    <line>         ЦИКЛ ДЛЯ(кв=1,колвсч)</line>
+    <line>           и++</line>
+    <line>           ШапкаИмя!и = ""</line>
+    <line>           ДлинаШапкаЗначение!и = а</line>
+    <line>           ШапкаВыводРамки!и = ДА</line>
+    <line>           ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>           КолДобШапкаИмя!и = 4       //количество дополнительных граф в строке</line>
+    <line>           ШапкаКлеить!и = ДА</line>
+    <line>           ШапкаРамкиЗначение!и = ДА</line>
+    <line>           ШапкаРамкиЗначение!и = ДА</line>
+    <line>           ШапкаРамкаВыделение!и = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>           ШапкаИмя[и*100000+1] = ОстКон!кв</line>
+    <line>           ДлинаШапкаЗначение[и*100000+1] = б</line>
+    <line>           ШапкаВыводРамки[и*100000+1] = ДА</line>
+    <line>           ШапкаКлеить[и*100000+1] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+1] = ДА</line>
+    <line>           ШапкаРамкаВыделение[и*100000+1] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>           ШапкаИмя[и*100000+2] = ""            //делаем ещё отступ между графами строки</line>
+    <line>           ДлинаШапкаЗначение[и*100000+2] = в</line>
+    <line>           ШапкаВыводРамки[и*100000+2] = ДА</line>
+    <line>           ШапкаКлеить[и*100000+2] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+2] = ДА</line>
+    <line>           ШапкаРамкаВыделение[и*100000+2] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>           ШапкаИмя[и*100000+3] = СТР(ост_квал!кв)+" "+ЕдВал!кв</line>
+    <line>           ДлинаШапкаЗначение[и*100000+3] = г</line>
+    <line>           ШапкаВыводРамки[и*100000+3] = ДА</line>
+    <line>           ШапкаКлеить[и*100000+3] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>           ШапкаРамкаВыделение[и*100000+3] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>           ШапкаИмя[и*100000+4] = "X"</line>
+    <line>           ДлинаШапкаЗначение[и*100000+4] = д</line>
+    <line>           ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>           ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>           ШапкаКлеить[и*100000+4] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>           ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>           ШапкаРамкаВыделение[и*100000+4] = 2    //шапку выделим жирной рамкой</line>
+    <line>           стр1 = ""</line>
+    <line>         КОНЕЦ_ЦИКЛА</line>
+    <line>      КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>      ЕСЛИ показывать_зп ТО</line>
+    <line>         и++</line>
+    <line>         ШапкаИмя!и = ""</line>
+    <line>         ДлинаШапкаЗначение!и = а</line>
+    <line>         ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>         КолДобШапкаИмя!и = 4       //количество дополнительных граф в строке</line>
+    <line>         ШапкаКлеить!и = ДА</line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+1] = "в т.ч. на заработную плату, выплаты социального характера и стипендии"</line>
+    <line>         ДлинаШапкаЗначение[и*100000+1] = б</line>
+    <line>         ШапкаКлеить[и*100000+1] = ДА</line>
+    <line></line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+2] = ""            //делаем ещё отступ между графами строки</line>
+    <line>         ДлинаШапкаЗначение[и*100000+2] = в</line>
+    <line>         ШапкаКлеить[и*100000+2] = ДА</line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+3] = 0//на_зп</line>
+    <line>         ДлинаШапкаЗначение[и*100000+3] = г</line>
+    <line>         ШапкаВыводРамки[и*100000+3] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+3] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+3] = 2    //шапку выделим жирной рамкой</line>
+    <line></line>
+    <line>         ШапкаИмя[и*100000+4] = "Х"</line>
+    <line>         ДлинаШапкаЗначение[и*100000+4] = д</line>
+    <line>         ШапкаВыводРамки[и*100000+4] = ДА</line>
+    <line>         ШапкаКлеить[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкиЗначение[и*100000+4] = ДА</line>
+    <line>         ШапкаРамкаВыделение[и*100000+4] = 2    //шапку выделим жирной рамкой</line>
+    <line>         ШапкаТекстЦент[и*100000+4] = "Ц"</line>
+    <line>       КОНЕЦ_ЕСЛИ</line>
+    <line>////////////// ВЫВОД РЕКВИЗИТОВ В КОНЦЕ ЛИСТА /////////////////</line>
+    <line>       и++</line>
+    <line>       ШапкаИмя!и = ""</line>
+    <line>       ДлинаШапкаЗначение!и = 1</line>
+    <line>       и++</line>
+    <line>       ШапкаИмя!и = ""</line>
+    <line>       ДлинаШапкаЗначение!и = а</line>
+    <line>       ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>       КолДобШапкаИмя!и = 2       //количество дополнительных граф в строке</line>
+    <line>       ШапкаКлеить!и = ДА</line>
+    <line>       ШапкаИмя[и*100000+1] = "Кассир_______________"</line>
+    <line>       ДлинаШапкаЗначение[и*100000+1] = 25</line>
+    <line>       ШапкаКлеить[и*100000+1] = ДА</line>
+    <line></line>
+    <line>       ШапкаИмя[и*100000+2] = Кассир            //делаем ещё отступ между графами строки</line>
+    <line>       ДлинаШапкаЗначение[и*100000+2] = 30</line>
+    <line>       ШапкаКлеить[и*100000+2] = ДА</line>
+    <line>       и++</line>
+    <line>       ШапкаИмя!и = ""</line>
+    <line>       ДлинаШапкаЗначение!и = 1</line>
+    <line>       и++</line>
+    <line>       ШапкаИмя!и = ""</line>
+    <line>       ДлинаШапкаЗначение!и = а</line>
+    <line>       ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>       КолДобШапкаИмя!и = 1       //количество дополнительных граф в строке</line>
+    <line>       ШапкаКлеить!и = ДА</line>
+    <line>       ШапкаИмя[и*100000+1] = "Записи в кассовой книге проверил и документы в количестве"</line>
+    <line>       ДлинаШапкаЗначение[и*100000+1] = 60</line>
+    <line>       ШапкаКлеить[и*100000+1] = ДА</line>
+    <line>       и++</line>
+    <line>       ШапкаИмя!и = ""</line>
+    <line>       ДлинаШапкаЗначение!и = а</line>
+    <line>       ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>       КолДобШапкаИмя!и = 1       //количество дополнительных граф в строке</line>
+    <line>       ШапкаКлеить!и = ДА</line>
+    <line>       ШапкаИмя[и*100000+1] = prn</line>
+    <line>       ДлинаШапкаЗначение[и*100000+1] = 60</line>
+    <line>       и++</line>
+    <line>       ШапкаИмя!и = ""</line>
+    <line>       ДлинаШапкаЗначение!и = 1</line>
+    <line>       и++</line>
+    <line>       ШапкаИмя!и = ""</line>
+    <line>       ДлинаШапкаЗначение!и = а</line>
+    <line>       ДобШапкаИмя!и = ДА         //наличие дополнительных граф в строке</line>
+    <line>       КолДобШапкаИмя!и = 2       //количество дополнительных граф в строке</line>
+    <line>       ШапкаКлеить!и = ДА</line>
+    <line>       ШапкаИмя[и*100000+1] = "Бухгалтер_______________"</line>
+    <line>       ДлинаШапкаЗначение[и*100000+1] = 25</line>
+    <line>       ШапкаКлеить[и*100000+1] = ДА</line>
+    <line>       ШапкаИмя[и*100000+2] = ГлавБух            //делаем ещё отступ между графами строки</line>
+    <line>       ДлинаШапкаЗначение[и*100000+2] = 30</line>
+    <line>       ШапкаКлеить[и*100000+2] = ДА</line>
+    <line>       и++</line>
+    <line>       ШапкаИмя!и = ЛистЗаМес</line>
+    <line>       ДлинаШапкаЗначение!и = 50</line>
+    <line>       и++</line>
+    <line>       ШапкаИмя!и = ЛистЗаГод</line>
+    <line>       ДлинаШапкаЗначение!и = 50</line>
+    <line>///////////////////////////////////////////////////////////////////////</line>
+    <line>       СтрокВшапке = и</line>
+    <line>       TBLPRINT_ПЕЧАТЬ_ШАПКИ      //вызываем функцию вывода</line>
+    <line>       cntPages++</line>
+    <line>       a = a + КолВстрок + 1</line>
+    <line>       //СООБЩЕНИЕ("КолВстрок = "+СТР(КолВстрок))</line>
+    <line>       //a1=a-1</line>
+    <line>       //КОНЕЦ_СТРАНИЦЫ(a-1)</line>
+    <line>        колконцов++</line>
+    <line>        конец!колконцов = a</line>
+    <line>      // СООБЩЕНИЕ("2 напечатали " + СТР(a))</line>
+    <line>        PlaceForGet=конец!колконцов                            //Харламов Р.Б.</line>
+    <line>       TBLPRINT_СБРОС_ШАПКИ(ДА)   //обнуляем значения переменных (выходной параметр не используется)</line>
+    <line></line>
+    <line>///////////////////////////////////////////////////////////////////////</line>
+    <line> КОНЕЦ_ЕСЛИ</line>
+    <line> LastM=МЕС(Дата)</line>
+    <line> Дата=Дата+1</line>
+    <line>КОНЕЦ_ЦИКЛА</line>
+    <line>//ОТЛАДКА("Номера строк обрыва")</line>
+    <line>ЦИКЛ ИНДЕКС(ном_строки=конец!инт)</line>
+    <line>  КОНЕЦ_СТРАНИЦЫ(ном_строки-1)</line>
+    <line>КОНЕЦ_ЦИКЛА</line>
+    <line>СБРОС(конец)</line>
+    <line>ЕСЛИ использовать_фильтр ТО</line>
+    <line>  Ф1.ПРИМЕНИТЬ  // восстанавливаем параметры фильтра</line>
+    <line>  ВЫКЛ_ФИЛЬТР</line>
+    <line>КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>ЕСЛИ ф_вкл ТО</line>
+    <line>   ВКЛ_ФИЛЬТР</line>
+    <line>КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+  </formulae>
+</blank>

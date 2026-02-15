@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.896</format>
+    <title> 3.01. Начисление по показаниям ИПУ</title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 3. Счетчики</alt_part>
+    <autorun state="true"/>
+    <hidden state="false"/>
+    <noprint1st state="true"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <init_validate state="false"/>
+    <archive>ST_02SPIS.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="100"/>
+      <orientation album="false"/>
+      <fields left="5" right="0" top="1" bottom="0"/>
+      <page_numbers state="false"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident>участок</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+    <help file="*ST_02SPIS" topic="0"/>
+  </header>
+  <text>
+    <line>Улицы</line>
+    <line>Участки</line>
+    <line>Вид ИПУ</line>
+    <line>E-mail</line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line>Сортировать</line>
+    <line></line>
+    <line>Дата начисления:</line>
+    <line></line>
+    <line>Период начисления:       г.     по</line>
+    <line></line>
+    <line></line>
+    <line>Параметры расчета:</line>
+    <line></line>
+    <line></line>
+    <line>Настройка формирования квитанций и ПКО</line>
+    <line>     в формате</line>
+    <line></line>
+    <line>    на сумму</line>
+    <line></line>
+    <line></line>
+    <line>   выводить разделы ПД</line>
+    <line></line>
+    <line>       в формате</line>
+    <line></line>
+    <line>   выгружать    в формате</line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="input field" variable="гр_улицы">
+      <location X="9" Y="1" Width="60" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+      <function>STG_ВыборУлиц</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="кн_сбросФлтУлиц">
+      <location X="72" Y="1" Width="3" Height="1"/>
+      <text>Х</text>
+      <comment></comment>
+      <event_name>соб_сбросФлтУлиц</event_name>
+    </object>
+    <object type="input field" variable="гр_участки">
+      <location X="9" Y="2" Width="60" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+      <function>STG_ВыборУчастков</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="кн_сбросФлтУчастков">
+      <location X="72" Y="2" Width="3" Height="1"/>
+      <text>Х</text>
+      <comment></comment>
+      <event_name>соб_сбросФлтУчастков</event_name>
+    </object>
+    <object type="input field" variable="гр_ТипСч">
+      <location X="9" Y="3" Width="15" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыборТипИПУ</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_email">
+      <location X="9" Y="4" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыборНаличияEMail</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="checkbox" variable="оп_импортИзФайла">
+      <location X="1" Y="6" Width="29" Height="1"/>
+      <text>импортировать показания из</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция23</event_name>
+    </object>
+    <object type="input field" variable="гр_файлИмпорта">
+      <location X="31" Y="6" Width="38" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_IMPORT_READINGS.IBL</library>
+      <function>STG_ВыбXLSФайлаСлуж</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="кн_настройкаСоотв">
+      <location X="72" Y="6" Width="11" Height="1"/>
+      <text>Настроить</text>
+      <comment></comment>
+      <event_name>соб_настройкаСоотв</event_name>
+    </object>
+    <object type="checkbox" variable="оп_создаватьИПУ">
+      <location X="3" Y="7" Width="30" Height="1"/>
+      <text>создавать отсутствующие ИПУ</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция23</event_name>
+    </object>
+    <object type="checkbox" variable="оп_обновлятьСущПок">
+      <location X="3" Y="8" Width="35" Height="1"/>
+      <text>обновлять существующий показания</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция23</event_name>
+    </object>
+    <object type="input field" variable="гр_сортироватьПо">
+      <location X="13" Y="9" Width="18" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_IMPORT_READINGS.IBL</library>
+      <function>STG_ВыборСортировки</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="датаОперации">
+      <location X="20" Y="11" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="checkbox" variable="делатьПроводки">
+      <location X="34" Y="11" Width="29" Height="1"/>
+      <text>запись в базу данных и ЖХО</text>
+      <comment></comment>
+      <event_name>переклДелатьПров</event_name>
+    </object>
+    <object type="checkbox" variable="оп_датаОпПоДатеПок">
+      <location X="34" Y="12" Width="40" Height="1"/>
+      <text>дата хоз. оп. по дате ввода показаний</text>
+      <comment></comment>
+      <event_name>соб_измОпДатаОпПоДатеПок</event_name>
+    </object>
+    <object type="input field" variable="гр_Месяц">
+      <location X="20" Y="13" Width="12" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_УстановкаПериода</function>
+      <param_type>string</param_type>
+      <refresh state="true"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_Год">
+      <location X="35" Y="13" Width="4" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_УстановкаПериода</function>
+      <param_type>string</param_type>
+      <refresh state="true"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_ДатаС">
+      <location X="46" Y="13" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="input field" variable="гр_ДатаПо">
+      <location X="62" Y="13" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="checkbox" variable="оп_датаПокПоДатеОп">
+      <location X="20" Y="14" Width="36" Height="1"/>
+      <text>дата показаний по дате начисления</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция21</event_name>
+    </object>
+    <object type="checkbox" variable="оп_Начисление">
+      <location X="20" Y="16" Width="15" Height="1"/>
+      <text>начисление</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция8</event_name>
+    </object>
+    <object type="checkbox" variable="оп_Долг">
+      <location X="42" Y="16" Width="8" Height="1"/>
+      <text>долг</text>
+      <comment>расчет долга на начало указанной даты операции</comment>
+      <event_name>ИзменениеОпция8</event_name>
+    </object>
+    <object type="checkbox" variable="оп_Аванс">
+      <location X="58" Y="16" Width="9" Height="1"/>
+      <text>аванс</text>
+      <comment>расчет переплат на начало указанной даты операции</comment>
+      <event_name>ИзменениеОпция8</event_name>
+    </object>
+    <object type="checkbox" variable="оп_округлятьКопейки">
+      <location X="20" Y="17" Width="21" Height="1"/>
+      <text>округлять копейки</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция52</event_name>
+    </object>
+    <object type="checkbox" variable="оп_учетОплат">
+      <location X="42" Y="17" Width="32" Height="1"/>
+      <text>учет оплат на дату начисления</text>
+      <comment>учет оплат, произведенных до конца даты начисления</comment>
+      <event_name>соб_учетОплат</event_name>
+    </object>
+    <object type="button" name="Кнопка1">
+      <location X="72" Y="19" Width="22" Height="1"/>
+      <text>Настройки ПД</text>
+      <comment></comment>
+      <event_name>Кнопка1</event_name>
+    </object>
+    <object type="checkbox" variable="оп_формПД">
+      <location X="2" Y="20" Width="17" Height="1"/>
+      <text>Формировать ПД</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция4</event_name>
+    </object>
+    <object type="input field" variable="гр_выводПД">
+      <location X="20" Y="20" Width="25" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбВыводаПД</function>
+      <param_type>string</param_type>
+      <refresh state="true"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_форматПД">
+      <location X="58" Y="20" Width="5" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбФорматаПД</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="Кнопка3">
+      <location X="72" Y="20" Width="22" Height="1"/>
+      <text>Настройки потерь ЭЭ</text>
+      <comment></comment>
+      <event_name>Кнопка3</event_name>
+    </object>
+    <object type="checkbox" variable="оп_ФормироватьПустые">
+      <location X="4" Y="21" Width="48" Height="1"/>
+      <text>формировать нулевые ПД или без тек. показаний</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция4</event_name>
+    </object>
+    <object type="button" name="кн_архивВыгрузок">
+      <location X="72" Y="21" Width="22" Height="1"/>
+      <text>Архив выгрузок</text>
+      <comment></comment>
+      <event_name>соб_архивВыгрузок</event_name>
+    </object>
+    <object type="checkbox" variable="оп_НачислениеБезТекПок">
+      <location X="4" Y="22" Width="33" Height="1"/>
+      <text>начисление без ввода показаний</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция4</event_name>
+    </object>
+    <object type="input field" variable="гр_СуммаНач">
+      <location X="47" Y="22" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>number</input_type>
+      <dec_places>2</dec_places>
+      <null_pad state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="button" name="кн_архивРасчетов">
+      <location X="72" Y="22" Width="22" Height="1"/>
+      <text>Архив расчетов</text>
+      <comment></comment>
+      <event_name>соб_архивРасчетов</event_name>
+    </object>
+    <object type="checkbox" variable="оп_разрывПослеКаждогоПД">
+      <location X="4" Y="23" Width="34" Height="1"/>
+      <text>каждый ПД на отдельной странице</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция46</event_name>
+    </object>
+    <object type="checkbox" variable="оп_строкаИтогоПоСтлб">
+      <location X="4" Y="24" Width="39" Height="1"/>
+      <text>вывести строку с итогами по столбцам</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция46</event_name>
+    </object>
+    <object type="button" name="кн_получить">
+      <location X="72" Y="24" Width="22" Height="1"/>
+      <text>Получить с сайта</text>
+      <comment>Получение показаний ИПУ с сайта и их синхронизация с БД</comment>
+      <event_name>соб_получить</event_name>
+    </object>
+    <object type="input field" variable="гр_разделыПД">
+      <location X="24" Y="25" Width="15" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбРазделовПД</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="кн_выгрузить">
+      <location X="72" Y="25" Width="22" Height="1"/>
+      <text>Выгрузить на сайт</text>
+      <comment>Выгрузка показаний ИПУ на сайт и их синхронизация с БД</comment>
+      <event_name>соб_выгрузить</event_name>
+    </object>
+    <object type="checkbox" variable="оп_вывестиРеестрПД">
+      <location X="2" Y="26" Width="21" Height="1"/>
+      <text>Вывести реестр ПД</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция60</event_name>
+    </object>
+    <object type="input field" variable="гр_парамВывРеестраПД">
+      <location X="24" Y="26" Width="15" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбВыводаРеестраПД</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="checkbox" variable="оп_выгрузитьРеестрПД">
+      <location X="4" Y="27" Width="12" Height="1"/>
+      <text>выгрузить</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция61</event_name>
+    </object>
+    <object type="input field" variable="гр_выводРеестра">
+      <location X="17" Y="27" Width="25" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбВыводаРеестра</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_форматРеестраПД">
+      <location X="55" Y="27" Width="5" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбФорматаРеестра</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="checkbox" variable="оп_ОтправлятьПочту">
+      <location X="2" Y="28" Width="24" Height="1"/>
+      <text>Отправлять на почту</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция4</event_name>
+    </object>
+    <object type="input field" variable="гр_выводПДПочта">
+      <location X="14" Y="29" Width="25" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбВыводаПДПочта</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_форматПДПочта">
+      <location X="52" Y="29" Width="5" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбФорматаПД</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="кн_Отправить">
+      <location X="72" Y="29" Width="11" Height="1"/>
+      <text>Отправить</text>
+      <comment></comment>
+      <event_name>соб_отправкаПочты</event_name>
+    </object>
+    <object type="checkbox" variable="оп_ПечатьПКО">
+      <location X="2" Y="30" Width="21" Height="1"/>
+      <text>Печать ПКО</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция4</event_name>
+    </object>
+    <object type="checkbox" variable="оп_ФормироватьРеестр">
+      <location X="2" Y="31" Width="52" Height="1"/>
+      <text>Формировать реестр начислений для передачи в банк</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция4</event_name>
+    </object>
+    <object type="page_break">
+      <location Y="32"/>
+    </object>
+  </objects>
+  <events>
+    <event name="Кнопка1">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+        <function>STG_НастрПечатиПДКноп</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="Кнопка3">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+        <function>STG_НастрРасчетаПЭЭ</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="соб_архивВыгрузок">
+      <handler>
+        <library>ST_GSK\ST_GSK_ARHIV.IBL</library>
+        <function>STG_ПоказАрхиваВыгрузокПД</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="соб_отправкаПочты">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+        <function>STG_ОтправкаПДНаПочтуКноп</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="соб_архивРасчетов">
+      <handler>
+        <library>ST_GSK\ST_GSK_ARHIV.IBL</library>
+        <function>STG_РедАрхивРасчетов</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="соб_сбросФлтУчастков">
+      <handler>
+        <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+        <function>STG_КнопкаСбросФильтра</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="соб_сбросФлтУлиц">
+      <handler>
+        <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+        <function>STG_КнопкаСбросФильтра</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="соб_настройкаСоотв">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_IMPORT_READINGS.IBL</library>
+        <function>STG_НастройкаТаблИмпорта</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="соб_получить">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_02SPIS.IBL</library>
+        <function>STG_КнПолучитьПокССайта</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="соб_выгрузить">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_02SPIS.IBL</library>
+        <function>STG_КнВыгрузитьНаСайт</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+  </events>
+  <formulae>
+    <line>ИСПОЛЬЗОВАТЬ("ST\ST_CONST")</line>
+    <line>ИСПОЛЬЗОВАТЬ("ST_GSK\BLW\ST_GSK_02SPIS")</line>
+    <line></line>
+    <line>  IB_PROF_УстТекЛокПрофиль(к_СНТПрофНачислениеЭЭ)</line>
+    <line>  STG_РасчетНачисленийИПУ</line>
+  </formulae>
+</blank>

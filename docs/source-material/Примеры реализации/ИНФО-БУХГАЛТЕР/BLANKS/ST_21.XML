@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.888</format>
+    <title> 5.12. Списание затрат</title>
+    <alt_title> 5.12. Списание затрат</alt_title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 5. Касса</alt_part>
+    <autorun state="false"/>
+    <hidden state="false"/>
+    <noprint1st state="false"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <init_validate state="false"/>
+    <archive>ST_21.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="100"/>
+      <orientation album="true"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="false"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+  </header>
+  <text>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="output field" expression="&quot;Аккумулирующий счет*&quot;">
+      <location X="2" Y="2" Width="23" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_АккумСчет">
+      <location X="26" Y="2" Width="48" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>account</input_type>
+      <last_level state="true"/>
+      <comment_as_title state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Счет непоследнего ур-ня, с которого надо&quot;+СИМВ(13)+&quot;сделать перенос на аккумулирующий счет&quot;">
+      <location X="2" Y="3" Width="43" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_СчетНепосл">
+      <location X="46" Y="4" Width="28" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>account</input_type>
+      <last_level state="false"/>
+      <comment_as_title state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="button" name="Кнопка1">
+      <location X="22" Y="5" Width="32" Height="1"/>
+      <text>Перенести</text>
+      <comment></comment>
+      <event_name>СоздатьПров</event_name>
+    </object>
+    <object type="output field" expression="&quot;Дата списания&quot;">
+      <location X="2" Y="7" Width="16" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_ДатаСписания">
+      <location X="19" Y="7" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Списать со счета&quot;">
+      <location X="2" Y="9" Width="20" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_СоСчета">
+      <location X="24" Y="9" Width="50" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>account</input_type>
+      <last_level state="false"/>
+      <comment_as_title state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="output field" expression="&quot;Списать на счет&quot;">
+      <location X="2" Y="10" Width="20" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_НаСчет">
+      <location X="24" Y="10" Width="50" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>account</input_type>
+      <last_level state="true"/>
+      <comment_as_title state="false"/>
+      <no_validation state="false"/>
+    </object>
+    <object type="button" name="Кнопка2">
+      <location X="22" Y="11" Width="32" Height="1"/>
+      <text>Списать затраты</text>
+      <comment></comment>
+      <event_name>СписатьЗатраты</event_name>
+    </object>
+  </objects>
+  <events>
+    <event name="СоздатьПров">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_21.IBL</library>
+        <function>STG_СоздатьПровАккумСч</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="СписатьЗатраты">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_21.IBL</library>
+        <function>STG_СписатьЗатраты</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+  </events>
+  <formulae>
+    <line></line>
+  </formulae>
+</blank>

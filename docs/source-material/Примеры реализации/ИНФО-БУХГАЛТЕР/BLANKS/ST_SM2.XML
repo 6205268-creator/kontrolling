@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.866</format>
+    <title> 2.02. Расчет сумм целевых и членских взносов по смете</title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 2. Начисление членских взносов и целевых платежей</alt_part>
+    <autorun state="true"/>
+    <hidden state="false"/>
+    <noprint1st state="true"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <archive>ST_SM2.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="100"/>
+      <orientation album="false"/>
+      <fields left="1" right="1" top="1" bottom="1"/>
+      <page_numbers state="false"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+  </header>
+  <text>
+    <line>Смета</line>
+    <line>Статьи</line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="input field" variable="гр_смета">
+      <location X="8" Y="1" Width="37" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_SM2.IBL</library>
+      <function>STG_ВыборСметы</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="checkbox" variable="оп_округлятьКопейки">
+      <location X="50" Y="1" Width="21" Height="1"/>
+      <text>округлять копейки</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция52</event_name>
+    </object>
+    <object type="input field" variable="гр_статьи">
+      <location X="8" Y="2" Width="37" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_SM2.IBL</library>
+      <function>STG_ВыборДоходов</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="page_break">
+      <location Y="3"/>
+    </object>
+  </objects>
+  <events/>
+  <formulae>
+    <line>ИСПОЛЬЗОВАТЬ("ST\ST_CONST")</line>
+    <line>ИСПОЛЬЗОВАТЬ("ST_GSK\BLW\ST_GSK_SM2")</line>
+    <line></line>
+    <line>  IB_PROF_УстТекЛокПрофиль(к_СметыПрофРасчетСНТПоСМ)</line>
+    <line>  STG_РасчетСуммНачПоСмете</line>
+  </formulae>
+</blank>

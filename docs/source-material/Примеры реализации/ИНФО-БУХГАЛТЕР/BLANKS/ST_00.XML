@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.869</format>
+    <title> 1.01. Настройка счетов</title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 1. Настройки и исходные данные</alt_part>
+    <autorun state="true"/>
+    <hidden state="false"/>
+    <noprint1st state="false"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <archive></archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="100"/>
+      <orientation album="true"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="true"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+  </header>
+  <text>
+    <line></line>
+    <line></line>
+    <line>                                                            По умолчанию используется счёт . Счета участков создаются</line>
+    <line> Счёт членов СНТ              автоматически по шаблону</line>
+    <line>                               Если установить галочку в графе "Вести аналитику по услугам", то счета</line>
+    <line>                                                            будут иметь вид</line>
+    <line>                                                            Счет  не будет использоваться при формировании проводок.</line>
+    <line>                                                            По умолчанию используется счёт 86. Аккумулирующие счета создаются</line>
+    <line> Счет оплат                   автоматически по шаблону 86/КодУслуги. Например счет для электроэнергии</line>
+    <line>                                      будет 86/Э, для газа 86/Г и так далее. Если необходимы субсчета по счету,</line>
+    <line>                                                            то в поле "Создавать субсчета" необходимо поставить "Х".</line>
+    <line>                                                            По умолчанию используется счёт 50/1. Выбрать можно только счёт последнего</line>
+    <line> Счёт кассы                   уровня.</line>
+    <line></line>
+    <line>                                                            По умолчанию используется счёт . Счета услуг создаются автомати-</line>
+    <line> Счёт услуг для начисления    чески с воответствии с шаблоном</line>
+    <line></line>
+    <line>                                                            По умолчанию используется счёт 51/1. Выбрать можно только счёт последнего</line>
+    <line> Счёт расчётного счёта        уровня.</line>
+    <line></line>
+    <line>                                                            По умолчанию программа формирует дополнительную(вторую) проводку по расхо-</line>
+    <line> Расходование средств(авто)                                дованию поступивших средств в хоз. оп. по внесению оплаты (значение поля</line>
+    <line>                                                            - X). Настройка игнорируется при X в поле Вести аналитику по услугам.</line>
+    <line></line>
+    <line> Счёт потерь электроэнергии   Счёт потерь электроэнергии. На указанном счёте будут создаваться субсчета</line>
+    <line>                                                  для каждого участка.</line>
+    <line></line>
+    <line>                                                            Код участка с счете дополняется нулями слева для корректной сортировки в</line>
+    <line> Дополнять код участка                                      плане счетов. Указывается длина кода вместе с нулями. Опция не будет</line>
+    <line> нулями слева(длина после                         использоваться при значении меньше 2. Если в процессе использования блока</line>
+    <line> добавления)                                                значение было изменено с одного на другое, то необходимо будет запустить</line>
+    <line>                                                            проверку счетов в ПС(кнопка в правом нижнем углу).</line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="output field" expression="&quot;Настройка счетов&quot;">
+      <location X="56" Y="1" Width="26" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-19</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="frame">
+      <location X="1" Y="3" Width="138" Height="5"/>
+      <width>3</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="30" Y="3" Width="33" Height="30"/>
+      <width>3</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="?(г_блокСНТ,&quot;76/СНТ&quot;,&quot;76/ГСК&quot;)">
+      <location X="95" Y="3" Width="6" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="НастрСчет!1">
+      <location X="31" Y="4" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_00</library>
+      <function>STG_ВыборСчета</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="output field" expression="?(г_блокСНТ,&quot;76/СНТ/Участки/КодУлицы/КодУчастка.&quot;,&quot;86/ГСК/Гаражи/КодУлицы/КодГаража.&quot;)">
+      <location X="89" Y="4" Width="34" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="output field" expression="&quot;Вести аналитику по услугам&quot;">
+      <location X="31" Y="5" Width="28" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="НастрСчет!8">
+      <location X="60" Y="5" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_00</library>
+      <function>STG_ВыборСчета</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="output field" expression="?(г_блокСНТ,&quot;76/СНТ/Участки/КодУлицы/КодУчастка/КодУслуги.&quot;,&quot;86/ГСК/Гаражи/КодУлицы/КодГаража/КодУслуги.&quot;)">
+      <location X="80" Y="6" Width="46" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="output field" expression="?(г_блокСНТ,&quot;86/СНТ/ЦФ&quot;,&quot;86/ГСК/ЦФ&quot;)">
+      <location X="69" Y="7" Width="9" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="1" Y="8" Width="138" Height="4"/>
+      <width>3</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="НастрСчет!2">
+      <location X="31" Y="9" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_00</library>
+      <function>STG_ВыборСчета</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="output field" expression="&quot;Создавать субсчета&quot;">
+      <location X="31" Y="10" Width="21" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="НастрСчет!6">
+      <location X="53" Y="10" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_00</library>
+      <function>STG_ВыборСчета</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="1" Y="12" Width="138" Height="3"/>
+      <width>3</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="НастрСчет!3">
+      <location X="31" Y="13" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_00</library>
+      <function>STG_ВыборСчета</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="1" Y="15" Width="138" Height="3"/>
+      <width>3</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="?(г_блокСНТ,&quot;86/СНТ/ЦФ&quot;,&quot;86/ГСК/ЦФ&quot;)">
+      <location X="95" Y="15" Width="9" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="НастрСчет!4">
+      <location X="31" Y="16" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_00</library>
+      <function>STG_ВыборСчета</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="output field" expression="?(г_блокСНТ,&quot;86/СНТ/ЦФ/КодУслуги/КодУчастка.&quot;,&quot;86/ГСК/ЦФ/КодУслуги/КодГаража.&quot;)">
+      <location X="96" Y="16" Width="34" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="1" Y="18" Width="138" Height="3"/>
+      <width>3</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="НастрСчет!5">
+      <location X="31" Y="19" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_00</library>
+      <function>STG_ВыборСчета</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="1" Y="21" Width="138" Height="3"/>
+      <width>3</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="НастрСчет!7">
+      <location X="45" Y="22" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_00</library>
+      <function>STG_ВыборСчета</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="1" Y="24" Width="138" Height="4"/>
+      <width>3</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="НастрСчет!9">
+      <location X="31" Y="25" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_00</library>
+      <function>STG_ВыборСчета</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="кн_очистить">
+      <location X="51" Y="26" Width="10" Height="1"/>
+      <text>Очистить</text>
+      <comment>Очищает графу "Счёт потерь электроэнергии"</comment>
+      <event_name>соб_очисткаНастр9</event_name>
+    </object>
+    <object type="frame">
+      <location X="1" Y="28" Width="138" Height="5"/>
+      <width>3</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="НастрСчет!10">
+      <location X="41" Y="30" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_00</library>
+      <function>STG_ВыборСчета</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="кн_ПроверитьИменаСчВПC">
+      <location X="105" Y="34" Width="34" Height="1"/>
+      <text>Проверка счетов в ПС</text>
+      <comment></comment>
+      <event_name>кн_ПроверитьИменаСчВПC</event_name>
+    </object>
+    <object type="button" name="кн_УдалениеСубсчетов">
+      <location X="99" Y="36" Width="40" Height="1"/>
+      <text>Удаление субсчетов со счета оплат</text>
+      <comment></comment>
+      <event_name>Кнопка3</event_name>
+    </object>
+  </objects>
+  <events>
+    <event name="кн_ПроверитьИменаСчВПC">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_00</library>
+        <function>STG_ПроверитьПС</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="Кнопка3">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_00</library>
+        <function>STG_УдалитьСубсчета</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="соб_очисткаНастр9">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_00</library>
+        <function>STG_СбросНастрСчета</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+  </events>
+  <formulae>
+    <line>ИСПОЛЬЗОВАТЬ("ST\ST_CONST")</line>
+    <line>ИСПОЛЬЗОВАТЬ("ST_GSK\BLW\ST_GSK_00")</line>
+    <line></line>
+    <line>  IB_PROF_УстТекЛокПрофиль(к_ПрефиксБлокСНТ)</line>
+    <line>  STG_СчитатьНастройки</line>
+    <line></line>
+  </formulae>
+</blank>

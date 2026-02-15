@@ -1,0 +1,852 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.866</format>
+    <title> 5.01. Поступление платы (с приходным ордером)</title>
+    <alt_title> 5.01. Поступление платы (с приходным ордером)</alt_title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 5. Касса</alt_part>
+    <autorun state="true"/>
+    <hidden state="false"/>
+    <noprint1st state="false"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <archive>ST_03.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="88"/>
+      <orientation album="false"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="true"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident>участок</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+    <help file="*ST_03" topic="0"/>
+  </header>
+  <text>
+    <line></line>
+    <line>                           Унифицированная форма N КО-1</line>
+    <line>                           Утверждена постановлением Госкомстата</line>
+    <line>                           России от 18.08.98 г. N 88</line>
+    <line>                                  организация</line>
+    <line>                                                         Код    Л</line>
+    <line>  Форма по ОКУД 0310001</line>
+    <line>          организация                         по ОКПО  и   к приходному кассовому ордеру</line>
+    <line>                        N</line>
+    <line>       структурное подразделение                                  нот</line>
+    <line>                                              Номер     Дата</line>
+    <line>                                           документасоставленияи</line>
+    <line></line>
+    <line>                                    я</line>
+    <line>                К р е д и т                        код це-</line>
+    <line>Дебет код струк- корр.    код          Сумма,   левого</line>
+    <line>       турного   счет,  аналит.      руб.коп.   назна-   о</line>
+    <line>       подразд. субсч.   учета                   чения</line>
+    <line>    т</line>
+    <line></line>
+    <line>Принято от    рСумма  руб. коп.</line>
+    <line>Основание              цифрами</line>
+    <line></line>
+    <line>Сумма</line>
+    <line>                              прописью                            з</line>
+    <line></line>
+    <line>  а</line>
+    <line></line>
+    <line> Приложение</line>
+    <line> Главный бухгалтер</line>
+    <line>                        подпись           расшифровка подписи       Глав.</line>
+    <line> Получил кассир                              бух. подпись   расшифровка подписи</line>
+    <line>                        подпись           расшифровка подписи       Кассир</line>
+    <line>                                                                           подпись  расшифровка подписи</line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="output field" expression="&quot;Несколько статей оплаты&quot;">
+      <location X="2" Y="1" Width="25" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_Объединять">
+      <location X="27" Y="1" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>IB_STR.IBL</library>
+      <function>IB_STR_Х_НЕХ</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="output field" expression="&quot;Проводка по начислению&quot;">
+      <location X="31" Y="1" Width="24" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_ПровПоНачислению">
+      <location X="55" Y="1" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>IB_STR.IBL</library>
+      <function>IB_STR_Х_НЕХ</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="67" Y="1" Width="1" Height="34"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="69" Y="1" Width="1" Height="33"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="&quot;Нач. и опл. в одну опер.&quot;">
+      <location X="70" Y="1" Width="26" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_ОднойОпер">
+      <location X="96" Y="1" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>IB_STR.IBL</library>
+      <function>IB_STR_Х_НЕХ</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="69" Y="2" Width="1" Height="33"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="Предприят">
+      <location X="70" Y="4" Width="35" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>2</dec_places>
+    </object>
+    <object type="output field" expression="&quot;Плательщик&quot;">
+      <location X="2" Y="5" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="участок">
+      <location X="13" Y="5" Width="36" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+      <function>STG_ВызовВыбУчГар</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="frame">
+      <location X="69" Y="5" Width="37" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="54" Y="6" Width="13" Height="1"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="Предприят">
+      <location X="2" Y="7" Width="38" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>2</dec_places>
+    </object>
+    <object type="frame">
+      <location X="54" Y="7" Width="13" Height="3"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="54" Y="7" Width="13" Height="1"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="&quot;КВИТАНЦИЯ&quot;">
+      <location X="82" Y="7" Width="11" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-16</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="frame">
+      <location X="1" Y="8" Width="40" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="54" Y="8" Width="13" Height="1"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="ОКПО">
+      <location X="56" Y="8" Width="9" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="структурноеПодразделение">
+      <location X="2" Y="9" Width="51" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="output field" expression="НОМЕР">
+      <location X="82" Y="9" Width="8" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-15</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="frame">
+      <location X="1" Y="10" Width="59" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="ДАТАП(датаОперации)">
+      <location X="73" Y="10" Width="27" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="81" Y="10" Width="11" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="43" Y="11" Width="12" Height="3"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="54" Y="11" Width="13" Height="2"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="72" Y="11" Width="29" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="&quot;Принято от: &quot;+участок">
+      <location X="70" Y="12" Width="36" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>2</dec_places>
+    </object>
+    <object type="output field" expression="&quot;ПРИХОДНЫЙ КАССОВЫЙ ОРДЕР&quot;">
+      <location X="9" Y="13" Width="30" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-16</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="frame">
+      <location X="43" Y="13" Width="24" Height="1"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="НОМЕР">
+      <location X="45" Y="13" Width="9" Height="1"/>
+      <comment>Номер по (F2 - автонумерация)</comment>
+      <printing state="false"/>
+      <bold state="true"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_ZHO.IBL</library>
+      <function>STG_АвтонумПКО</function>
+      <param_type>number</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="true"/>
+      <read_only state="false"/>
+    </object>
+    <object type="output field" expression="НОМЕР">
+      <location X="45" Y="13" Width="9" Height="1"/>
+      <comment>Номер по (F2 - автонумерация)</comment>
+      <printing state="true"/>
+      <bold state="true"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="датаОперации">
+      <location X="55" Y="13" Width="11" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="frame">
+      <location X="69" Y="13" Width="38" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="69" Y="14" Width="38" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="1" Y="15" Width="7" Height="5"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="7" Y="15" Width="35" Height="1"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="41" Y="15" Width="14" Height="5"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="54" Y="15" Width="11" Height="5"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="64" Y="15" Width="3" Height="5"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="&quot;Основание: &quot;+типВзноса">
+      <location X="70" Y="15" Width="36" Height="4"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>0</dec_places>
+    </object>
+    <object type="frame">
+      <location X="7" Y="16" Width="3" Height="4"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="9" Y="16" Width="12" Height="4"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="20" Y="16" Width="8" Height="4"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="69" Y="16" Width="38" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="69" Y="17" Width="38" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="69" Y="18" Width="38" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="1" Y="19" Width="66" Height="1"/>
+      <width>2</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="&quot;50/1&quot;">
+      <location X="2" Y="19" Width="5" Height="1"/>
+      <comment>Код счета в плане счетов</comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="кодпод">
+      <location X="10" Y="19" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="output field" expression="гр_счетУчастка">
+      <location X="21" Y="19" Width="6" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="output field" expression="&quot;-&quot;">
+      <location X="28" Y="19" Width="13" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_суммаПлатежа">
+      <location X="43" Y="19" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_ZHO.IBL</library>
+      <function>STG_СуммаДолга</function>
+      <param_type>number</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="true"/>
+      <read_only state="false"/>
+    </object>
+    <object type="output field" expression="&quot;-&quot;">
+      <location X="55" Y="19" Width="9" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="69" Y="19" Width="38" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="участок">
+      <location X="12" Y="21" Width="52" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="output field" expression="РУБ(гр_суммаПлатежа)">
+      <location X="76" Y="21" Width="19" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="output field" expression="СТР0(КОП(гр_суммаПлатежа),2)">
+      <location X="100" Y="21" Width="2" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="11" Y="22" Width="56" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="типВзноса">
+      <location X="11" Y="22" Width="53" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+      <function>STG_ВыборОснования</function>
+      <param_type>string</param_type>
+      <refresh state="true"/>
+      <reload state="false"/>
+      <reread state="true"/>
+      <read_only state="false"/>
+    </object>
+    <object type="output field" expression="гр_Основание!1">
+      <location X="11" Y="22" Width="55" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="75" Y="22" Width="21" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="99" Y="22" Width="4" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="гр_Основание!2">
+      <location X="1" Y="23" Width="65" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="11" Y="23" Width="56" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="сумп">
+      <location X="70" Y="23" Width="36" Height="3"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>2</dec_places>
+    </object>
+    <object type="frame">
+      <location X="1" Y="24" Width="66" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="сумп1">
+      <location X="7" Y="24" Width="59" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>2</dec_places>
+    </object>
+    <object type="frame">
+      <location X="69" Y="24" Width="38" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="6" Y="25" Width="61" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="69" Y="25" Width="38" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="сумп2">
+      <location X="2" Y="26" Width="64" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>2</dec_places>
+    </object>
+    <object type="frame">
+      <location X="69" Y="26" Width="38" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="НДСп">
+      <location X="70" Y="26" Width="36" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="1" Y="27" Width="66" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="НДСп">
+      <location X="2" Y="27" Width="64" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>2</dec_places>
+    </object>
+    <object type="frame">
+      <location X="69" Y="27" Width="38" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="НСПп">
+      <location X="70" Y="27" Width="36" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>2</dec_places>
+    </object>
+    <object type="frame">
+      <location X="1" Y="28" Width="66" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="НСПп">
+      <location X="2" Y="28" Width="64" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>2</dec_places>
+    </object>
+    <object type="frame">
+      <location X="1" Y="29" Width="66" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="input field" variable="прилож">
+      <location X="13" Y="29" Width="53" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="output field" expression="ДАТАП(датаОперации)">
+      <location X="70" Y="29" Width="18" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>0</dec_places>
+    </object>
+    <object type="frame">
+      <location X="12" Y="30" Width="55" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="ГлавБух">
+      <location X="41" Y="30" Width="23" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="69" Y="30" Width="20" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="20" Y="31" Width="18" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="40" Y="31" Width="25" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="ГлавБух">
+      <location X="86" Y="31" Width="20" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="output field" expression="Кассир">
+      <location X="41" Y="32" Width="23" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="76" Y="32" Width="31" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="20" Y="33" Width="18" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="frame">
+      <location X="40" Y="33" Width="25" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+    <object type="output field" expression="Кассир">
+      <location X="88" Y="33" Width="18" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="frame">
+      <location X="77" Y="34" Width="30" Height="0"/>
+      <width>1</width>
+      <editor_stop state="true"/>
+      <auto_extend state="true"/>
+      <auto_move state="true"/>
+    </object>
+  </objects>
+  <events/>
+  <formulae>
+    <line>ИСПОЛЬЗОВАТЬ("ST\ST_CONST")</line>
+    <line>ИСПОЛЬЗОВАТЬ("ST_GSK\BLW\ST_GSK_03")</line>
+    <line></line>
+    <line>  IB_PROF_УстТекЛокПрофиль(к_СНТПрофПКО)</line>
+    <line>  STG_БланкПКО</line>
+  </formulae>
+</blank>

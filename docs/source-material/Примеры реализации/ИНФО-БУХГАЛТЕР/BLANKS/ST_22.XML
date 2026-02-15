@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.866</format>
+    <title> 5.03. Поступление платы (суммы оплат из операций по начислениям в ЖХО)</title>
+    <alt_title> 5.03. Поступление платы (суммы оплат из операций по начислениям в ЖХО)</alt_title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 5. Касса</alt_part>
+    <autorun state="true"/>
+    <hidden state="false"/>
+    <noprint1st state="true"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <archive>ST_22_OLD.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="84"/>
+      <orientation album="false"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="false"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+    <help file="*ST_22" topic="0"/>
+  </header>
+  <text>
+    <line>Улицы</line>
+    <line>Участки</line>
+    <line>Взносы</line>
+    <line>Начисления за период с  по</line>
+    <line></line>
+    <line>Дата составления:</line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line>   структурное подразделение</line>
+    <line>   код структ. подразделения</line>
+    <line>   в том числе</line>
+    <line>   приложение</line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="input field" variable="гр_улицы">
+      <location X="9" Y="1" Width="60" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+      <function>STG_ВыборУлиц</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_участки">
+      <location X="9" Y="2" Width="60" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+      <function>STG_ВыборУчастков</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_взносы">
+      <location X="9" Y="3" Width="60" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+      <function>STG_ВыборВзносов</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_датаС">
+      <location X="24" Y="4" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="input field" variable="гр_датаПо">
+      <location X="38" Y="4" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="input field" variable="датаОперации">
+      <location X="19" Y="6" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="checkbox" variable="оп_отдХоДляПотерь">
+      <location X="1" Y="8" Width="42" Height="1"/>
+      <text>отдельная ХО для потерь электроэнергии</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция4</event_name>
+    </object>
+    <object type="checkbox" variable="печататьПО">
+      <location X="1" Y="9" Width="20" Height="1"/>
+      <text>формировать ПКО</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция16</event_name>
+    </object>
+    <object type="input field" variable="гр_Пар!4">
+      <location X="30" Y="10" Width="50" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="input field" variable="гр_Пар!5">
+      <location X="30" Y="11" Width="50" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="input field" variable="гр_Пар!7">
+      <location X="30" Y="12" Width="50" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="input field" variable="гр_Пар!6">
+      <location X="30" Y="13" Width="50" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="page_break">
+      <location Y="14"/>
+    </object>
+  </objects>
+  <events/>
+  <formulae>
+    <line>ИСПОЛЬЗОВАТЬ("ST\ST_CONST")</line>
+    <line></line>
+    <line>  СООБЩЕНИЕ("Обновленная версия бланка будет доступна в ближайшем обновлении.")</line>
+    <line>  СТОП_ВСЕ</line>
+    <line>/*</line>
+    <line>  ЕСЛИ АТРИБУТ("$былаИни") = "" ТО</line>
+    <line>    УСТ_АТРИБУТ("$былаИни", "ДА")</line>
+    <line>    УСТ_АТРИБУТ("$профиль", к_СНТПрофОплатыСпискомПоНач)</line>
+    <line>    УСТ_АТРИБУТ("$испПрофиль", "ДА")</line>
+    <line>    //УСТ_АТРИБУТ("$контекст", "начислениеЧлЦлВз")</line>
+    <line>    //УСТ_АТРИБУТ("&amp;группОперации", "ДА")</line>
+    <line></line>
+    <line>    идПрофСпрУлиц = к_СНТПрофОплатыСпискомПоНач + к_СНТПрофСпрУлиц</line>
+    <line>    идПрофСпрУчастков = к_СНТПрофОплатыСпискомПоНач + к_СНТПрофСпрУчастков</line>
+    <line>    идПрофСпрВзносов = к_СНТПрофОплатыСпискомПоНач + к_СНТПрофСпрВзносов</line>
+    <line></line>
+    <line>    гр_улицы = IB_PROF_СформироватьОтображение(идПрофСпрУлиц)</line>
+    <line>    гр_участки = IB_PROF_СформироватьОтображение(идПрофСпрУчастков)</line>
+    <line>    гр_взносы = IB_PROF_СформироватьОтображение(идПрофСпрВзносов)</line>
+    <line></line>
+    <line>    ST_LIB01_СчитатьНастрБлока</line>
+    <line></line>
+    <line>    СТОП_ВСЕ</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>  СОЗДАТЬ(СП,ТИП_СПИСОК) //список для запросов</line>
+    <line>  ST_LIB_УстТекстБлока</line>
+    <line>  ST_LIB02_R_ФНастроек</line>
+    <line>  ST_LIB01_СчитатьНастрБлока</line>
+    <line></line>
+    <line>  СОЗДАТЬ(фильтр,ТИП_ФИЛЬТР)</line>
+    <line>  IB_FLT_СохранитьФильтр</line>
+    <line>  IB_FLT_СбросФильтраПрограммы</line>
+    <line></line>
+    <line>  колУлиц = 0</line>
+    <line>  ЕСЛИ гр_улицы &lt;&gt; "" ТО</line>
+    <line>    ЕСЛИ IB_PROF_ФайлПрофиляМножВыб(идПрофСпрУлиц, путьПрофиляСпрУлиц) ТО</line>
+    <line>      колУлиц = IB_DBF_ВсегоЗап(путьПрофиляСпрУлиц)</line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>  колУчастков = 0</line>
+    <line>  ЕСЛИ гр_участки &lt;&gt; "" ТО</line>
+    <line>    ЕСЛИ IB_PROF_ФайлПрофиляМножВыб(идПрофСпрУчастков, путьПрофиляСпрУчастков) ТО</line>
+    <line>      колУчастков = IB_DBF_ВсегоЗап(путьПрофиляСпрУчастков)</line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>  колВзносов = 0</line>
+    <line>  ЕСЛИ гр_взносы &lt;&gt; "" ТО</line>
+    <line>    ЕСЛИ IB_PROF_ФайлПрофиляМножВыб(идПрофСпрВзносов, путьПрофиляСпрВзносов) ТО</line>
+    <line>      колВзносов = IB_DBF_ВсегоЗап(путьПрофиляСпрВзносов)</line>
+    <line>    КОНЕЦ_ЕСЛИ</line>
+    <line>  КОНЕЦ_ЕСЛИ</line>
+    <line></line>
+    <line>  УСТ_АТРИБУТ("&amp;путьПрофиляСпрВзносов", путьПрофиляСпрВзносов)</line>
+    <line>  ST_LIB01_ПодготовитьДанныеСтатей</line>
+    <line>  УСТ_АТРИБУТ("&amp;путьПрофиляСпрВзносов", "")</line>
+    <line></line>
+    <line>  */</line>
+  </formulae>
+</blank>

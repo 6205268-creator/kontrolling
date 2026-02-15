@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//RU" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ru">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <meta chapter="Прикладные компоненты\Инфо-Бухгалтер 8\Блоки\СНТ">
+    <meta help-id="ST_TARIF">
+    <title>1.2.3. Справочник тарифов</title>
+<link href="../../../../_assets/css/bloki.css" rel="stylesheet">
+
+<script>
+   function collapsElement(id) {
+     style = document.getElementById(id).style;
+     style.display = (style.display == 'block') ? 'none' : 'block';
+   }
+</script>
+    
+<link rel="icon" href="../../../../_assets/img/favicon.ico" type="image/ico">
+</head>
+
+<body>
+
+<div class="header reset">
+	<div class="header_inner">
+		<p class="brand">
+		<img class="ib-header-image" src="../../../../_assets/img/idn.png" align="left" alt="Центр помощи">
+		</p>
+	</div>
+</div>
+<div class="main_column">
+	<!-- ===================== САМ ТЕКСТ ========================= -->
+    <h1>Справочник тарифов</h1>
+    <p>Данный справочник содержит в себе тарифы взносов(рис. 1).</p>
+    <p>Для различных типов взносов и методов расчета предусмотрены отличающиеся друг от друга редакторы тарифов. Рассмотрим возможные варианты:</p>
+    <ul>
+      <li>
+        <p><strong>Справочник тарифов на членские и целевые взносы, воду, газ и отопление.</strong><!--<a href="javascript:collapsElement('id')"
+            title="" rel="nofollow">(подробно)</a>--></p>
+        <!--<div id="id" style="display: none;">-->
+          <p>Рассмотрим справочник на примере справочника тарифов на
+            членские взносов (рис. 1).</p>
+          <div align="center"> <img class="screenshot" src="images/st_tarif%281%29.png">
+            Рис. 1. Справочник тарифов на членские и целевые взносы, воду, газ и отопление.</div>
+          <p>Рассмотрим поля, доступные для заполнения:</p>
+          <ul>
+            <li>
+              <p><b>Тариф</b> - указывается тариф или сумма фиксированного взноса(для взносов с методом расчета <strong>Фикс. взнос</strong>).</p>
+            </li>
+            <li>
+              <p><b>Дата начала</b> - дата начала действия тарифа. </p>
+            </li>
+            <li>
+              <p><b>Дата конца</b> - дата окончания действия тарифа. </p>
+            </li>
+          </ul>
+        <!--</div>-->
+      </li>
+      <li>
+        <p>Справочник тарифов на электроэнергию <!--<a href="javascript:collapsElement('id1')" title="" rel="nofollow">(подробно)</a>-->
+</p>
+        <!--<div id="id1" style="display: none;">-->
+
+          <p>Справочник тарифов на электроэнергию содержит в себе три
+            подсправочника (рис. 3).</p>
+          <div align="center"> <img class="screenshot" src="images/st_tarif%283%29.png">
+            Рис. 3. Выбор справочника тарифов на электроэнергию.</div>
+          <p>После выбора откроется соответствующий справочник тарифов на
+            электроэнергию. Рассмотрим справочник тарифов на электроэнергию на
+            примере трехтарифного справочника (рис. 4).</p>
+          <div align="center"> <img class="screenshot" src="images/st_tarif%284%29.png">
+            Рис. 4. Трехтарифный справочник тарифов на электроэнергию.</div>
+          <p>Рассмотрим поля, доступные для заполнения:</p>
+          <ul>
+            <li>
+              <p><b>Тариф Т...</b> - тарифы для
+                соответствующих тарифных зон. Количество доступных тарифов зависит от тарифности взноса.</p>
+            </li>
+            <li>
+              <p><b>Дата начала</b> - дата начала действия тарифа. </p>
+            </li>
+            <li>
+              <p><b>Дата конца</b> - дата окончания действия тарифа. </p>
+            </li>
+            <li>
+              <p><b>Признак</b> - признак тарифа - <strong>сельский</strong> или 
+				<strong>обычный</strong>. Данный признак учитывается при расчете начислений за электроэнергию. Данный признак должен совпадать у тарифа и ИПУ, по которому ведётся расчет.</p>
+            </li>
+          </ul>
+        <!--</div>-->
+
+      </li>
+    </ul>
+    <table style="width: 100%; border-style: solid; border-width: 0px 0px 0px 10px; padding: 4px; margin: 1px auto; vertical-align: middle; text-align: middle;">
+      <tbody>
+        <tr>
+          <td height="auto" width="45px">
+            <p class="middle"><img class="middle" src="images/lightbulb.png" height="30"
+
+                width="30"></p>
+          </td>
+          <td style="vertical-align: middle;">
+            <p class="middle">Дата окончания действия предыдущего тарифа не
+              должна пересекаться с датой начала действия нового тарифа.
+              Например, дата окончания предыдущего тарифа 30.06.2015. Значит
+              дата начала действия нового тарифа должна быть 01.07.2015. В
+              противном случае возможен некорректный выбор тарифа.</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+	<!-- ===================== КОНЕЦ ТЕКСТА ========================= --></div>
+<div class="footer_wrapper reset">
+	<div class="footer">
+		<div class="ib_slogan">
+			<p>Многолетний опыт автоматизации бухучета и отчетности</p>
+		</div>
+		<div class="ib_logo">
+			<h1><a href="#"><b>Инфо-Бухгалтер</b> ©</a></h1>
+		</div>
+	</div>
+</div>
+<script src="../../../../_assets/js/jquery.js" type="text/javascript"></script>
+<script src="../../../../_assets/js/highlight.pack.js" type="text/javascript"></script>
+<script src="../../../../_assets/js/ib_platform_all.js" type="text/javascript"></script>
+
+  </body>
+</html>

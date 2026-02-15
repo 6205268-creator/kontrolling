@@ -7,7 +7,10 @@ alwaysApply: true
 
 ## Диаграммы
 
-- Все схемы только в **Mermaid**. PlantUML не использовать.
+- **C4 Model (архитектура)** — только в **Mermaid**. PlantUML не использовать.
+- **BPMN (бизнес-процессы)** — использовать BPMN 2.0 для детальных workflow.
+- Хранить .bpmn файлы в `/docs/processes/{domain}/`
+- Вьювер: `docs/processes/bpmn-viewer.html` (на базе bpmn-js)
 
 ## Именование
 

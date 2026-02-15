@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//RU" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ru">
+
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="content-type">
+<meta chapter="Прикладные компоненты\Инфо-Бухгалтер 8\Блоки\СНТ">
+<meta help-id="ST_DOLG">
+<link href="../../../../_assets/css/bloki.css" rel="stylesheet">
+<link rel="icon" href="../../../../_assets/img/favicon.ico" type="image/ico">
+<title>6.04. Реестр задолженностей по оплате</title>
+</head>
+
+<body>
+
+<div class="header reset">
+	<div class="header_inner">
+		<p class="brand">
+		<img class="ib-header-image" src="../../../../_assets/img/idn.png" align="left" alt="Центр помощи">
+		</p>
+	</div>
+</div>
+<div class="main_column">
+	<!-- ===================== САМ ТЕКСТ ========================= -->
+	<h1>Бланк &quot;Реестр задолженностей по оплате&quot;</h1>
+	<p>Данный бланк предназначен для отображения оборотов по указанному взносу за 
+	указанный период с указанной детализацией (рис. 1). </p>
+	<div align="center">
+		<img class="screenshot" src="images/st_dolg(1).png"> Рис. 1. Бланк &quot;Реестр 
+		задолженностей по оплате&quot;</div>
+	<br>
+	<table style="width: 100%; border-style: solid; border-width: 0px 0px 0px 10px; padding: 4px; margin: 1px auto; vertical-align: middle; text-align: middle;">
+		<tr>
+			<td height="auto" width="45px">
+			<p class="middle">
+			<img class="middle" src="images/lightbulb.png" height="30" width="30"></p>
+			</td>
+			<td style="vertical-align: middle;">
+			<p class="left">Бланк содержит графы множественного выбора. Подробное 
+			описание работы с данными графами находится
+			<a href="ST_MULTISEL.html">тут</a>.</p>
+			</td>
+		</tr>
+	</table>
+	<p>Рассмотрим поля, доступные для заполнения:</p>
+	<ul>
+		<li>
+		<p><strong>Улицы</strong> - выбираются улицы, по которым необходимо выполнить 
+		расчет. Возможен выбор произвольного количества улиц. Если оставить графу 
+		пустой, то отбор будет осуществляться по всем улицам.</p>
+		</li>
+		<li>
+		<p><strong>Участки</strong> - выбираются участки, по которым необходимо 
+		расчет. Возможен выбор произвольного количества участков. Если оставить 
+		графу пустой, то отбор будет осуществляться по всем участкам.</p>
+		</li>
+		<li>
+		<p><strong>Взносы</strong> - выбираются взносы, по которым необходимо расчет. 
+		Возможен выбор произвольного количества взносов. Если оставить графу пустой, 
+		то отбор будет осуществляться по всем участкам.</p>
+		</li>
+		<li>
+		<p><b>Дата задолженности</b> - дата, на которую будет рассчитан и сформирован 
+		реестр. </p>
+		</li>
+		<li>
+		<p><b>Печатать предупреждения</b> - настройка печати предупреждений о задолженности. 
+		В отдельном бланке будут выведены предупреждения.</p>
+		</li>
+		<li>
+		<p><b>Оплатить до</b> - дата, до которой необходимо оплатить задолженность. 
+		Отображается в предупреждении о задолженности.</p>
+		</li>
+		<li>
+		<p><strong>выгрузить ... в формате ...</strong> - позволяет 
+		выгрузить на диск таблицу через указанное приложение в указанном формате.</p>
+		</li>
+		<li>
+		<p><strong>Формировать реестр для передачи начислений в банк</strong> - 
+		признак формирования реестра для передачи в банк.</p>
+		<ul>
+			<li>
+			<p><strong>Выводить сумму по каждой статье отдельно</strong> - сумма 
+			по каждой статье будет выведена в реестр отдельной строкой.</p>
+			</li>
+		</ul>
+		</li>
+		<li>
+		<p><strong>Дир. выгрузки реестра</strong> - указывается директория выгрузки 
+		реестра. В эту же директорию будет выгружен файл Excel.</p>
+		</li>
+	</ul>
+	<p>После заполнения полей, влияющих на расчет, необходимо пересчитать бланк. 
+	Для этого нажмите кнопку
+	<img class="middle" src="images/F9.png" height="25" width="25"> на панели инструментов, 
+	клавишу <strong>F9</strong>, или комбинацию клавиш <strong>Ctrl + Enter</strong>.</p>
+	<p>После пересчета на экране отобразится таблица с задолженностями (рис. 2).</p>
+	<div align="center">
+		<img class="screenshot" src="images/st_dolg(2).png"> Рис. 2. Бланк &quot;Реестр 
+		задолженностей по оплате&quot; после пересчета</div>
+	<!-- ===================== КОНЕЦ ТЕКСТА ========================= --></div>
+<div class="footer_wrapper reset">
+	<div class="footer">
+		<div class="ib_slogan">
+			<p>Многолетний опыт автоматизации бухучета и отчетности</p>
+		</div>
+		<div class="ib_logo">
+			<h1><a href="#"><b>Инфо-Бухгалтер</b> ©</a></h1>
+		</div>
+	</div>
+</div>
+<script src="../../../../_assets/js/jquery.js" type="text/javascript"></script>
+<script src="../../../../_assets/js/highlight.pack.js" type="text/javascript"></script>
+<script src="../../../../_assets/js/ib_platform_all.js" type="text/javascript"></script>
+
+</body>
+
+</html>

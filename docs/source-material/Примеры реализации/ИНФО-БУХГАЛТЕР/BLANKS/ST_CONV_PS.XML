@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.860</format>
+    <title> 4. Конвертация ПС</title>
+    <part>Садоводческие товарищества (СНТ) - Служебные бланки</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ):ХХХ - Служебные бланки</alt_part>
+    <autorun state="true"/>
+    <hidden state="false"/>
+    <noprint1st state="false"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <archive>ST_CONV_PS.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="86"/>
+      <orientation album="false"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="false"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="7"/>
+  </header>
+  <text>
+    <line>                                     Конвертация плана счетов.</line>
+    <line></line>
+    <line>                                        !!! ВНИМАНИЕ !!!</line>
+    <line> Перед конвертацией плана счетов настоятельно рекомендуется ознакомиться с .</line>
+    <line></line>
+    <line> 1. Для корректной конвертации необходимо заполнить .</line>
+    <line> 2. Далее необходимо выполнить .</line>
+    <line> 3. После этого можно проверить  и скорректировать операции, которые .</line>
+    <line> 4. После корректировки обновленных операций можно  обновленный план счетов и хоз. операции.</line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="button" name="кн_инструкция">
+      <location X="76" Y="4" Width="12" Height="1"/>
+      <text>инструкцией</text>
+      <comment></comment>
+      <event_name>Кнопка1</event_name>
+    </object>
+    <object type="button" name="кн_спрШаблонов">
+      <location X="53" Y="6" Width="20" Height="1"/>
+      <text>справочник шаблонов</text>
+      <comment></comment>
+      <event_name>Кнопка3</event_name>
+    </object>
+    <object type="button" name="кн_предвКонв">
+      <location X="32" Y="7" Width="28" Height="1"/>
+      <text>предварительную конвертацию</text>
+      <comment></comment>
+      <event_name>Кнопка6</event_name>
+    </object>
+    <object type="button" name="кн_новыеОпОК">
+      <location X="33" Y="8" Width="15" Height="1"/>
+      <text>новые операции</text>
+      <comment></comment>
+      <event_name>показВсехРезультатов</event_name>
+    </object>
+    <object type="button" name="кн_ошибкиКонв">
+      <location X="85" Y="8" Width="33" Height="1"/>
+      <text>не были определены автоматически</text>
+      <comment></comment>
+      <event_name>показОшибок</event_name>
+    </object>
+    <object type="button" name="кн_сохранить">
+      <location X="52" Y="9" Width="10" Height="1"/>
+      <text>сохранить</text>
+      <comment></comment>
+      <event_name>соб_сохранение</event_name>
+    </object>
+  </objects>
+  <events>
+    <event name="Кнопка3">
+      <handler>
+        <library>ST\ST_CONV_PS.IBL</library>
+        <function>ST_PS_ПоказСпрШаблонов</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="Кнопка6">
+      <handler>
+        <library>ST\ST_CONV_PS.IBL</library>
+        <function>ST_PS_КонвертацияПС</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="показВсехРезультатов">
+      <handler>
+        <library>ST\ST_CONV_PS.IBL</library>
+        <function>ST_PS_ПоказРезультатов</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="показОшибок">
+      <handler>
+        <library>ST\ST_CONV_PS.IBL</library>
+        <function>ST_PS_ПоказРезультатов</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="соб_сохранение">
+      <handler>
+        <library>ST\ST_CONV_PS.IBL</library>
+        <function>ST_PS_СохранитьРезультаты</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+  </events>
+  <formulae>
+    <line></line>
+  </formulae>
+</blank>

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.899</format>
+    <title>ХХХ Анализ структуры базы данных</title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ)</alt_part>
+    <autorun state="true"/>
+    <hidden state="false"/>
+    <noprint1st state="false"/>
+    <custom_print_ini state="false"/>
+    <recalc_on_print_settings_change state="false"/>
+    <use_similar_lib state="false"/>
+    <init_validate state="false"/>
+    <archive>ST_DBINFO.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="100"/>
+      <orientation album="false"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="true"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+  </header>
+  <text>
+    <line></line>
+    <line></line>
+    <line>Файл INI:</line>
+    <line>Директория БД:</line>
+    <line>Маска файлов:</line>
+    <line></line>
+    <line></line>
+    <line>  Не обрабатывать(не учитывать при выводе результатов) пустые и несуществующие файлы</line>
+    <line>  Обрабатывать только файлы корневой папки</line>
+    <line></line>
+    <line></line>
+    <line> - Для вызова редактора таблицы зажмите Alt и щелкните левой кнопкой мыши по имени таблицы</line>
+    <line> - Для изменения структуры таблицы в соответствии с ее описанием в INI файле зажмите Shift и щелкните левой кнопкой мыши по имени таблицы</line>
+    <line> - Для изменения описания структуры таблицы в INI файле в соответствии с ее текущей структурой зажмите Shift+Ctrl и щелкните левой кнопкой мыши по имени таблицы</line>
+    <line> - Для показа таблицы в проводнике зажмите Ctrl+Alt и щелкните левой кнопкой мыши по имени таблицы</line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="output field" expression="&quot; Анализ структуры базы данных&quot;">
+      <location X="38" Y="1" Width="40" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-16</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="output field" expression="&quot;блока &quot;&quot;Садоводческие товарищества&quot;&quot;&quot;">
+      <location X="35" Y="2" Width="51" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-16</lfHeight>
+        <lfWeight>700</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="input field" variable="ФлИНИ">
+      <location X="16" Y="3" Width="100" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>IB_DBFINFO.IBL</library>
+      <function>IB_DBFINFO_ВЫБ_ИНИФАЙЛА</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="ВыбрТекДир">
+      <location X="16" Y="4" Width="100" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>IB_DBFINFO.IBL</library>
+      <function>IB_DBFINFO_ВЫБ_ДИР</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="true"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_маскаФайлов">
+      <location X="16" Y="5" Width="30" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>string</input_type>
+    </object>
+    <object type="button" name="Кнопка1">
+      <location X="1" Y="6" Width="20" Height="1"/>
+      <text> Изменить INI файл</text>
+      <comment>Внесение данных о фактической структуре БД в текущий INI файл</comment>
+      <event_name>ОбрИзмINI</event_name>
+    </object>
+    <object type="button" name="Кнопка2">
+      <location X="22" Y="6" Width="24" Height="1"/>
+      <text>Изменить структуру БД</text>
+      <comment>Приведение  фактической структуры БД в соответствие с данными INI файла</comment>
+      <event_name>ОбрИзмСтруктБД</event_name>
+    </object>
+    <object type="input field" variable="НеВывПустНесущФайлы">
+      <location X="2" Y="8" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>IB_DBFINFO.IBL</library>
+      <function>ПР_ОБР</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="ОбрВерхУр">
+      <location X="2" Y="9" Width="1" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>IB_DBFINFO.IBL</library>
+      <function>ПР_ОБР</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="checkbox" variable="оп_пропускВременных">
+      <location X="2" Y="10" Width="42" Height="1"/>
+      <text>не обрабатывать временные файлы и папки</text>
+      <comment></comment>
+      <event_name>соб_пропускВременных</event_name>
+    </object>
+  </objects>
+  <events>
+    <event name="ОбрИзмСтруктБД">
+      <handler>
+        <library>IB_DBFINFO.IBL</library>
+        <function>ИЗМЕНИТЬ_СТРУКТ_БД</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="ОбрИзмINI">
+      <handler>
+        <library>IB_DBFINFO.IBL</library>
+        <function>ИЗМЕНИТЬ_INI_ФАЙЛ</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="Alt+Click">
+      <handler>
+        <library>IB_DBFINFO.IBL</library>
+        <function>IB_DBFINFO_РЕДАКТОР_ТАБЛИЦ</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="Shift+Click">
+      <handler>
+        <library>IB_DBFINFO.IBL</library>
+        <function>ИЗМЕНИТЬ_СТРУКТ_ФАЙЛА</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="Ctrl+Shift+Click">
+      <handler>
+        <library>IB_DBFINFO.IBL</library>
+        <function>IB_DBFINFO_ИЗМ_ОПИС_ФАЙЛА</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="Ctrl+Alt+Click">
+      <handler>
+        <library>IB_DBFINFO.IBL</library>
+        <function>IB_DBFINFO_ПоказатьВПроводнике</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+  </events>
+  <formulae>
+    <line>ИСПОЛЬЗОВАТЬ("IB_DBFINFO.IBL")</line>
+    <line>ИСПОЛЬЗОВАТЬ("TBLPRINT")</line>
+    <line></line>
+    <line>//пути по умолчанию для ИНИ файла и  директории БД</line>
+    <line>путьINI = ТЕК_ДИР + "\DOC\Форматы\INI\ST_DBFINFO.INI"</line>
+    <line>дирDBF = "ST"</line>
+    <line>путьДирDBF = ДИР_DBF + "\" + дирDBF</line>
+    <line>имяБлока = "Садоводческие товарищества"</line>
+    <line>гр_маскаФайлов = ?(гр_маскаФайлов = "", "*", гр_маскаФайлов)</line>
+    <line></line>
+    <line>IB_DBINFO_ЗапускАнализаБД(путьINI, дирDBF, путьДирDBF, имяБлока)</line>
+  </formulae>
+</blank>

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.896</format>
+    <title> 7.02. Реестр участков/собственников</title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 7. Отчёты по справочникам</alt_part>
+    <autorun state="true"/>
+    <hidden state="false"/>
+    <noprint1st state="true"/>
+    <custom_print_ini state="true"/>
+    <recalc_on_print_settings_change state="true"/>
+    <use_similar_lib state="false"/>
+    <init_validate state="false"/>
+    <archive>ST_13.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="100"/>
+      <orientation album="true"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="false"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+    <help file="*ST_13" topic="0"/>
+  </header>
+  <text>
+    <line> Улицы</line>
+    <line> Участки         Участок используется</line>
+    <line> Отчёт</line>
+    <line></line>
+    <line>  с     по</line>
+    <line>     в формате</line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="input field" variable="гр_улицы">
+      <location X="10" Y="1" Width="50" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+      <function>STG_ВыборУлиц</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="кн_сбросФлтУлиц">
+      <location X="63" Y="1" Width="3" Height="1"/>
+      <text>Х</text>
+      <comment></comment>
+      <event_name>соб_сбросФлтУлиц</event_name>
+    </object>
+    <object type="button" name="кн_НастройкиТаблиц">
+      <location X="70" Y="1" Width="27" Height="1"/>
+      <text>Настройка вывода столбцов</text>
+      <comment></comment>
+      <event_name>Кнопка1</event_name>
+    </object>
+    <object type="input field" variable="гр_участки">
+      <location X="10" Y="2" Width="50" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+      <function>STG_ВыборУчастков</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="button" name="кн_сбросФлтУчастков">
+      <location X="63" Y="2" Width="3" Height="1"/>
+      <text>Х</text>
+      <comment></comment>
+      <event_name>соб_сбросФлтУчастков</event_name>
+    </object>
+    <object type="input field" variable="гр_испПризнакИспУч">
+      <location X="92" Y="2" Width="3" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ДаНет</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_ДетУчастокСобст">
+      <location X="10" Y="3" Width="19" Height="1"/>
+      <comment></comment>
+      <printing state="false"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыборТипаРеестраБл13</function>
+      <param_type>string</param_type>
+      <refresh state="true"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="checkbox" variable="оп_текущиеВладельцы">
+      <location X="2" Y="4" Width="28" Height="1"/>
+      <text>только текущие владельцы</text>
+      <comment>будут показаны принимающие участие в расчете владельцы</comment>
+      <event_name>соб_текущиеВладельцы</event_name>
+    </object>
+    <object type="checkbox" variable="оп_владельцыЗаПериод">
+      <location X="2" Y="5" Width="12" Height="1"/>
+      <text>владельцы</text>
+      <comment></comment>
+      <event_name>соб_владельцыЗаПериод</event_name>
+    </object>
+    <object type="input field" variable="гр_датаС">
+      <location X="17" Y="5" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="input field" variable="гр_датаПо">
+      <location X="34" Y="5" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="checkbox" variable="оп_выгрузитьРеестр">
+      <location X="2" Y="6" Width="12" Height="1"/>
+      <text>выгрузить</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция61</event_name>
+    </object>
+    <object type="input field" variable="гр_прогВывода">
+      <location X="14" Y="6" Width="25" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбВыводаРеестра</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_формат">
+      <location X="53" Y="6" Width="5" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбФорматаРеестра</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="true"/>
+      <read_only state="true"/>
+    </object>
+    <object type="page_break">
+      <location Y="7"/>
+    </object>
+    <object type="output field" expression="гр_заголовокОтчета">
+      <location X="36" Y="7" Width="45" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-27</lfHeight>
+        <lfWeight>400</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+  </objects>
+  <events>
+    <event name="Кнопка1">
+      <handler>
+        <library>IB_TABLE_SETTINGS.IBL</library>
+        <function>IB_TBLSET_ПоказатьНастрПоПрофКн</function>
+      </handler>
+      <options>
+        <refresh state="false"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="соб_сбросФлтУлиц">
+      <handler>
+        <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+        <function>STG_КнопкаСбросФильтра</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="соб_сбросФлтУчастков">
+      <handler>
+        <library>ST_GSK\ST_GSK_SELECT.IBL</library>
+        <function>STG_КнопкаСбросФильтра</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="false"/>
+      </options>
+    </event>
+    <event name="соб_владельцыЗаПериод">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_13.IBL</library>
+        <function>STG_ОпцииБланка</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+    <event name="соб_текущиеВладельцы">
+      <handler>
+        <library>ST_GSK\BLW\ST_GSK_13.IBL</library>
+        <function>STG_ОпцииБланка</function>
+      </handler>
+      <options>
+        <refresh state="true"/>
+        <reload state="false"/>
+        <reread state="true"/>
+      </options>
+    </event>
+  </events>
+  <formulae>
+    <line>ИСПОЛЬЗОВАТЬ("ST\ST_CONST")</line>
+    <line>ИСПОЛЬЗОВАТЬ("ST_GSK\BLW\ST_GSK_13")</line>
+    <line></line>
+    <line>  IB_PROF_УстТекЛокПрофиль(к_СНТПрофРеестрУчастков)</line>
+    <line>  STG_СформироватьРеестр(гр_заголовокОтчета)</line>
+    <line></line>
+  </formulae>
+</blank>

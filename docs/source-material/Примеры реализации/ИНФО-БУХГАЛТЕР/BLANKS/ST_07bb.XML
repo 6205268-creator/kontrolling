@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<blank>
+  <header>
+    <id> ИБ(w) : формат бланка : стандарт</id>
+    <format>8.896</format>
+    <title> 7.04. Ведомость по показаниям общих счетчиков</title>
+    <part>Садоводческие товарищества (СНТ)</part>
+    <alt_part>X. Дополнительные блоки:07. Садоводческие товарищества (СНТ): 7. Отчёты по справочникам</alt_part>
+    <autorun state="true"/>
+    <hidden state="false"/>
+    <noprint1st state="true"/>
+    <custom_print_ini state="true"/>
+    <recalc_on_print_settings_change state="true"/>
+    <use_similar_lib state="false"/>
+    <init_validate state="false"/>
+    <archive>ST_07.BAR</archive>
+    <font>
+      <lfFaceName>Courier New</lfFaceName>
+      <lfHeight>-13</lfHeight>
+      <lfWeight>400</lfWeight>
+      <lfItalic>0</lfItalic>
+      <lfUnderline>0</lfUnderline>
+      <lfStrikeOut>0</lfStrikeOut>
+      <lfCharSet>204</lfCharSet>
+    </font>
+    <print_settings>
+      <scale value="82"/>
+      <orientation album="true"/>
+      <fields left="0" right="0" top="0" bottom="0"/>
+      <page_numbers state="true"/>
+    </print_settings>
+    <archive_ident date="true" time="true">
+      <ident>НОМЕР</ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+      <ident></ident>
+    </archive_ident>
+    <compiler state="true" flags="23"/>
+    <help file="*ST_07b" topic="0"/>
+  </header>
+  <text>
+    <line></line>
+    <line>Период с  по</line>
+    <line>  в формате</line>
+    <line></line>
+    <line>Настройка вывода столбцов таблицы:</line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+    <line></line>
+  </text>
+  <objects>
+    <object type="output field" expression="&quot;Общий прибор учёта:&quot;">
+      <location X="1" Y="1" Width="21" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+    <object type="input field" variable="гр_ОбщСч">
+      <location X="22" Y="1" Width="28" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\TOP\ST_GSK_METERS.IBL</library>
+      <function>STG_ВыборОПУ</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_ДатаС">
+      <location X="10" Y="2" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="input field" variable="гр_ДатаПо">
+      <location X="24" Y="2" Width="10" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>date</input_type>
+      <no_validation state="false"/>
+    </object>
+    <object type="checkbox" variable="оп_выгрузитьРеестр">
+      <location X="1" Y="3" Width="12" Height="1"/>
+      <text>выгрузить</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция61</event_name>
+    </object>
+    <object type="input field" variable="гр_прогВывода">
+      <location X="14" Y="3" Width="25" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбВыводаРеестра</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="input field" variable="гр_формат">
+      <location X="50" Y="3" Width="5" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <input_type>function</input_type>
+      <no_validation state="false"/>
+      <library>ST_GSK\BLW\ST_GSK_BLW.IBL</library>
+      <function>STG_ВыбФорматаРеестра</function>
+      <param_type>string</param_type>
+      <refresh state="false"/>
+      <reload state="false"/>
+      <reread state="false"/>
+      <button_always state="false"/>
+      <read_only state="true"/>
+    </object>
+    <object type="checkbox" variable="оп_Стлб!1">
+      <location X="2" Y="6" Width="22" Height="1"/>
+      <text>Начальные показания</text>
+      <comment></comment>
+      <event_name>ИзменениеОпция2</event_name>
+    </object>
+    <object type="checkbox" variable="оп_показания">
+      <location X="28" Y="6" Width="13" Height="1"/>
+      <text>Показания</text>
+      <comment></comment>
+      <event_name>переклВыводитьОбъемы</event_name>
+    </object>
+    <object type="checkbox" variable="оп_объемы">
+      <location X="45" Y="6" Width="10" Height="1"/>
+      <text>Объемы</text>
+      <comment></comment>
+      <event_name>переклВыводитьОбъемы</event_name>
+    </object>
+    <object type="checkbox" variable="оп_УбиратьПустые">
+      <location X="59" Y="6" Width="18" Height="1"/>
+      <text>убирать пустые</text>
+      <comment></comment>
+      <event_name>переклУбиратьПустые</event_name>
+    </object>
+    <object type="page_break">
+      <location Y="7"/>
+    </object>
+    <object type="output field" expression="&quot;Ведомость показаний общих счетчиков&quot;">
+      <location X="3" Y="7" Width="77" Height="2"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+      <font>
+        <lfFaceName>Courier New</lfFaceName>
+        <lfHeight>-19</lfHeight>
+        <lfWeight>400</lfWeight>
+        <lfItalic>0</lfItalic>
+        <lfUnderline>0</lfUnderline>
+        <lfStrikeOut>0</lfStrikeOut>
+        <lfCharSet>204</lfCharSet>
+      </font>
+    </object>
+    <object type="output field" expression="гр_ЗаПериод">
+      <location X="3" Y="9" Width="77" Height="1"/>
+      <comment></comment>
+      <printing state="true"/>
+      <bold state="false"/>
+      <dec_places>-1</dec_places>
+    </object>
+  </objects>
+  <events/>
+  <formulae>
+    <line>ИСПОЛЬЗОВАТЬ("ST\ST_CONST")</line>
+    <line>ИСПОЛЬЗОВАТЬ("ST_GSK\BLW\ST_GSK_07BB.IBL")</line>
+    <line></line>
+    <line>  IB_PROF_УстТекЛокПрофиль(к_СНТПрофРеестрОПУ)</line>
+    <line>  STG_РеестрПоказанийОПУ(гр_ЗаПериод)</line>
+    <line></line>
+  </formulae>
+</blank>
