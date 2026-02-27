@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, get_db, require_role
 from app.models.app_user import AppUser
+from app.models.land_plot import LandPlot
 from app.schemas.land_plot import LandPlotCreate, LandPlotUpdate, LandPlotWithOwners
 from app.schemas.plot_ownership import PlotOwnershipCreate, PlotOwnershipInDB
 from app.services import land_plot_service

@@ -5,11 +5,6 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    exclude: ['**/node_modules/**', '**/e2e/**'],
-  },
   define: {
     __BUILD_TIMESTAMP__: JSON.stringify(new Date().toISOString().slice(0, 19).replace('T', ' ')),
   },
