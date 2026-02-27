@@ -1,0 +1,17 @@
+flowchart LR
+    subgraph External["Внешние системы"]
+        System_BelarusBankAPI["System_BelarusBankAPI"]
+    end
+
+    subgraph Containers["Контейнеры"]
+        Service_BankingReconciliation["Service_BankingReconciliation<br/>Python"]
+        Service_ContributionManager["Service_ContributionManager"]
+    end
+
+    Database_PostgreSQL_ST["Database_PostgreSQL_ST"]
+
+    System_BelarusBankAPI -->|выписка| Service_BankingReconciliation
+    Service_BankingReconciliation -->|распознавание плательщика| Service_BankingReconciliation
+    Service_BankingReconciliation -->|зачисление| Service_BankingReconciliation
+    Service_BankingReconciliation -->|PaymentProcessed| Service_ContributionManager
+    Service_BankingReconciliation <--> Database_PostgreSQL_ST

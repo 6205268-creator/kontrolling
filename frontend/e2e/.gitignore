@@ -1,0 +1,10 @@
+# Playwright
+playwright-report/
+test-results/
+
+# Coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,16 +1,45 @@
-# 🏡 КОНТРОЛЛИНГ — Система управления СТ (РБ)
+# КОНТРОЛЛИНГ — Система управления СТ (РБ)
 
-Архитектура как код. Единая точка правды для системы учёта участков, взносов, показаний счётчиков и уведомлений в садоводческих товариществах.
+Система учёта хозяйственной деятельности садоводческих товариществ (СТ) Республики Беларусь.
 
-## 🗺 Структура
-- `/docs/architecture/` — глобальные правила, компоненты, глоссарии, диаграммы (C4)
-- `/domains/` — бизнес-домены (участки, взносы, банковские выписки, уведомления, отчётность)
-- `.cursor/rules/` — правила для ИИ-ассистента
-- `/logs/` — журналы работ (русский и английский), записи по архитектуре и другим задачам
+[![Backend tests](https://github.com/OWNER/kontrolling/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/OWNER/kontrolling/actions/workflows/backend-tests.yml)
+[![Frontend tests](https://github.com/OWNER/kontrolling/actions/workflows/frontend-tests.yml/badge.svg)](https://github.com/OWNER/kontrolling/actions/workflows/frontend-tests.yml)
 
-## 📐 Методология
-- **C4 Model** — иерархия от системы до компонентов
-- **Schema First** — сначала схема в Git → потом код
-- **ADR** — фиксация решений с обоснованием
+> В бейджах замените `OWNER` на владельца репозитория (логин или организацию GitHub).
 
-> Все диаграммы рендерятся нативно на GitHub через Mermaid.
+## Стек
+
+| Слой | Технология |
+|------|-----------|
+| Backend | Python 3.11 + FastAPI |
+| БД | PostgreSQL 15+ + SQLAlchemy 2.0 (async) + Alembic |
+| Frontend | Vue 3 + TypeScript + Vite + Pinia |
+| Auth | JWT + bcrypt |
+| Тесты | pytest + Vitest |
+
+## Структура проекта
+
+```
+kontrolling/
+├── backend/            # FastAPI приложение
+├── frontend/           # Vue 3 SPA
+├── docs/
+│   ├── project-design.md        # Архитектура и дизайн системы
+│   ├── project-implementation.md # План реализации (35 фич)
+│   ├── decomposition.md         # Декомпозиция модулей
+│   ├── data-model/              # Модель данных (диаграммы)
+│   ├── architecture/            # C4-диаграммы
+│   ├── source-material/         # Исходные материалы
+│   └── processes/               # BPMN-процессы
+└── README.md
+```
+
+## Инструменты разработки (AI / Cursor)
+
+- **[Context7](https://github.com/upstash/context7)** — MCP-сервер для актуальной документации библиотек (FastAPI, SQLAlchemy, Vue и др.). Подключён в проекте (`.cursor/mcp.json`); ассистенты должны **всегда** использовать Context7 при запросах по API и примерам кода библиотек. [Получить ключ](https://context7.com/dashboard) (опционально, для повышенных лимитов).
+
+## Документация
+
+- [Дизайн системы](docs/project-design.md)
+- [План реализации](docs/project-implementation.md)
+- [Модель данных](docs/data-model/schema-viewer.html)

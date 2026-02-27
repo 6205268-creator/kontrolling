@@ -1,0 +1,46 @@
+---
+description: Тестирование бэкенда (pytest, фикстуры, порядок импортов) и подводные камни
+globs: backend/**/*.py, backend/tests/**/*
+---
+
+# Тестирование бэкенда и подводные камни
+
+## Документация библиотек (Context7)
+
+При написании или доработке тестов (pytest, pytest-asyncio, FastAPI TestClient, httpx) и при вопросах по API используй **Context7 MCP** — см. `.cursor/rules/context7-docs.mdc`. Не опираться только на знания модели: актуальные примеры dependency override, async fixtures, параметризации — в Context7.
+
+## Структура тестов
+
+- `tests/test_api/` — эндпоинты (async_client, токены по ролям).
+- `tests/test_services/` — сервисы с `test_db`.
+- `tests/test_schemas/`, `tests/test_models/`, `tests/test_core/` — схемы, модели, утилиты.
+- Общие фикстуры: `tests/conftest.py` (`test_db`, `async_client`, при необходимости `admin_token`, `treasurer_token` и т.д.).
+
+## Порядок в conftest.py (критично)
+
+1. Установить `os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"` до любого импорта приложения.
+2. Импортировать `Base` и затем `app.models` (чтобы таблицы попали в `Base.metadata`).
+3. Только после этого импортировать `app` из `app.main`. Иначе приложение создаст движок из `.env` (PostgreSQL).
+
+## Переопределение get_db в тестах API
+
+При использовании `async_client` нужно подменить зависимость БД. В текущем проекте переопределяются оба:
+
+- `app.dependency_overrides[deps.get_db] = override_get_db`
+- `app.dependency_overrides[db_session.get_db] = override_get_db`
+
+Иначе часть кода может получить сессию из глобального движка, а не из `test_db`.
+
+## Модели и Alembic
+
+- Каждая новая ORM-модель должна быть импортирована в `app/models/__init__.py` и добавлена в `__all__`. Иначе Alembic не увидит таблицу при `autogenerate`, а в тестах `Base.metadata.create_all` не создаст её.
+
+## UUID в моделях
+
+- Использовать тип `Guid` из `app.db.base` для первичных ключей и FK по UUID: совместимость PostgreSQL (native UUID) и SQLite в тестах (CHAR(36)).
+
+## Соглашения по тестам
+
+- Имена: `test_<что>_<сценарий>` (например `test_get_land_plot_not_found`, `test_create_land_plot_with_single_owner`).
+- Async-тесты: `async def test_...` с фикстурами `test_db` или `async_client` по необходимости.
+- Для примеров по pytest-asyncio, httpx, FastAPI testing — использовать Context7.

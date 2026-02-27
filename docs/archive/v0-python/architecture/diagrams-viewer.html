@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Схемы КОНТРОЛЛИНГ — Mermaid</title>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
+    document.querySelectorAll('.mermaid-src').forEach(async (el, i) => {
+      const code = el.textContent.trim();
+      const out = el.nextElementSibling;
+      try {
+        const { svg } = await mermaid.render('mermaid-' + i, code);
+        out.innerHTML = svg;
+      } catch (e) {
+        out.innerHTML = '<pre style="color:red">' + e.message + '</pre>';
+      }
+    });
+  </script>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 1rem; max-width: 1200px; }
+    h1 { font-size: 1.25rem; }
+    section { margin: 2rem 0; padding: 1rem; border: 1px solid #eee; border-radius: 8px; }
+    section h2 { margin-top: 0; font-size: 1.1rem; }
+    .mermaid-out { overflow: auto; padding: 1rem; background: #fafafa; border-radius: 6px; }
+    .mermaid-out svg { max-width: 100%; }
+    .mermaid-src { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Схемы архитектуры КОНТРОЛЛИНГ</h1>
+
+  <section>
+    <h2>1. Акторы (actors.mmd)</h2>
+    <div class="mermaid-src">flowchart TB
+    subgraph Actors["Actors"]
+        Person_Sobstvennik["Person_Sobstvennik"]
+        Person_Predsedatel_ST["Person_Predsedatel_ST"]
+        Person_Buhgalter_ST["Person_Buhgalter_ST"]
+    end</div>
+    <div class="mermaid-out"></div>
+  </section>
+
+  <section>
+    <h2>2. Внешние системы (external_systems.mmd)</h2>
+    <div class="mermaid-src">flowchart TB
+    subgraph ExternalSystems["External Systems"]
+        System_BelarusBankAPI["System_BelarusBankAPI"]
+        System_TelegramBot["System_TelegramBot"]
+        System_EmailService["System_EmailService"]
+    end</div>
+    <div class="mermaid-out"></div>
+  </section>
+
+  <section>
+    <h2>3. Базы данных (databases.mmd)</h2>
+    <div class="mermaid-src">flowchart TB
+    subgraph Databases["Databases"]
+        Database_PostgreSQL_ST["Database_PostgreSQL_ST<br/>Требование РБ: хранение 5+ лет"]
+    end</div>
+    <div class="mermaid-out"></div>
+  </section>
+
+  <section>
+    <h2>4. System Context L1 (system-context-l1.mmd)</h2>
+    <div class="mermaid-src">flowchart LR
+    subgraph Actors["Акторы"]
+        Person_Sobstvennik["Собственник участка"]
+        Person_Predsedatel_ST["Председатель СТ"]
+        Person_Kaznachey_ST["Казначей СТ"]
+    end
+
+    subgraph External["Внешние системы"]
+        System_Bank["Банк\nвыписки"]
+        System_Telegram["Telegram"]
+        System_Email_RB["Почта РБ"]
+        System_SMS["SMS"]
+    end
+
+    System_Kontrolling["«КОНТРОЛЛИНГ»"]
+
+    Person_Sobstvennik -->|получает уведомления| System_Kontrolling
+    System_Kontrolling --> Person_Sobstvennik
+    System_Bank -->|поставляет выписки| System_Kontrolling
+    Person_Predsedatel_ST -->|формирует отчёты| System_Kontrolling
+    Person_Kaznachey_ST -->|формирует отчёты| System_Kontrolling
+    System_Kontrolling --> System_Telegram
+    System_Kontrolling --> System_Email_RB
+    System_Kontrolling --> System_SMS</div>
+    <div class="mermaid-out"></div>
+  </section>
+
+  <section>
+    <h2>5. Container L2 — Банковские выписки (container-diagram.mmd)</h2>
+    <div class="mermaid-src">flowchart LR
+    subgraph External["Внешние системы"]
+        System_BelarusBankAPI["System_BelarusBankAPI"]
+    end
+
+    subgraph Containers["Контейнеры"]
+        Service_BankingReconciliation["Service_BankingReconciliation<br/>Python"]
+        Service_ContributionManager["Service_ContributionManager"]
+    end
+
+    Database_PostgreSQL_ST["Database_PostgreSQL_ST"]
+
+    System_BelarusBankAPI -->|выписка| Service_BankingReconciliation
+    Service_BankingReconciliation -->|распознавание плательщика| Service_BankingReconciliation
+    Service_BankingReconciliation -->|зачисление| Service_BankingReconciliation
+    Service_BankingReconciliation -->|PaymentProcessed| Service_ContributionManager
+    Service_BankingReconciliation &lt;--&gt; Database_PostgreSQL_ST</div>
+    <div class="mermaid-out"></div>
+  </section>
+</body>
+</html>

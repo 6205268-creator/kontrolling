@@ -1,0 +1,9 @@
+# Опционально: pre-commit для локальной проверки перед коммитом.
+# Установка: pip install pre-commit && pre-commit install
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff-format
+      - id: ruff-check
+        args: [--fix]
