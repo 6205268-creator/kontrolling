@@ -6,8 +6,7 @@
 Создаёт: 2 СТ, 5 владельцев, 10 участков с правами собственности,
 финансовые субъекты, виды взносов, категории расходов, начисления и платежи,
 расходы, 3 счётчика с показаниями, 3 пользователя (admin, chairman, treasurer).
-Пользователи (admin, chairman, treasurer) создаются только при отсутствии.
-Остальные сущности при повторном запуске дублируются — предпочтительно чистая БД.
+Все сущности создаются только если ещё не существуют (идемпотентный скрипт).
 """
 from __future__ import annotations
 
@@ -38,12 +37,20 @@ from app.models import (
 
 
 async def seed(session) -> None:
-    """Создаёт все тестовые сущности в переданной сессии."""
-    # 2 СТ
-    coop_romashka = Cooperative(name='СТ "Ромашка"', unp="100000001", address="Минский р-н, д. Ромашки")
-    coop_vasilek = Cooperative(name='СТ "Василёк"', unp="100000002", address="Минский р-н, д. Васильки")
-    session.add_all([coop_romashka, coop_vasilek])
-    await session.flush()
+    """Создаёт все тестовые сущности в переданной сессии (идемпотентно)."""
+    # 2 СТ (только если нет)
+    result = await session.execute(select(Cooperative).where(Cooperative.unp.in_(["100000001", "100000002"])))
+    existing_coops = result.scalars().all()
+    if len(existing_coops) == 2:
+        print("ℹ️ СТ уже существуют, пропускаем создание")
+        coop_romashka = existing_coops[0]
+        coop_vasilek = existing_coops[1]
+    else:
+        coop_romashka = Cooperative(name='СТ "Ромашка"', unp="100000001", address="Минский р-н, д. Ромашки")
+        coop_vasilek = Cooperative(name='СТ "Василёк"', unp="100000002", address="Минский р-н, д. Васильки")
+        session.add_all([coop_romashka, coop_vasilek])
+        await session.flush()
+        print("✅ Создано 2 СТ")
 
     # 5 владельцев: 3 физ., 2 юр.
     owners = [
@@ -228,12 +235,15 @@ async def main() -> int:
         try:
             await seed(session)
             await session.commit()
-            print("Seed выполнен: созданы СТ, владельцы, участки, начисления, платежи, расходы, счётчики, пользователи.")
-            print("Пользователи: admin/admin, chairman/chairman, treasurer/treasurer")
+            print("✅ Seed выполнен (или пропущен, если данные уже есть).")
+            print("👤 Пользователи: admin/admin, chairman/chairman, treasurer/treasurer")
             return 0
         except Exception as e:
             await session.rollback()
-            print(f"Ошибка при seed: {e}", file=sys.stderr)
+            if "duplicate key" in str(e).lower() or "unique violation" in str(e).lower():
+                print("ℹ️ Seed пропущен: данные уже существуют в БД")
+                return 0
+            print(f"❌ Ошибка при seed: {e}", file=sys.stderr)
             raise
 
 

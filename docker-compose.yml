@@ -37,6 +37,7 @@ services:
     command: >
       sh -c "pip install -r requirements.txt &&
              alembic upgrade head &&
+             python -m app.scripts.seed_db || true &&
              uvicorn app.main:app --host 0.0.0.0 --port 8000"
 
   frontend:
