@@ -1,6 +1,7 @@
 ---
 description: Architecture as Code (AaC) & C4 Modeling — роль, визуализация, SSoT, структура репозитория, Schema First, ADR
-alwaysApply: true
+alwaysApply: false
+globs: docs/architecture/**, docs/processes/**, docs/data-model/**, domains/**, **/*.mmd, **/*.bpmn
 ---
 
 # Standard: Architecture as Code (AaC) & C4 Modeling for Controlling Project

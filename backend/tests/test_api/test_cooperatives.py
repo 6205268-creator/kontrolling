@@ -2,8 +2,10 @@ import pytest
 from httpx import AsyncClient
 
 from app.core.security import create_access_token, get_password_hash
-from app.models.app_user import AppUser
-from app.models.cooperative import Cooperative
+
+# Import models from Clean Architecture modules
+from app.modules.administration.infrastructure.models import AppUserModel as AppUser
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
 
 
 @pytest.fixture

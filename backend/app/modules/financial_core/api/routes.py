@@ -4,31 +4,19 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db
+from app.api.deps import get_current_user
 from app.models.app_user import AppUser
 
 from .schemas import BalanceInfo, FinancialSubjectInfo
-from ..infrastructure.repositories import FinancialSubjectRepository, BalanceRepository
-from ..application.use_cases import (
-    GetFinancialSubjectUseCase,
-    GetFinancialSubjectsUseCase,
-    GetBalanceUseCase,
-    GetBalancesByCooperativeUseCase,
+from app.modules.deps import (
+    get_get_financial_subject_use_case,
+    get_get_financial_subjects_use_case,
+    get_get_balance_use_case,
+    get_get_balances_by_cooperative_use_case,
 )
 
 router = APIRouter()
-
-
-def _get_fs_repo(db: AsyncSession) -> FinancialSubjectRepository:
-    """Get financial subject repository instance."""
-    return FinancialSubjectRepository(db)
-
-
-def _get_balance_repo(db: AsyncSession) -> BalanceRepository:
-    """Get balance repository instance."""
-    return BalanceRepository(db)
 
 
 @router.get(
@@ -39,7 +27,7 @@ def _get_balance_repo(db: AsyncSession) -> BalanceRepository:
 )
 async def get_financial_subjects(
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_get_financial_subjects_use_case),
     cooperative_id: UUID | None = Query(None, description="Фильтр по СТ"),
 ) -> list[FinancialSubjectInfo]:
     """
@@ -58,10 +46,8 @@ async def get_financial_subjects(
             detail="Необходимо указать cooperative_id",
         )
 
-    repo = _get_fs_repo(db)
-    use_case = GetFinancialSubjectsUseCase(repo)
     subjects = await use_case.execute(cooperative_id=cooperative_id)
-    
+
     return [
         FinancialSubjectInfo(
             id=s.id,
@@ -84,18 +70,16 @@ async def get_financial_subjects(
 async def get_financial_subject_balance(
     subject_id: UUID,
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    get_subject_use_case=Depends(get_get_financial_subject_use_case),
+    get_balance_use_case=Depends(get_get_balance_use_case),
 ) -> BalanceInfo:
     """Получить баланс конкретного финансового субъекта."""
     # Check access
-    fs_repo = _get_fs_repo(db)
-    get_subject_use_case = GetFinancialSubjectUseCase(fs_repo)
-    
     subject = await get_subject_use_case.execute(
         subject_id=subject_id,
         cooperative_id=current_user.cooperative_id,
     )
-    
+
     if subject is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -109,10 +93,8 @@ async def get_financial_subject_balance(
             detail="Нет доступа к данному финансовому субъекту",
         )
 
-    balance_repo = _get_balance_repo(db)
-    use_case = GetBalanceUseCase(balance_repo)
-    balance = await use_case.execute(financial_subject_id=subject_id)
-    
+    balance = await get_balance_use_case.execute(financial_subject_id=subject_id)
+
     if balance is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -130,7 +112,7 @@ async def get_financial_subject_balance(
 )
 async def get_balances_by_cooperative(
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_get_balances_by_cooperative_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ"),
 ) -> list[BalanceInfo]:
     """
@@ -149,10 +131,8 @@ async def get_balances_by_cooperative(
             detail="Необходимо указать cooperative_id",
         )
 
-    balance_repo = _get_balance_repo(db)
-    use_case = GetBalancesByCooperativeUseCase(balance_repo)
     balances = await use_case.execute(cooperative_id=cooperative_id)
-    
+
     return [
         BalanceInfo(
             financial_subject_id=b.financial_subject_id,

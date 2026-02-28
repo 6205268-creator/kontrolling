@@ -6,11 +6,12 @@ from httpx import AsyncClient
 from sqlalchemy import select
 
 from app.core.security import create_access_token, get_password_hash
-from app.models.app_user import AppUser
-from app.models.cooperative import Cooperative
-from app.models.meter import Meter
-from app.models.meter_reading import MeterReading
-from app.models.owner import Owner
+
+# Import models from Clean Architecture modules
+from app.modules.administration.infrastructure.models import AppUserModel as AppUser
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
+from app.modules.land_management.infrastructure.models import OwnerModel as Owner
+from app.modules.meters.infrastructure.models import MeterModel as Meter, MeterReadingModel as MeterReading
 
 
 @pytest.fixture

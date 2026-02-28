@@ -2,7 +2,9 @@ import pytest
 from httpx import AsyncClient
 
 from app.core.security import get_password_hash
-from app.models.app_user import AppUser
+
+# Import models from Clean Architecture modules
+from app.modules.administration.infrastructure.models import AppUserModel as AppUser
 
 
 @pytest.mark.asyncio

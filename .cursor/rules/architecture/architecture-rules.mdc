@@ -1,6 +1,7 @@
 ---
 description: Архитектурные правила — Mermaid, именование, Schema First, глоссарий
-alwaysApply: true
+alwaysApply: false
+globs: docs/architecture/**, docs/processes/**, docs/data-model/**, domains/**, **/*.mmd, **/*.bpmn
 ---
 
 # Архитектурные правила

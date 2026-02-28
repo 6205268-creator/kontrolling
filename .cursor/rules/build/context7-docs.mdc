@@ -1,3 +1,9 @@
+---
+description: Context7 — актуальная документация библиотек (использовать везде)
+alwaysApply: false
+globs: backend/**, frontend/**
+---
+
 # Context7 — актуальная документация библиотек (использовать везде)
 
 **Инструмент:** [Context7 MCP](https://github.com/upstash/context7) — актуальная, версионная документация и примеры кода для библиотек.

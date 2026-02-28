@@ -1,15 +1,12 @@
 ﻿"""FastAPI routes for land_management module."""
 
-from datetime import date
 from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db, require_role
+from app.api.deps import get_current_user, require_role
 from app.models.app_user import AppUser
-from app.modules.shared.kernel.events import EventDispatcher
 
 from .schemas import (
     LandPlotCreate,
@@ -21,53 +18,24 @@ from .schemas import (
     PlotOwnershipCreate,
     PlotOwnershipInDB,
 )
-from ..infrastructure.repositories import (
-    LandPlotRepository,
-    OwnerRepository,
-    PlotOwnershipRepository,
-)
-from ..application.use_cases import (
-    CreateLandPlotUseCase,
-    GetLandPlotUseCase,
-    GetLandPlotsUseCase,
-    UpdateLandPlotUseCase,
-    DeleteLandPlotUseCase,
-    CreateOwnerUseCase,
-    GetOwnerUseCase,
-    GetOwnersUseCase,
-    UpdateOwnerUseCase,
-    DeleteOwnerUseCase,
-    SearchOwnersUseCase,
-    CreatePlotOwnershipUseCase,
-    ClosePlotOwnershipUseCase,
-    GetPlotOwnershipUseCase,
-    GetCurrentPlotOwnershipsUseCase,
+from app.modules.deps import (
+    get_create_land_plot_use_case,
+    get_get_land_plot_use_case,
+    get_get_land_plots_use_case,
+    get_update_land_plot_use_case,
+    get_delete_land_plot_use_case,
+    get_create_owner_use_case,
+    get_get_owner_use_case,
+    get_get_owners_use_case,
+    get_update_owner_use_case,
+    get_delete_owner_use_case,
+    get_search_owners_use_case,
+    get_create_plot_ownership_use_case,
+    get_close_plot_ownership_use_case,
+    get_current_plot_ownerships_use_case,
 )
 
 router = APIRouter()
-
-# Global event dispatcher instance
-_event_dispatcher = EventDispatcher()
-
-
-def _get_land_plot_repo(db: AsyncSession) -> LandPlotRepository:
-    """Get land plot repository instance."""
-    return LandPlotRepository(db)
-
-
-def _get_owner_repo(db: AsyncSession) -> OwnerRepository:
-    """Get owner repository instance."""
-    return OwnerRepository(db)
-
-
-def _get_ownership_repo(db: AsyncSession) -> PlotOwnershipRepository:
-    """Get plot ownership repository instance."""
-    return PlotOwnershipRepository(db)
-
-
-def _get_event_dispatcher() -> EventDispatcher:
-    """Get event dispatcher instance."""
-    return _event_dispatcher
 
 
 @router.get(
@@ -78,7 +46,7 @@ def _get_event_dispatcher() -> EventDispatcher:
 )
 async def get_land_plots(
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_get_land_plots_use_case),
     cooperative_id: UUID | None = Query(None, description="Фильтр по СТ"),
     skip: int = 0,
     limit: int = 100,
@@ -99,8 +67,6 @@ async def get_land_plots(
             detail="cooperative_id is required for non-admin users",
         )
 
-    repo = _get_land_plot_repo(db)
-    use_case = GetLandPlotsUseCase(repo)
     plots = await use_case.execute(cooperative_id=cooperative_id, skip=skip, limit=limit)
 
     # For now, return basic list without owners/financial subject details
@@ -132,14 +98,12 @@ async def get_land_plots(
 async def get_land_plot(
     plot_id: UUID,
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    get_plot_use_case=Depends(get_get_land_plot_use_case),
+    get_ownerships_use_case=Depends(get_current_plot_ownerships_use_case),
 ) -> LandPlotWithOwners:
     """Получить участок по ID с владельцами и финансовым субъектом."""
-    repo = _get_land_plot_repo(db)
-    use_case = GetLandPlotUseCase(repo)
-    
-    plot = await use_case.execute(plot_id=plot_id, cooperative_id=current_user.cooperative_id)
-    
+    plot = await get_plot_use_case.execute(plot_id=plot_id, cooperative_id=current_user.cooperative_id)
+
     if plot is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -154,9 +118,7 @@ async def get_land_plot(
         )
 
     # Get current ownerships
-    ownership_repo = _get_ownership_repo(db)
-    ownerships_use_case = GetCurrentPlotOwnershipsUseCase(ownership_repo)
-    ownerships = await ownerships_use_case.execute(plot_id)
+    ownerships = await get_ownerships_use_case.execute(plot_id)
 
     return LandPlotWithOwners(
         id=plot.id,
@@ -197,18 +159,13 @@ async def get_land_plot(
 async def create_land_plot(
     plot_data: LandPlotCreate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_create_land_plot_use_case),
 ) -> LandPlotWithOwners:
     """Создать участок с владельцами (treasurer, admin)."""
     # Override cooperative_id with user's cooperative for non-admin
     if current_user.role != "admin":
         plot_data.cooperative_id = current_user.cooperative_id
 
-    land_plot_repo = _get_land_plot_repo(db)
-    ownership_repo = _get_ownership_repo(db)
-    event_dispatcher = _get_event_dispatcher()
-    
-    use_case = CreateLandPlotUseCase(land_plot_repo, ownership_repo, event_dispatcher)
     plot = await use_case.execute(data=plot_data, ownerships=plot_data.ownerships)
 
     return LandPlotWithOwners(
@@ -236,18 +193,15 @@ async def update_land_plot(
     plot_id: UUID,
     plot_data: LandPlotUpdate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_update_land_plot_use_case),
 ) -> LandPlotWithOwners:
     """Обновить участок (treasurer, admin)."""
-    repo = _get_land_plot_repo(db)
-    use_case = UpdateLandPlotUseCase(repo)
-    
     plot = await use_case.execute(
         plot_id=plot_id,
         data=plot_data,
         cooperative_id=current_user.cooperative_id,
     )
-    
+
     if plot is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -277,15 +231,12 @@ async def update_land_plot(
 )
 async def delete_land_plot(
     plot_id: UUID,
-    _: Annotated[AppUser, Depends(require_role(["admin"]))],
-    db: AsyncSession = Depends(get_db),
+    current_user: Annotated[AppUser, Depends(require_role(["admin"]))],
+    use_case=Depends(get_delete_land_plot_use_case),
 ) -> None:
     """Удалить участок (только admin)."""
-    repo = _get_land_plot_repo(db)
-    use_case = DeleteLandPlotUseCase(repo)
-    
-    deleted = await use_case.execute(plot_id=plot_id, cooperative_id=_.cooperative_id)
-    
+    deleted = await use_case.execute(plot_id=plot_id, cooperative_id=current_user.cooperative_id)
+
     if not deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -300,13 +251,11 @@ async def delete_land_plot(
     description="Получить список всех владельцев (физических и юридических лиц).",
 )
 async def get_owners(
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_get_owners_use_case),
     skip: int = 0,
     limit: int = 100,
 ) -> list[OwnerInDB]:
     """Получить список владельцев."""
-    repo = _get_owner_repo(db)
-    use_case = GetOwnersUseCase(repo)
     owners = await use_case.execute(skip=skip, limit=limit)
     return [
         OwnerInDB(
@@ -331,12 +280,10 @@ async def get_owners(
 )
 async def search_owners(
     q: Annotated[str, Query(description="Поисковый запрос (имя или УНП)")],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_search_owners_use_case),
     limit: int = 100,
 ) -> list[OwnerInDB]:
     """Поиск владельцев по имени или tax_id."""
-    repo = _get_owner_repo(db)
-    use_case = SearchOwnersUseCase(repo)
     owners = await use_case.execute(query=q, limit=limit)
     return [
         OwnerInDB(
@@ -361,14 +308,11 @@ async def search_owners(
 )
 async def get_owner(
     owner_id: UUID,
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_get_owner_use_case),
 ) -> OwnerInDB:
     """Получить владельца по ID."""
-    repo = _get_owner_repo(db)
-    use_case = GetOwnerUseCase(repo)
-    
     owner = await use_case.execute(owner_id=owner_id)
-    
+
     if owner is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -387,15 +331,11 @@ async def get_owner(
 async def create_owner(
     owner_data: OwnerCreate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_create_owner_use_case),
 ) -> OwnerInDB:
     """Создать нового владельца (treasurer, admin)."""
-    repo = _get_owner_repo(db)
-    event_dispatcher = _get_event_dispatcher()
-    use_case = CreateOwnerUseCase(repo, event_dispatcher)
-    
     owner = await use_case.execute(data=owner_data)
-    
+
     return OwnerInDB(
         id=owner.id,
         owner_type=owner.owner_type,
@@ -418,14 +358,11 @@ async def update_owner(
     owner_id: UUID,
     owner_data: OwnerUpdate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_update_owner_use_case),
 ) -> OwnerInDB:
     """Обновить владельца (treasurer, admin)."""
-    repo = _get_owner_repo(db)
-    use_case = UpdateOwnerUseCase(repo)
-    
     owner = await use_case.execute(owner_id=owner_id, data=owner_data)
-    
+
     if owner is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -442,15 +379,12 @@ async def update_owner(
 )
 async def delete_owner(
     owner_id: UUID,
-    _: Annotated[AppUser, Depends(require_role(["admin"]))],
-    db: AsyncSession = Depends(get_db),
+    current_user: Annotated[AppUser, Depends(require_role(["admin"]))],
+    use_case=Depends(get_delete_owner_use_case),
 ) -> None:
     """Удалить владельца (только admin)."""
-    repo = _get_owner_repo(db)
-    use_case = DeleteOwnerUseCase(repo)
-    
     deleted = await use_case.execute(owner_id=owner_id)
-    
+
     if not deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -469,21 +403,15 @@ async def add_ownership(
     plot_id: UUID,
     ownership_data: PlotOwnershipCreate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_create_plot_ownership_use_case),
 ) -> PlotOwnershipInDB:
     """Добавить владельца к участку (treasurer, admin)."""
-    land_plot_repo = _get_land_plot_repo(db)
-    ownership_repo = _get_ownership_repo(db)
-    event_dispatcher = _get_event_dispatcher()
-    
-    use_case = CreatePlotOwnershipUseCase(ownership_repo, land_plot_repo, event_dispatcher)
-    
     ownership = await use_case.execute(
         land_plot_id=plot_id,
         data=ownership_data,
         cooperative_id=current_user.cooperative_id,
     )
-    
+
     return PlotOwnershipInDB(
         id=ownership.id,
         land_plot_id=ownership.land_plot_id,
@@ -506,26 +434,25 @@ async def add_ownership(
 )
 async def close_ownership(
     ownership_id: UUID,
-    valid_to: date = Query(..., description="Дата прекращения владения"),
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))] = None,
-    db: AsyncSession = Depends(get_db),
+    valid_to: Annotated[str, Query(..., description="Дата прекращения владения")],
+    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    use_case=Depends(get_close_plot_ownership_use_case),
 ) -> PlotOwnershipInDB:
     """Закрыть право собственности (установить valid_to) (treasurer, admin)."""
-    ownership_repo = _get_ownership_repo(db)
-    event_dispatcher = _get_event_dispatcher()
-    
-    use_case = ClosePlotOwnershipUseCase(ownership_repo, event_dispatcher)
+    from datetime import date
+
+    valid_to_date = date.fromisoformat(valid_to)
     
     ownership = await use_case.execute(
         ownership_id=ownership_id,
-        valid_to=valid_to,
-        cooperative_id=current_user.cooperative_id,  # type: ignore[union-attr]
+        valid_to=valid_to_date,
+        cooperative_id=current_user.cooperative_id,
     )
-    
+
     if ownership is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Право собственности не найдено",
         )
-    
+
     return ownership

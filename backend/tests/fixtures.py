@@ -11,20 +11,35 @@ from decimal import Decimal
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import (
-    Accrual,
-    AppUser,
-    ContributionType,
-    Cooperative,
-    Expense,
-    ExpenseCategory,
-    FinancialSubject,
-    LandPlot,
-    Meter,
-    MeterReading,
-    Owner,
-    Payment,
-    PlotOwnership,
+# Import models from Clean Architecture modules
+from app.modules.land_management.infrastructure.models import (
+    LandPlotModel as LandPlot,
+    OwnerModel as Owner,
+    PlotOwnershipModel as PlotOwnership,
+)
+from app.modules.financial_core.infrastructure.models import (
+    FinancialSubjectModel as FinancialSubject,
+)
+from app.modules.accruals.infrastructure.models import (
+    AccrualModel as Accrual,
+    ContributionTypeModel as ContributionType,
+)
+from app.modules.payments.infrastructure.models import (
+    PaymentModel as Payment,
+)
+from app.modules.expenses.infrastructure.models import (
+    ExpenseModel as Expense,
+    ExpenseCategoryModel as ExpenseCategory,
+)
+from app.modules.meters.infrastructure.models import (
+    MeterModel as Meter,
+    MeterReadingModel as MeterReading,
+)
+from app.modules.administration.infrastructure.models import (
+    AppUserModel as AppUser,
+)
+from app.modules.cooperative_core.infrastructure.models import (
+    CooperativeModel as Cooperative,
 )
 
 

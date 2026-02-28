@@ -14,23 +14,26 @@ from ..domain.events import (
     PlotOwnershipCreated,
 )
 from ..domain.repositories import ILandPlotRepository, IOwnerRepository, IPlotOwnershipRepository
+from app.modules.financial_core.domain.repositories import IFinancialSubjectRepository
+from app.modules.financial_core.domain.entities import FinancialSubject
 
 
 class CreateLandPlotUseCase:
     """Use case for creating a new LandPlot.
-    
-    IMPORTANT: Does NOT create FinancialSubject directly.
-    Publishes LandPlotCreated event for financial_core to handle.
+
+    Creates both LandPlot and FinancialSubject atomically.
     """
 
     def __init__(
         self,
         land_plot_repo: ILandPlotRepository,
         ownership_repo: IPlotOwnershipRepository,
+        fs_repo: IFinancialSubjectRepository,
         event_dispatcher: EventDispatcher,
     ):
         self.land_plot_repo = land_plot_repo
         self.ownership_repo = ownership_repo
+        self.fs_repo = fs_repo
         self.event_dispatcher = event_dispatcher
 
     async def execute(
@@ -39,21 +42,21 @@ class CreateLandPlotUseCase:
         ownerships: list[PlotOwnershipCreate] | None = None,
     ) -> LandPlot:
         """Create a new land plot with optional ownerships.
-        
+
         Args:
             data: DTO with land plot data.
             ownerships: Optional list of ownership records to create.
-            
+
         Returns:
             Created LandPlot entity.
-            
+
         Raises:
             ValidationError: If validation fails.
         """
         # Domain validation
         if not data.plot_number or len(data.plot_number) > 50:
             raise ValidationError("Plot number must be between 1 and 50 characters")
-        
+
         if data.cadastral_number and len(data.cadastral_number) > 50:
             raise ValidationError("Cadastral number must not exceed 50 characters")
 
@@ -66,9 +69,21 @@ class CreateLandPlotUseCase:
             cadastral_number=data.cadastral_number,
             status=data.status,
         )
-        
+
         created_plot = await self.land_plot_repo.add(entity)
-        
+
+        # Create FinancialSubject atomically
+        fs_code = f"FS-LP-{created_plot.plot_number}"
+        fs = FinancialSubject(
+            id=UUID(int=0),
+            subject_type="LAND_PLOT",
+            subject_id=created_plot.id,
+            cooperative_id=created_plot.cooperative_id,
+            code=fs_code,
+            status="active",
+        )
+        await self.fs_repo.add(fs)
+
         # Create ownerships if provided
         if ownerships:
             for ownership_data in ownerships:
@@ -84,7 +99,7 @@ class CreateLandPlotUseCase:
                 )
                 await self.ownership_repo.add(ownership)
 
-        # Publish domain event for financial_core to create FinancialSubject
+        # Publish domain event for other modules (notifications, analytics, etc.)
         self.event_dispatcher.dispatch(
             LandPlotCreated(
                 land_plot_id=created_plot.id,
@@ -93,7 +108,7 @@ class CreateLandPlotUseCase:
                 area_sqm=float(created_plot.area_sqm),
             )
         )
-        
+
         return created_plot
 
 
@@ -156,7 +171,7 @@ class DeleteLandPlotUseCase:
         entity = await self.repo.get_by_id(plot_id, cooperative_id)
         if entity is None:
             return False
-            
+
         await self.repo.delete(plot_id, cooperative_id)
         return True
 
@@ -173,7 +188,7 @@ class CreateOwnerUseCase:
         # Domain validation
         if not data.name or len(data.name) > 255:
             raise ValidationError("Name must be between 1 and 255 characters")
-        
+
         if data.tax_id and len(data.tax_id) > 20:
             raise ValidationError("Tax ID must not exceed 20 characters")
 
@@ -185,9 +200,9 @@ class CreateOwnerUseCase:
             contact_phone=data.contact_phone,
             contact_email=data.contact_email,
         )
-        
+
         created_owner = await self.repo.add(entity)
-        
+
         # Publish domain event
         self.event_dispatcher.dispatch(
             OwnerCreated(
@@ -196,7 +211,7 @@ class CreateOwnerUseCase:
                 name=created_owner.name,
             )
         )
-        
+
         return created_owner
 
 
@@ -258,7 +273,7 @@ class DeleteOwnerUseCase:
         entity = await self.repo.get_by_id(owner_id, UUID(int=0))
         if entity is None:
             return False
-            
+
         await self.repo.delete(owner_id, UUID(int=0))
         return True
 
@@ -309,9 +324,9 @@ class CreatePlotOwnershipUseCase:
             valid_from=data.valid_from,
             valid_to=data.valid_to,
         )
-        
+
         created_ownership = await self.ownership_repo.add(entity)
-        
+
         # Publish domain event
         self.event_dispatcher.dispatch(
             PlotOwnershipCreated(
@@ -323,7 +338,7 @@ class CreatePlotOwnershipUseCase:
                 is_primary=data.is_primary,
             )
         )
-        
+
         return created_ownership
 
 
@@ -351,7 +366,7 @@ class ClosePlotOwnershipUseCase:
 
         entity.valid_to = valid_to
         updated_ownership = await self.ownership_repo.update(entity)
-        
+
         # Publish domain event
         self.event_dispatcher.dispatch(
             PlotOwnershipTransferred(
@@ -361,7 +376,7 @@ class ClosePlotOwnershipUseCase:
                 valid_to=valid_to.isoformat(),
             )
         )
-        
+
         return updated_ownership
 
 

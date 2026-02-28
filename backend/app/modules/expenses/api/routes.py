@@ -4,31 +4,21 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db, require_role
+from app.api.deps import get_current_user, require_role
 from app.models.app_user import AppUser
 
 from .schemas import ExpenseCreate, ExpenseInDB, ExpenseCategoryInDB
-from ..infrastructure.repositories import ExpenseRepository, ExpenseCategoryRepository
-from ..application.use_cases import (
-    CreateExpenseUseCase,
-    GetExpenseUseCase,
-    GetExpensesByCooperativeUseCase,
-    ConfirmExpenseUseCase,
-    CancelExpenseUseCase,
-    GetExpenseCategoriesUseCase,
+from app.modules.deps import (
+    get_create_expense_use_case,
+    get_get_expense_use_case,
+    get_expenses_by_cooperative_use_case,
+    get_confirm_expense_use_case,
+    get_cancel_expense_use_case,
+    get_expense_categories_use_case,
 )
 
 router = APIRouter()
-
-
-def _get_expense_repo(db: AsyncSession) -> ExpenseRepository:
-    return ExpenseRepository(db)
-
-
-def _get_expense_category_repo(db: AsyncSession) -> ExpenseCategoryRepository:
-    return ExpenseCategoryRepository(db)
 
 
 @router.get(
@@ -38,13 +28,11 @@ def _get_expense_category_repo(db: AsyncSession) -> ExpenseCategoryRepository:
     description="Получить справочник категорий расходов.",
 )
 async def get_expense_categories(
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_expense_categories_use_case),
 ) -> list[ExpenseCategoryInDB]:
     """Get expense categories."""
-    repo = _get_expense_category_repo(db)
-    use_case = GetExpenseCategoriesUseCase(repo)
     categories = await use_case.execute()
-    
+
     return [
         ExpenseCategoryInDB(
             id=c.id,
@@ -65,7 +53,7 @@ async def get_expense_categories(
 )
 async def get_expenses(
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_expenses_by_cooperative_use_case),
     cooperative_id: UUID | None = Query(None, description="Фильтр по СТ"),
 ) -> list[ExpenseInDB]:
     """Get expenses by cooperative."""
@@ -78,10 +66,8 @@ async def get_expenses(
             detail="Необходимо указать cooperative_id",
         )
 
-    repo = _get_expense_repo(db)
-    use_case = GetExpensesByCooperativeUseCase(repo)
     expenses = await use_case.execute(cooperative_id=cooperative_id)
-    
+
     return [
         ExpenseInDB(
             id=e.id,
@@ -109,7 +95,7 @@ async def get_expenses(
 async def create_expense(
     expense_data: ExpenseCreate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_create_expense_use_case),
 ) -> ExpenseInDB:
     """Create an expense."""
     if current_user.role != "admin" and current_user.cooperative_id != expense_data.cooperative_id:
@@ -118,11 +104,8 @@ async def create_expense(
             detail="Нет доступа к данному СТ",
         )
 
-    repo = _get_expense_repo(db)
-    use_case = CreateExpenseUseCase(repo)
-    
     expense = await use_case.execute(data=expense_data, cooperative_id=current_user.cooperative_id)
-    
+
     return ExpenseInDB(
         id=expense.id,
         cooperative_id=expense.cooperative_id,
@@ -146,17 +129,14 @@ async def create_expense(
 async def confirm_expense(
     expense_id: UUID,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_confirm_expense_use_case),
 ) -> ExpenseInDB:
     """Confirm expense."""
-    repo = _get_expense_repo(db)
-    use_case = ConfirmExpenseUseCase(repo)
-    
     try:
         expense = await use_case.execute(expense_id=expense_id, cooperative_id=current_user.cooperative_id)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
-    
+
     return ExpenseInDB(
         id=expense.id,
         cooperative_id=expense.cooperative_id,
@@ -180,17 +160,14 @@ async def confirm_expense(
 async def cancel_expense(
     expense_id: UUID,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_cancel_expense_use_case),
 ) -> ExpenseInDB:
     """Cancel expense."""
-    repo = _get_expense_repo(db)
-    use_case = CancelExpenseUseCase(repo)
-    
     try:
         expense = await use_case.execute(expense_id=expense_id, cooperative_id=current_user.cooperative_id)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-    
+
     return ExpenseInDB(
         id=expense.id,
         cooperative_id=expense.cooperative_id,

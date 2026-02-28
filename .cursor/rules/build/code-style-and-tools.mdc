@@ -1,6 +1,7 @@
 ---
 description: Стиль кода и работа с инструментами (поиск, правки, цитирование)
-alwaysApply: true
+alwaysApply: false
+globs: backend/**, frontend/**
 ---
 
 # Стиль кода и инструменты

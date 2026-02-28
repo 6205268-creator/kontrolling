@@ -5,11 +5,15 @@ import pytest
 from httpx import AsyncClient
 
 from app.core.security import create_access_token, get_password_hash
-from app.models.app_user import AppUser
-from app.models.cooperative import Cooperative
-from app.models.land_plot import LandPlot
-from app.models.owner import Owner
-from app.models.plot_ownership import PlotOwnership
+
+# Import models from Clean Architecture modules
+from app.modules.administration.infrastructure.models import AppUserModel as AppUser
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
+from app.modules.land_management.infrastructure.models import (
+    LandPlotModel as LandPlot,
+    OwnerModel as Owner,
+    PlotOwnershipModel as PlotOwnership,
+)
 
 
 @pytest.fixture

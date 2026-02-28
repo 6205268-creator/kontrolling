@@ -14,7 +14,6 @@ from app.api.v1.owners import router as owners_router
 from app.api.v1.payments import router as payments_router_v1
 from app.api.v1.reports import router as reports_router
 from app.config import settings
-from app.db.history_events import register_history_events
 
 # Modular routers (Clean Architecture migration in progress)
 from app.modules.cooperative_core.api.routes import router as cooperative_core_router

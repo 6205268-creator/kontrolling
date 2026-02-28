@@ -12,8 +12,16 @@ TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 os.environ["DATABASE_URL"] = TEST_DATABASE_URL
 
 # Импортируем Base до app чтобы таблицы создались правильно
-# Импорт моделей, чтобы таблицы попали в Base.metadata для create_all
-import app.models  # noqa: F401
+# Импорт моделей из модулей Clean Architecture
+import app.modules.land_management.infrastructure.models  # noqa: F401
+import app.modules.financial_core.infrastructure.models  # noqa: F401
+import app.modules.accruals.infrastructure.models  # noqa: F401
+import app.modules.payments.infrastructure.models  # noqa: F401
+import app.modules.meters.infrastructure.models  # noqa: F401
+import app.modules.expenses.infrastructure.models  # noqa: F401
+import app.modules.cooperative_core.infrastructure.models  # noqa: F401
+import app.modules.administration.infrastructure.models  # noqa: F401
+
 from app.db.base import Base
 
 # Теперь импортируем app после установки DATABASE_URL

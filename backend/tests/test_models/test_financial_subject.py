@@ -5,8 +5,8 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.cooperative import Cooperative
-from app.models.financial_subject import FinancialSubject, generate_financial_subject_code
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
+from app.modules.financial_core.infrastructure.models import FinancialSubjectModel as FinancialSubject
 
 
 @pytest.mark.asyncio
@@ -152,6 +152,7 @@ async def test_financial_subject_subject_types(test_db: AsyncSession) -> None:
 
 def test_generate_financial_subject_code() -> None:
     """Генератор code возвращает строку формата FS-XXXXXXXX."""
+    from app.modules.financial_core.infrastructure.models import generate_financial_subject_code
     code = generate_financial_subject_code()
     assert code.startswith("FS-")
     assert len(code) == 11  # "FS-" + 8 hex chars

@@ -2,18 +2,32 @@
 
 from uuid import UUID
 
+from app.modules.shared.kernel.events import EventDispatcher
 from app.modules.shared.kernel.exceptions import ValidationError
 
 from .dtos import MeterCreate, MeterReadingCreate
 from ..domain.entities import Meter, MeterReading
+from ..domain.events import MeterCreated
 from ..domain.repositories import IMeterRepository, IMeterReadingRepository
+from app.modules.financial_core.domain.repositories import IFinancialSubjectRepository
+from app.modules.financial_core.domain.entities import FinancialSubject
 
 
 class CreateMeterUseCase:
-    """Use case for creating a Meter."""
+    """Use case for creating a Meter.
 
-    def __init__(self, repo: IMeterRepository):
+    Creates both Meter and FinancialSubject atomically.
+    """
+
+    def __init__(
+        self,
+        repo: IMeterRepository,
+        fs_repo: IFinancialSubjectRepository,
+        event_dispatcher: EventDispatcher,
+    ):
         self.repo = repo
+        self.fs_repo = fs_repo
+        self.event_dispatcher = event_dispatcher
 
     async def execute(self, data: MeterCreate, cooperative_id: UUID) -> Meter:
         """Create a new meter."""
@@ -25,7 +39,32 @@ class CreateMeterUseCase:
             installation_date=data.installation_date,
             status=data.status,
         )
-        return await self.repo.add(entity)
+        created_meter = await self.repo.add(entity)
+
+        # Create FinancialSubject atomically
+        fs_code = f"FS-M-{created_meter.serial_number}"
+        subject_type = f"{created_meter.meter_type}_METER"
+        fs = FinancialSubject(
+            id=UUID(int=0),
+            subject_type=subject_type,
+            subject_id=created_meter.id,
+            cooperative_id=cooperative_id,
+            code=fs_code,
+            status="active",
+        )
+        await self.fs_repo.add(fs)
+
+        # Publish domain event for other modules
+        self.event_dispatcher.dispatch(
+            MeterCreated(
+                meter_id=created_meter.id,
+                cooperative_id=cooperative_id,
+                meter_type=created_meter.meter_type,
+                serial_number=created_meter.serial_number,
+            )
+        )
+
+        return created_meter
 
 
 class GetMeterUseCase:
@@ -61,12 +100,12 @@ class UpdateMeterUseCase:
         entity = await self.repo.get_by_id(meter_id, cooperative_id)
         if entity is None:
             return None
-        
+
         update_data = data.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             if hasattr(entity, field):
                 setattr(entity, field, value)
-        
+
         return await self.repo.update(entity)
 
 

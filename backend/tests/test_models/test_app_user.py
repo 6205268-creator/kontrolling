@@ -122,7 +122,7 @@ async def test_app_user_default_role(test_db: AsyncSession) -> None:
     await test_db.commit()
     await test_db.refresh(user)
 
-    assert user.role == "treasurer"
+    assert user.role == "user"
 
 
 @pytest.mark.asyncio

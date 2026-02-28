@@ -5,17 +5,19 @@ import pytest
 from httpx import AsyncClient
 
 from app.core.security import create_access_token, get_password_hash
-from app.models.accrual import Accrual
-from app.models.app_user import AppUser
-from app.models.contribution_type import ContributionType
-from app.models.cooperative import Cooperative
-from app.models.expense import Expense
-from app.models.expense_category import ExpenseCategory
-from app.models.financial_subject import FinancialSubject
-from app.models.land_plot import LandPlot
-from app.models.owner import Owner
-from app.models.payment import Payment
-from app.models.plot_ownership import PlotOwnership
+
+# Import models from Clean Architecture modules
+from app.modules.accruals.infrastructure.models import AccrualModel as Accrual, ContributionTypeModel as ContributionType
+from app.modules.administration.infrastructure.models import AppUserModel as AppUser
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
+from app.modules.expenses.infrastructure.models import ExpenseModel as Expense, ExpenseCategoryModel as ExpenseCategory
+from app.modules.financial_core.infrastructure.models import FinancialSubjectModel as FinancialSubject
+from app.modules.land_management.infrastructure.models import (
+    LandPlotModel as LandPlot,
+    OwnerModel as Owner,
+    PlotOwnershipModel as PlotOwnership,
+)
+from app.modules.payments.infrastructure.models import PaymentModel as Payment
 
 
 @pytest.fixture

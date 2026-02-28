@@ -4,28 +4,21 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db, require_role
+from app.api.deps import get_current_user, require_role
 from app.models.app_user import AppUser
 
 from .schemas import PaymentCreate, PaymentInDB
-from ..infrastructure.repositories import PaymentRepository
-from ..application.use_cases import (
-    RegisterPaymentUseCase,
-    GetPaymentUseCase,
-    GetPaymentsByFinancialSubjectUseCase,
-    GetPaymentsByOwnerUseCase,
-    GetPaymentsByCooperativeUseCase,
-    CancelPaymentUseCase,
+from app.modules.deps import (
+    get_register_payment_use_case,
+    get_get_payment_use_case,
+    get_payments_by_financial_subject_use_case,
+    get_payments_by_owner_use_case,
+    get_payments_by_cooperative_use_case,
+    get_cancel_payment_use_case,
 )
 
 router = APIRouter()
-
-
-def _get_payment_repo(db: AsyncSession) -> PaymentRepository:
-    """Get payment repository instance."""
-    return PaymentRepository(db)
 
 
 @router.get(
@@ -36,7 +29,9 @@ def _get_payment_repo(db: AsyncSession) -> PaymentRepository:
 )
 async def get_payments(
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    fs_use_case=Depends(get_payments_by_financial_subject_use_case),
+    owner_use_case=Depends(get_payments_by_owner_use_case),
+    coop_use_case=Depends(get_payments_by_cooperative_use_case),
     financial_subject_id: UUID | None = Query(None, description="Фильтр по финансовому субъекту"),
     owner_id: UUID | None = Query(None, description="Фильтр по владельцу"),
     cooperative_id: UUID | None = Query(None, description="Фильтр по СТ"),
@@ -45,21 +40,17 @@ async def get_payments(
     if current_user.role != "admin":
         cooperative_id = current_user.cooperative_id
 
-    repo = _get_payment_repo(db)
     payments = []
-    
+
     if financial_subject_id:
-        use_case = GetPaymentsByFinancialSubjectUseCase(repo)
-        payments = await use_case.execute(
+        payments = await fs_use_case.execute(
             financial_subject_id=financial_subject_id,
             cooperative_id=cooperative_id,  # type: ignore[arg-type]
         )
     elif owner_id:
-        use_case = GetPaymentsByOwnerUseCase(repo)
-        payments = await use_case.execute(owner_id=owner_id, cooperative_id=cooperative_id)  # type: ignore[arg-type]
+        payments = await owner_use_case.execute(owner_id=owner_id, cooperative_id=cooperative_id)  # type: ignore[arg-type]
     elif cooperative_id:
-        use_case = GetPaymentsByCooperativeUseCase(repo)
-        payments = await use_case.execute(cooperative_id=cooperative_id)
+        payments = await coop_use_case.execute(cooperative_id=cooperative_id)
     else:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -93,31 +84,11 @@ async def get_payments(
 async def create_payment(
     payment_data: PaymentCreate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_register_payment_use_case),
 ) -> PaymentInDB:
     """Register a payment."""
-    from app.modules.financial_core.infrastructure.repositories import FinancialSubjectRepository
-    
-    fs_repo = FinancialSubjectRepository(db)
-    subject = await fs_repo.get_by_id(payment_data.financial_subject_id, current_user.cooperative_id)
-    
-    if subject is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Финансовый субъект не найден",
-        )
-
-    if current_user.role != "admin" and current_user.cooperative_id != subject.cooperative_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Нет доступа к данному финансовому субъекту",
-        )
-
-    repo = _get_payment_repo(db)
-    use_case = RegisterPaymentUseCase(repo)
-    
     payment = await use_case.execute(data=payment_data, cooperative_id=current_user.cooperative_id)
-    
+
     return PaymentInDB(
         id=payment.id,
         financial_subject_id=payment.financial_subject_id,
@@ -141,12 +112,9 @@ async def create_payment(
 async def cancel_payment(
     payment_id: UUID,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_cancel_payment_use_case),
 ) -> PaymentInDB:
     """Cancel a payment."""
-    repo = _get_payment_repo(db)
-    use_case = CancelPaymentUseCase(repo)
-    
     try:
         payment = await use_case.execute(payment_id=payment_id, cooperative_id=current_user.cooperative_id)
     except ValueError as e:
@@ -154,7 +122,7 @@ async def cancel_payment(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(e),
         )
-    
+
     return PaymentInDB(
         id=payment.id,
         financial_subject_id=payment.financial_subject_id,

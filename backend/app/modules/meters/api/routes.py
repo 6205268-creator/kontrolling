@@ -4,32 +4,22 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db, require_role
+from app.api.deps import get_current_user, require_role
 from app.models.app_user import AppUser
 
 from .schemas import MeterCreate, MeterInDB, MeterUpdate, MeterReadingCreate, MeterReadingInDB
-from ..infrastructure.repositories import MeterRepository, MeterReadingRepository
-from ..application.use_cases import (
-    CreateMeterUseCase,
-    GetMeterUseCase,
-    GetMetersByOwnerUseCase,
-    UpdateMeterUseCase,
-    DeleteMeterUseCase,
-    AddMeterReadingUseCase,
-    GetMeterReadingsUseCase,
+from app.modules.deps import (
+    get_create_meter_use_case,
+    get_get_meter_use_case,
+    get_meters_by_owner_use_case,
+    get_update_meter_use_case,
+    get_delete_meter_use_case,
+    get_add_meter_reading_use_case,
+    get_meter_readings_use_case,
 )
 
 router = APIRouter()
-
-
-def _get_meter_repo(db: AsyncSession) -> MeterRepository:
-    return MeterRepository(db)
-
-
-def _get_meter_reading_repo(db: AsyncSession) -> MeterReadingRepository:
-    return MeterReadingRepository(db)
 
 
 @router.post(
@@ -42,14 +32,11 @@ def _get_meter_reading_repo(db: AsyncSession) -> MeterReadingRepository:
 async def create_meter(
     meter_data: MeterCreate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_create_meter_use_case),
 ) -> MeterInDB:
     """Create a new meter."""
-    repo = _get_meter_repo(db)
-    use_case = CreateMeterUseCase(repo)
-    
     meter = await use_case.execute(data=meter_data, cooperative_id=current_user.cooperative_id)
-    
+
     return MeterInDB(
         id=meter.id,
         owner_id=meter.owner_id,
@@ -71,17 +58,14 @@ async def create_meter(
 async def get_meter(
     meter_id: UUID,
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_get_meter_use_case),
 ) -> MeterInDB:
     """Get meter by ID."""
-    repo = _get_meter_repo(db)
-    use_case = GetMeterUseCase(repo)
-    
     meter = await use_case.execute(meter_id=meter_id, cooperative_id=current_user.cooperative_id)
-    
+
     if meter is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Счётчик не найден")
-    
+
     return MeterInDB(
         id=meter.id,
         owner_id=meter.owner_id,
@@ -103,14 +87,11 @@ async def get_meter(
 async def get_meters_by_owner(
     owner_id: UUID,
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_meters_by_owner_use_case),
 ) -> list[MeterInDB]:
     """Get all meters for an owner."""
-    repo = _get_meter_repo(db)
-    use_case = GetMetersByOwnerUseCase(repo)
-    
     meters = await use_case.execute(owner_id=owner_id, cooperative_id=current_user.cooperative_id)
-    
+
     return [
         MeterInDB(
             id=m.id,
@@ -136,17 +117,14 @@ async def update_meter(
     meter_id: UUID,
     meter_data: MeterUpdate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_update_meter_use_case),
 ) -> MeterInDB:
     """Update meter."""
-    repo = _get_meter_repo(db)
-    use_case = UpdateMeterUseCase(repo)
-    
     meter = await use_case.execute(meter_id=meter_id, data=meter_data, cooperative_id=current_user.cooperative_id)
-    
+
     if meter is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Счётчик не найден")
-    
+
     return MeterInDB(
         id=meter.id,
         owner_id=meter.owner_id,
@@ -167,15 +145,12 @@ async def update_meter(
 )
 async def delete_meter(
     meter_id: UUID,
-    _: Annotated[AppUser, Depends(require_role(["admin"]))],
-    db: AsyncSession = Depends(get_db),
+    current_user: Annotated[AppUser, Depends(require_role(["admin"]))],
+    use_case=Depends(get_delete_meter_use_case),
 ) -> None:
     """Delete meter."""
-    repo = _get_meter_repo(db)
-    use_case = DeleteMeterUseCase(repo)
-    
-    deleted = await use_case.execute(meter_id=meter_id, cooperative_id=_.cooperative_id)
-    
+    deleted = await use_case.execute(meter_id=meter_id, cooperative_id=current_user.cooperative_id)
+
     if not deleted:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Счётчик не найден")
 
@@ -191,17 +166,14 @@ async def add_meter_reading(
     meter_id: UUID,
     reading_data: MeterReadingCreate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_add_meter_reading_use_case),
 ) -> MeterReadingInDB:
     """Add a meter reading."""
     # Override meter_id from path
     reading_data.meter_id = meter_id
-    
-    repo = _get_meter_reading_repo(db)
-    use_case = AddMeterReadingUseCase(repo)
-    
+
     reading = await use_case.execute(data=reading_data)
-    
+
     return MeterReadingInDB(
         id=reading.id,
         meter_id=reading.meter_id,
@@ -220,14 +192,11 @@ async def add_meter_reading(
 async def get_meter_readings(
     meter_id: UUID,
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_meter_readings_use_case),
 ) -> list[MeterReadingInDB]:
     """Get all readings for a meter."""
-    repo = _get_meter_reading_repo(db)
-    use_case = GetMeterReadingsUseCase(repo)
-    
     readings = await use_case.execute(meter_id=meter_id)
-    
+
     return [
         MeterReadingInDB(
             id=r.id,

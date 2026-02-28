@@ -1,6 +1,7 @@
 ---
 description: Планирование, подагенты, верификация и управление задачами по tasks/workflow-orchestration.md
-alwaysApply: true
+alwaysApply: false
+globs: tasks/**
 ---
 
 # Workflow Orchestration

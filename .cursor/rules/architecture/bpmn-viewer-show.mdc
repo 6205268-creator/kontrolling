@@ -1,3 +1,9 @@
+---
+description: Показ BPMN-диаграмм в браузере через bpmn-js вьювер
+alwaysApply: false
+globs: docs/architecture/**, docs/processes/**, docs/data-model/**, domains/**, **/*.mmd, **/*.bpmn
+---
+
 # Показ BPMN-диаграмм в браузере
 
 Когда пользователь просит **показать BPMN-диаграмму**, **открыть вьювер процессов** или аналогично — имеется в виду интерактивный BPMN вьювер (bpmn-js) в браузере.
