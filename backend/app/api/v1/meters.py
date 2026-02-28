@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, get_db, require_role
 from app.models.app_user import AppUser
-from app.schemas.meter import MeterCreate, MeterInDB, MeterReadingCreate, MeterReadingInDB, MeterUpdate
+from app.schemas.meter import MeterCreate, MeterInDB, MeterReadingCreate, MeterReadingInDB
 from app.services import meter_service
 
 router = APIRouter()

@@ -182,6 +182,7 @@ async def test_get_owner_not_found(
 ) -> None:
     """Тест получения несуществующего владельца."""
     import uuid
+
     fake_id = uuid.uuid4()
 
     response = await async_client.get(
@@ -272,6 +273,7 @@ async def test_update_owner_not_found(
 ) -> None:
     """Тест обновления несуществующего владельца."""
     import uuid
+
     fake_id = uuid.uuid4()
 
     response = await async_client.patch(

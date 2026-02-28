@@ -1,8 +1,8 @@
 # SQLAlchemy models — импорты для Alembic
 from app.models.accrual import Accrual
 from app.models.app_user import AppUser
-from app.models.cooperative import Cooperative
 from app.models.contribution_type import ContributionType
+from app.models.cooperative import Cooperative
 from app.models.expense import Expense
 from app.models.expense_category import ExpenseCategory
 from app.models.financial_subject import FinancialSubject

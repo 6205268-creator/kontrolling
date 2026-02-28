@@ -6,6 +6,7 @@
 Создаётся пользователь admin / admin (роль admin), если такого ещё нет.
 Для продакшена смени пароль после первого входа.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -22,7 +23,9 @@ async def main() -> int:
     async with async_session_maker() as session:
         result = await session.execute(select(AppUser).where(AppUser.username == "admin"))
         if result.scalar_one_or_none() is not None:
-            print("Пользователь admin уже существует. Вход: admin / <пароль, заданный при создании>")
+            print(
+                "Пользователь admin уже существует. Вход: admin / <пароль, заданный при создании>"
+            )
             return 0
 
         user = AppUser(

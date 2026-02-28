@@ -1,43 +1,47 @@
 <template>
   <aside class="sidebar">
-    <nav class="sidebar-nav">
+    <div class="sidebar-brand">
+      <LayoutDashboard class="brand-icon" aria-hidden />
+      <span class="brand-text">Контроллинг-СТ</span>
+    </div>
+    <nav class="sidebar-nav" aria-label="Основное меню">
       <router-link to="/dashboard" class="nav-item">
-        <span class="nav-icon">📊</span>
+        <LayoutDashboard class="nav-icon" aria-hidden />
         <span>Dashboard</span>
       </router-link>
-      
+
       <router-link to="/land-plots" class="nav-item">
-        <span class="nav-icon">🏞️</span>
+        <MapPin class="nav-icon" aria-hidden />
         <span>Участки</span>
       </router-link>
-      
+
       <router-link to="/owners" class="nav-item">
-        <span class="nav-icon">👥</span>
+        <Users class="nav-icon" aria-hidden />
         <span>Владельцы</span>
       </router-link>
-      
+
       <router-link to="/accruals" class="nav-item">
-        <span class="nav-icon">💰</span>
+        <Wallet class="nav-icon" aria-hidden />
         <span>Начисления</span>
       </router-link>
-      
+
       <router-link to="/payments" class="nav-item">
-        <span class="nav-icon">💳</span>
+        <CreditCard class="nav-icon" aria-hidden />
         <span>Платежи</span>
       </router-link>
-      
+
       <router-link to="/expenses" class="nav-item">
-        <span class="nav-icon">📉</span>
+        <TrendingDown class="nav-icon" aria-hidden />
         <span>Расходы</span>
       </router-link>
-      
+
       <router-link to="/meters" class="nav-item">
-        <span class="nav-icon">📏</span>
+        <Gauge class="nav-icon" aria-hidden />
         <span>Счётчики</span>
       </router-link>
-      
+
       <router-link to="/reports" class="nav-item">
-        <span class="nav-icon">📋</span>
+        <FileText class="nav-icon" aria-hidden />
         <span>Отчёты</span>
       </router-link>
     </nav>
@@ -45,6 +49,16 @@
 </template>
 
 <script setup lang="ts">
+import {
+  LayoutDashboard,
+  MapPin,
+  Users,
+  Wallet,
+  CreditCard,
+  TrendingDown,
+  Gauge,
+  FileText,
+} from 'lucide-vue-next';
 </script>
 
 <style scoped>
@@ -53,10 +67,36 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 260px;
+  width: 272px;
+  z-index: 50;
   background: var(--color-sidebar);
-  padding: 1.5rem 0;
+  padding: 1.25rem 0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1.25rem 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.brand-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--color-sidebar-accent);
+  flex-shrink: 0;
+}
+
+.brand-text {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-inverse);
+  letter-spacing: -0.02em;
 }
 
 .sidebar-nav {
@@ -68,12 +108,12 @@
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.875rem;
   padding: 0.75rem 1.25rem;
   margin: 0 0.5rem;
-  color: #94a3b8;
+  color: var(--color-sidebar-muted);
   text-decoration: none;
-  transition: background 0.2s, color 0.2s;
+  transition: background var(--transition-base), color var(--transition-base);
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
   border-radius: var(--radius-md);
@@ -87,11 +127,17 @@
 .nav-item.router-link-active {
   background: var(--color-sidebar-active);
   color: var(--color-text-inverse);
-  box-shadow: inset 3px 0 0 var(--color-sidebar-accent);
+  box-shadow: inset 4px 0 0 var(--color-sidebar-accent);
 }
 
 .nav-icon {
-  font-size: 1.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
   opacity: 0.9;
+}
+
+.nav-item.router-link-active .nav-icon {
+  color: var(--color-sidebar-accent);
 }
 </style>

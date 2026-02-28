@@ -8,6 +8,7 @@
 расходы, 3 счётчика с показаниями, 3 пользователя (admin, chairman, treasurer).
 Все сущности создаются только если ещё не существуют (идемпотентный скрипт).
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -39,25 +40,46 @@ from app.models import (
 async def seed(session) -> None:
     """Создаёт все тестовые сущности в переданной сессии (идемпотентно)."""
     # 2 СТ (только если нет)
-    result = await session.execute(select(Cooperative).where(Cooperative.unp.in_(["100000001", "100000002"])))
+    result = await session.execute(
+        select(Cooperative).where(Cooperative.unp.in_(["100000001", "100000002"]))
+    )
     existing_coops = result.scalars().all()
     if len(existing_coops) == 2:
         print("ℹ️ СТ уже существуют, пропускаем создание")
         coop_romashka = existing_coops[0]
         coop_vasilek = existing_coops[1]
     else:
-        coop_romashka = Cooperative(name='СТ "Ромашка"', unp="100000001", address="Минский р-н, д. Ромашки")
-        coop_vasilek = Cooperative(name='СТ "Василёк"', unp="100000002", address="Минский р-н, д. Васильки")
+        coop_romashka = Cooperative(
+            name='СТ "Ромашка"', unp="100000001", address="Минский р-н, д. Ромашки"
+        )
+        coop_vasilek = Cooperative(
+            name='СТ "Василёк"', unp="100000002", address="Минский р-н, д. Васильки"
+        )
         session.add_all([coop_romashka, coop_vasilek])
         await session.flush()
         print("✅ Создано 2 СТ")
 
     # 5 владельцев: 3 физ., 2 юр.
     owners = [
-        Owner(owner_type="physical", name="Иванов Иван Иванович", tax_id="123456789A", contact_phone="+375291111111"),
-        Owner(owner_type="physical", name="Петрова Мария Сергеевна", tax_id="123456789B", contact_phone="+375292222222"),
+        Owner(
+            owner_type="physical",
+            name="Иванов Иван Иванович",
+            tax_id="123456789A",
+            contact_phone="+375291111111",
+        ),
+        Owner(
+            owner_type="physical",
+            name="Петрова Мария Сергеевна",
+            tax_id="123456789B",
+            contact_phone="+375292222222",
+        ),
         Owner(owner_type="physical", name="Сидоров Пётр Алексеевич", tax_id="123456789C"),
-        Owner(owner_type="legal", name="ООО «Дачник»", tax_id="123456789", contact_email="dachnik@example.by"),
+        Owner(
+            owner_type="legal",
+            name="ООО «Дачник»",
+            tax_id="123456789",
+            contact_email="dachnik@example.by",
+        ),
         Owner(owner_type="legal", name="ИП Козлов", tax_id="987654321"),
     ]
     session.add_all(owners)
@@ -115,7 +137,9 @@ async def seed(session) -> None:
     ctypes = [
         ContributionType(name="Членский", code="MEMBER", description="Членский взнос"),
         ContributionType(name="Целевой", code="TARGET", description="Целевой взнос"),
-        ContributionType(name="Электроэнергия", code="ELECTRICITY", description="Взнос за электроэнергию"),
+        ContributionType(
+            name="Электроэнергия", code="ELECTRICITY", description="Взнос за электроэнергию"
+        ),
     ]
     session.add_all(ctypes)
     await session.flush()
@@ -207,7 +231,11 @@ async def seed(session) -> None:
     rd = datetime.now(UTC)
     for m in meters:
         session.add(
-            MeterReading(meter_id=m.id, reading_value=Decimal("100.5") + Decimal(meters.index(m) * 10), reading_date=rd)
+            MeterReading(
+                meter_id=m.id,
+                reading_value=Decimal("100.5") + Decimal(meters.index(m) * 10),
+                reading_date=rd,
+            )
         )
     await session.flush()
 

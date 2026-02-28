@@ -17,9 +17,15 @@ class BalanceInfo(BaseModel):
     subject_id: UUID = Field(..., description="ID бизнес-объекта (участок, счётчик, etc.)")
     cooperative_id: UUID = Field(..., description="ID СТ")
     code: str = Field(..., description="Код финансового субъекта для платёжных документов")
-    total_accruals: Decimal = Field(..., description="Сумма всех начислений (applied)", decimal_places=2)
-    total_payments: Decimal = Field(..., description="Сумма всех платежей (confirmed)", decimal_places=2)
-    balance: Decimal = Field(..., description="Задолженность (accruals - payments)", decimal_places=2)
+    total_accruals: Decimal = Field(
+        ..., description="Сумма всех начислений (applied)", decimal_places=2
+    )
+    total_payments: Decimal = Field(
+        ..., description="Сумма всех платежей (confirmed)", decimal_places=2
+    )
+    balance: Decimal = Field(
+        ..., description="Задолженность (accruals - payments)", decimal_places=2
+    )
 
 
 class FinancialSubjectInfo(BaseModel):

@@ -1,21 +1,25 @@
 <template>
   <div class="main-layout">
     <Sidebar />
-    
+
     <div class="main-content">
       <header class="header">
-        <h1 class="header-title">Controlling</h1>
-        
+        <h1 class="header-title">Контроллинг-СТ</h1>
+
         <div class="header-right">
+          <span v-if="authStore.cooperativeName" class="cooperative-name" :title="authStore.cooperativeName">
+            {{ authStore.cooperativeName }}
+          </span>
           <span v-if="authStore.user" class="user-info">
             {{ authStore.user.username }} ({{ authStore.user.role }})
           </span>
-          <button class="logout-button" @click="handleLogout">
+          <button class="logout-button" type="button" @click="handleLogout" aria-label="Выйти">
+            <LogOut class="logout-icon" aria-hidden />
             Выйти
           </button>
         </div>
       </header>
-      
+
       <main class="content">
         <router-view />
       </main>
@@ -24,12 +28,20 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { LogOut } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import Sidebar from '@/components/Sidebar.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
+
+onMounted(() => {
+  if (authStore.cooperativeId && !authStore.cooperativeName) {
+    authStore.loadCooperativeName();
+  }
+});
 
 function handleLogout() {
   authStore.logout();
@@ -48,7 +60,10 @@ function handleLogout() {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 260px;
+  margin-left: 272px;
+  position: relative;
+  z-index: 0;
+  min-width: 0;
 }
 
 .header {
@@ -75,12 +90,25 @@ function handleLogout() {
   gap: 1rem;
 }
 
+.cooperative-name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-primary);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .user-info {
   font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
 
 .logout-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.5rem 1rem;
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
@@ -90,7 +118,7 @@ function handleLogout() {
   font-weight: var(--font-medium);
   color: var(--color-text);
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition: background var(--transition-base), border-color var(--transition-base);
 }
 
 .logout-button:hover {
@@ -98,9 +126,18 @@ function handleLogout() {
   border-color: var(--color-text-muted);
 }
 
+.logout-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  opacity: 0.85;
+}
+
 .content {
   flex: 1;
   padding: 1.5rem;
   overflow-y: auto;
+  position: relative;
+  pointer-events: auto;
+  background: var(--color-bg);
 }
 </style>

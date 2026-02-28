@@ -2,11 +2,12 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import type { LandPlotWithOwners } from '@/types';
 import api from '@/services/api';
+import { formatApiError, type ApiErrorInfo } from '@/utils/errorFormatter';
 
 export const useLandPlotsStore = defineStore('landPlots', () => {
   const plots = ref<LandPlotWithOwners[]>([]);
   const loading = ref(false);
-  const error = ref<string | null>(null);
+  const error = ref<ApiErrorInfo | null>(null);
 
   async function fetchPlots(cooperativeId?: string | null): Promise<void> {
     loading.value = true;
@@ -19,10 +20,7 @@ export const useLandPlotsStore = defineStore('landPlots', () => {
       const response = await api.get<LandPlotWithOwners[]>('land-plots/', { params });
       plots.value = response.data ?? [];
     } catch (e: unknown) {
-      const message = e && typeof e === 'object' && 'response' in e
-        ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
-        : 'Не удалось загрузить список участков';
-      error.value = typeof message === 'string' ? message : 'Ошибка загрузки';
+      error.value = formatApiError(e, 'Не удалось загрузить список участков');
       plots.value = [];
     } finally {
       loading.value = false;

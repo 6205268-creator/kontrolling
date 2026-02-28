@@ -4,6 +4,7 @@
 Зависимости между сущностями задаются через параметры фикстур (например,
 sample_land_plot зависит от sample_cooperative).
 """
+
 from datetime import UTC, date, datetime
 from decimal import Decimal
 

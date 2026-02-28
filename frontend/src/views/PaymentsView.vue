@@ -2,7 +2,10 @@
   <div class="payments-container">
     <div class="page-header">
       <h1>Платежи</h1>
-      <router-link to="/payments/create" class="create-button">Зарегистрировать платёж</router-link>
+      <router-link to="/payments/create" class="create-button">
+        <Plus class="create-button-icon" aria-hidden />
+        Зарегистрировать платёж
+      </router-link>
     </div>
 
     <!-- Фильтры -->
@@ -113,6 +116,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { Plus } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { usePaymentsStore } from '@/stores/payments';
 import type { Payment, FinancialSubject, Owner } from '@/types';
@@ -242,20 +246,28 @@ async function cancelPayment(paymentId: string): Promise<void> {
 }
 
 .create-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.625rem 1.25rem;
-  background: var(--color-primary);
+  background: linear-gradient(180deg, #14b8a6 0%, var(--color-primary) 100%);
   color: white;
   text-decoration: none;
   border-radius: var(--radius-md);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: var(--font-semibold);
-  transition: background 0.2s, box-shadow 0.2s;
+  transition: background var(--transition-base), box-shadow var(--transition-base);
 }
 
 .create-button:hover {
-  background: var(--color-primary-hover);
+  background: linear-gradient(180deg, #0d9488 0%, var(--color-primary-hover) 100%);
   box-shadow: var(--shadow-md);
+}
+
+.create-button-icon {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .filters-card {
@@ -392,8 +404,8 @@ async function cancelPayment(paymentId: string): Promise<void> {
 }
 
 .payments-table th {
-  padding: 0.75rem 1rem;
-  background: #f8fafc;
+  padding: 0.875rem 1.25rem;
+  background: var(--color-bg-elevated);
   font-weight: var(--font-semibold);
   color: var(--color-text-muted);
   text-align: left;
@@ -401,12 +413,12 @@ async function cancelPayment(paymentId: string): Promise<void> {
 }
 
 .payments-table td {
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1.25rem;
   border-bottom: 1px solid var(--color-border);
 }
 
 .payment-row:hover {
-  background: #f8fafc;
+  background: var(--color-primary-subtle);
 }
 
 .id-cell code {

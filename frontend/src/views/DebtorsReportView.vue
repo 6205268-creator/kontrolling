@@ -9,6 +9,7 @@
           :disabled="sortedDebtors.length === 0"
           @click="exportCsv"
         >
+          <Download class="btn-icon" aria-hidden />
           Экспорт в CSV
         </button>
       </div>
@@ -89,6 +90,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { Download } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useReportsStore } from '@/stores/reports';
 import type { DebtorInfo } from '@/types';
@@ -238,5 +240,10 @@ onMounted(async () => {
 .amount-col {
   text-align: right;
   white-space: nowrap;
+}
+
+.btn-icon {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 </style>

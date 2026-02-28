@@ -177,6 +177,7 @@ async def test_get_financial_subject_balance_not_found(
 ) -> None:
     """Тест получения баланса несуществующего субъекта."""
     import uuid
+
     fake_id = uuid.uuid4()
 
     response = await async_client.get(
@@ -200,7 +201,9 @@ async def test_get_balances_by_cooperative(
 
     # Создаём несколько субъектов
     for i in range(3):
-        plot = LandPlot(cooperative_id=coop.id, plot_number=f"Участок {i}", area_sqm=Decimal("500.00"))
+        plot = LandPlot(
+            cooperative_id=coop.id, plot_number=f"Участок {i}", area_sqm=Decimal("500.00")
+        )
         test_db.add(plot)
         await test_db.flush()
 
@@ -247,7 +250,7 @@ async def test_get_balances_by_cooperative_treasurer(
     subject = FinancialSubject(
         subject_type="LAND_PLOT",
         subject_id=plot.id,
-        cooperative_id=coop_id,
+        cooperative_id=UUID(coop_id),
     )
     test_db.add(subject)
     await test_db.commit()

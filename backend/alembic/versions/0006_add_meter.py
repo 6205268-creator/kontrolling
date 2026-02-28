@@ -5,9 +5,11 @@ Revises: 0005
 Create Date: 2026-02-22
 
 """
+
 from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "0006"
@@ -43,7 +45,9 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["meter_id"], ["meters.id"]),
         sa.UniqueConstraint("meter_id", "reading_date", name="uq_meter_readings_meter_date"),
     )
-    op.create_index(op.f("ix_meter_readings_meter_id"), "meter_readings", ["meter_id"], unique=False)
+    op.create_index(
+        op.f("ix_meter_readings_meter_id"), "meter_readings", ["meter_id"], unique=False
+    )
 
 
 def downgrade() -> None:

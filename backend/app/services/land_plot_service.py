@@ -179,9 +179,7 @@ async def close_plot_ownership(
 
     Возвращает обновлённый PlotOwnership или None если не найден.
     """
-    result = await db.execute(
-        select(PlotOwnership).where(PlotOwnership.id == ownership_id)
-    )
+    result = await db.execute(select(PlotOwnership).where(PlotOwnership.id == ownership_id))
     ownership = result.scalar_one_or_none()
     if ownership is None:
         return None
@@ -194,7 +192,5 @@ async def close_plot_ownership(
 
 async def get_plot_ownership(db: AsyncSession, ownership_id: UUID) -> PlotOwnership | None:
     """Получение PlotOwnership по ID."""
-    result = await db.execute(
-        select(PlotOwnership).where(PlotOwnership.id == ownership_id)
-    )
+    result = await db.execute(select(PlotOwnership).where(PlotOwnership.id == ownership_id))
     return result.scalar_one_or_none()

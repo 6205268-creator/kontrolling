@@ -1,0 +1,26 @@
+"""Domain services for reporting."""
+
+from datetime import date
+from decimal import Decimal
+from dataclasses import dataclass
+
+
+@dataclass
+class CashFlowReport:
+    """Cash flow report for a period."""
+    period_start: date
+    period_end: date
+    total_accruals: Decimal
+    total_payments: Decimal
+    total_expenses: Decimal
+    net_balance: Decimal
+
+
+@dataclass
+class DebtorInfo:
+    """Debtor information for report."""
+    financial_subject_id: str  # UUID as string
+    subject_type: str
+    subject_info: dict
+    owner_name: str
+    total_debt: Decimal

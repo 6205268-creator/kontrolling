@@ -16,7 +16,7 @@ class AppUser(Base):
     - admin — системный администратор, доступ ко всем СТ
     - chairman — председатель СТ, просмотр данных своего СТ
     - treasurer — казначей СТ, операционная работа (начисления, платежи, расходы)
-    
+
     Привязка к СТ через cooperative_id (для chairman и treasurer).
     """
 
@@ -28,9 +28,13 @@ class AppUser(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[str] = mapped_column(String(20), nullable=False, default="treasurer")
-    cooperative_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("cooperatives.id"), nullable=True, index=True)
+    cooperative_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("cooperatives.id"), nullable=True, index=True
+    )
     is_active: Mapped[bool] = mapped_column(default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),

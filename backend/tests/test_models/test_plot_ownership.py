@@ -1,8 +1,8 @@
 from datetime import date
 
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.cooperative import Cooperative
 from app.models.land_plot import LandPlot
@@ -120,6 +120,7 @@ async def test_plot_ownership_primary_retrieval(test_db: AsyncSession) -> None:
     await test_db.commit()
 
     from sqlalchemy import select
+
     result = await test_db.execute(
         select(PlotOwnership).where(
             PlotOwnership.land_plot_id == plot.id,

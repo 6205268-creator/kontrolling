@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db, require_role
+from app.api.deps import get_current_user, get_db
 from app.models.app_user import AppUser
 from app.schemas.balance import BalanceInfo, FinancialSubjectInfo
 from app.services import balance_service

@@ -7,7 +7,11 @@ from pydantic import BaseModel, ConfigDict, Field
 class FinancialSubjectBase(BaseModel):
     """Базовая схема FinancialSubject."""
 
-    subject_type: str = Field(..., description="Тип субъекта", pattern="^(LAND_PLOT|WATER_METER|ELECTRICITY_METER|GENERAL_DECISION)$")
+    subject_type: str = Field(
+        ...,
+        description="Тип субъекта",
+        pattern="^(LAND_PLOT|WATER_METER|ELECTRICITY_METER|GENERAL_DECISION)$",
+    )
     subject_id: UUID = Field(..., description="ID бизнес-объекта")
     cooperative_id: UUID = Field(..., description="ID coopérative")
     code: str = Field(..., description="Уникальный код", min_length=1, max_length=50)

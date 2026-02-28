@@ -52,6 +52,7 @@ async def test_owner_type_values(test_db: AsyncSession) -> None:
         test_db.add(owner)
     await test_db.commit()
     from sqlalchemy import select
+
     result = await test_db.execute(select(Owner))
     owners = result.scalars().all()
     assert len(owners) == 2

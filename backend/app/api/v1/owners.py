@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db, require_role
+from app.api.deps import get_db, require_role
 from app.models.app_user import AppUser
 from app.schemas.owner import OwnerCreate, OwnerInDB, OwnerUpdate
 from app.services import owner_service

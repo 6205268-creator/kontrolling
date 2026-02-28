@@ -18,11 +18,33 @@ This file provides guidance to AI assistants (WARP, Cursor, etc.) when working w
 
 ## Build & Development Commands
 
+### Единый запуск (рекомендуется)
+
+Из **корня проекта** одной командой поднимаются и бэкенд (порт 8000), и фронтенд (Vite, порт 5173). Фронт проксирует `/api` на бэкенд — без запущенного бэкенда будет `ECONNREFUSED` и «Не удалось загрузить данные».
+
+```powershell
+# Один раз из корня: установить зависимости для скрипта запуска
+npm install
+
+# Запуск backend + frontend (Windows; для Linux/macOS см. ниже)
+npm run dev
+```
+
+После запуска открывай приложение по адресу: **http://localhost:5173** (логин — по данным из `seed_db`/`seed_user`).
+
+- **Windows:** скрипт использует `backend\venv\Scripts\python.exe`. Убедись, что venv создан: `cd backend && python -m venv venv && pip install -e ".[dev]"`.
+- **Linux/macOS:** из корня можно запустить в двух терминалах: `cd backend && source venv/bin/activate && uvicorn app.main:app --reload --host 127.0.0.1 --port 8000` и `cd frontend && npm run dev`. Либо добавить в корень `package.json` скрипт под свою ОС.
+
+### Backend отдельно
+
 All backend commands run from `backend/`.
 
 ```powershell
 # Activate venv
 backend\venv\Scripts\Activate.ps1
+
+# Install dev dependencies (for linting and testing)
+pip install -e ".[dev]"
 
 # Run dev server
 uvicorn app.main:app --reload
@@ -38,12 +60,27 @@ pytest tests/test_health.py::test_health_returns_ok
 alembic revision --autogenerate -m "description"
 alembic upgrade head
 
-# Lint
+# Lint (run before commit)
 ruff check .
+ruff format --check .
+
+# Auto-fix lint issues and format
+ruff check . --fix
 ruff format .
 ```
 
 Configuration is loaded from `backend/.env` (see `.env.example`). Tests override `DATABASE_URL` to `sqlite+aiosqlite:///:memory:` in `conftest.py` before importing the app.
+
+## Seed Database (test data)
+
+To populate the database with test data (2 cooperatives, owners, plots, users, accruals, payments, expenses, meters):
+
+```powershell
+cd backend
+python -m app.scripts.seed_db
+```
+
+This is the **only** canonical seed script. The file is located at `backend/app/scripts/seed_db.py`.
 
 ## Testing (backend)
 

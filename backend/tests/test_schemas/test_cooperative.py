@@ -65,6 +65,7 @@ def test_cooperative_update_empty() -> None:
 
 def test_cooperative_in_db_from_model() -> None:
     """Сериализация SQLAlchemy модели в CooperativeInDB."""
+
     # Создаём mock-объект (имитируем модель из БД)
     class MockCooperative:
         id = uuid4()

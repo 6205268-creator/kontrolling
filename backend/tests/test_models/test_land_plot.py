@@ -1,17 +1,18 @@
 import uuid
-from datetime import datetime
 from decimal import Decimal
 
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.cooperative import Cooperative
 from app.models.land_plot import LandPlot
 
 
 @pytest.mark.asyncio
-async def test_land_plot_via_fixture(sample_land_plot: LandPlot, sample_cooperative: Cooperative) -> None:
+async def test_land_plot_via_fixture(
+    sample_land_plot: LandPlot, sample_cooperative: Cooperative
+) -> None:
     """Фикстуры sample_land_plot и sample_cooperative создают связанные сущности без дублирования кода."""
     assert sample_land_plot.id is not None
     assert sample_land_plot.cooperative_id == sample_cooperative.id
@@ -93,6 +94,7 @@ async def test_land_plot_status_values(test_db: AsyncSession) -> None:
     await test_db.commit()
 
     from sqlalchemy import select
+
     result = await test_db.execute(select(LandPlot).where(LandPlot.cooperative_id == coop.id))
     plots = result.scalars().all()
     assert len(plots) == 3

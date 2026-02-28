@@ -55,14 +55,19 @@ async def test_create_app_user_with_cooperative(test_db: AsyncSession) -> None:
 @pytest.mark.asyncio
 async def test_app_user_username_unique(test_db: AsyncSession) -> None:
     """Проверка уникальности username."""
-    user1 = AppUser(username="unique_user", email="user1@example.com", hashed_password="$2b$12$testhash")
+    user1 = AppUser(
+        username="unique_user", email="user1@example.com", hashed_password="$2b$12$testhash"
+    )
     test_db.add(user1)
     await test_db.flush()
 
-    user2 = AppUser(username="unique_user", email="user2@example.com", hashed_password="$2b$12$testhash")
+    user2 = AppUser(
+        username="unique_user", email="user2@example.com", hashed_password="$2b$12$testhash"
+    )
     test_db.add(user2)
 
     from sqlalchemy.exc import IntegrityError
+
     with pytest.raises(IntegrityError):
         await test_db.commit()
     await test_db.rollback()
@@ -79,6 +84,7 @@ async def test_app_user_email_unique(test_db: AsyncSession) -> None:
     test_db.add(user2)
 
     from sqlalchemy.exc import IntegrityError
+
     with pytest.raises(IntegrityError):
         await test_db.commit()
     await test_db.rollback()
@@ -151,17 +157,12 @@ async def test_app_user_relationships(test_db: AsyncSession) -> None:
     await test_db.commit()
 
     # Явно загружаем relationship через select
-    result = await test_db.execute(
-        select(Cooperative)
-        .where(Cooperative.id == coop.id)
-    )
+    result = await test_db.execute(select(Cooperative).where(Cooperative.id == coop.id))
     loaded_coop = result.scalar_one()
 
     assert loaded_coop is not None
     # Проверяем что связь работает через отдельный запрос
-    user_result = await test_db.execute(
-        select(AppUser).where(AppUser.cooperative_id == coop.id)
-    )
+    user_result = await test_db.execute(select(AppUser).where(AppUser.cooperative_id == coop.id))
     users = user_result.scalars().all()
     assert len(users) == 1
     assert users[0].username == "rel_user"

@@ -5,9 +5,11 @@ Revises: 0003
 Create Date: 2026-02-22
 
 """
+
 from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "0004"
@@ -72,7 +74,9 @@ def upgrade() -> None:
     op.create_index(
         op.f("ix_payments_financial_subject_id"), "payments", ["financial_subject_id"], unique=False
     )
-    op.create_index(op.f("ix_payments_payer_owner_id"), "payments", ["payer_owner_id"], unique=False)
+    op.create_index(
+        op.f("ix_payments_payer_owner_id"), "payments", ["payer_owner_id"], unique=False
+    )
 
 
 def downgrade() -> None:

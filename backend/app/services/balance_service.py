@@ -142,7 +142,5 @@ async def get_financial_subjects_by_cooperative(
 
 async def get_financial_subject(db: AsyncSession, subject_id: UUID) -> FinancialSubject | None:
     """Получение финансового субъекта по ID."""
-    result = await db.execute(
-        select(FinancialSubject).where(FinancialSubject.id == subject_id)
-    )
+    result = await db.execute(select(FinancialSubject).where(FinancialSubject.id == subject_id))
     return result.scalar_one_or_none()

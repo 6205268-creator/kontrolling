@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date
 from decimal import Decimal
 
 import pytest
@@ -57,7 +57,9 @@ async def treasurer_token(test_db) -> str:
 @pytest.fixture
 async def contribution_type_fixture(test_db) -> ContributionType:
     """Создаёт вид взноса."""
-    ct = ContributionType(name="Членский взнос", code="MEMBER", description="Ежегодный членский взнос")
+    ct = ContributionType(
+        name="Членский взнос", code="MEMBER", description="Ежегодный членский взнос"
+    )
     test_db.add(ct)
     await test_db.commit()
     return ct
@@ -70,7 +72,9 @@ async def financial_subject_fixture(test_db) -> FinancialSubject:
     test_db.add(coop)
     await test_db.flush()
 
-    plot = LandPlot(cooperative_id=coop.id, plot_number="Начисления Тест", area_sqm=Decimal("600.00"))
+    plot = LandPlot(
+        cooperative_id=coop.id, plot_number="Начисления Тест", area_sqm=Decimal("600.00")
+    )
     test_db.add(plot)
     await test_db.flush()
 
@@ -265,7 +269,9 @@ async def test_mass_create_accruals(
 
     subjects = []
     for i in range(3):
-        plot = LandPlot(cooperative_id=coop.id, plot_number=f"Массовый {i}", area_sqm=Decimal("500.00"))
+        plot = LandPlot(
+            cooperative_id=coop.id, plot_number=f"Массовый {i}", area_sqm=Decimal("500.00")
+        )
         test_db.add(plot)
         await test_db.flush()
 

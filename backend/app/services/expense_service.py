@@ -101,15 +101,11 @@ async def get_expenses_by_cooperative(
 
 async def get_expense_categories(db: AsyncSession) -> list[ExpenseCategory]:
     """Получение списка категорий расходов."""
-    result = await db.execute(
-        select(ExpenseCategory).order_by(ExpenseCategory.name)
-    )
+    result = await db.execute(select(ExpenseCategory).order_by(ExpenseCategory.name))
     return list(result.scalars().all())
 
 
 async def get_expense_category(db: AsyncSession, category_id: UUID) -> ExpenseCategory | None:
     """Получение категории расхода по ID."""
-    result = await db.execute(
-        select(ExpenseCategory).where(ExpenseCategory.id == category_id)
-    )
+    result = await db.execute(select(ExpenseCategory).where(ExpenseCategory.id == category_id))
     return result.scalar_one_or_none()

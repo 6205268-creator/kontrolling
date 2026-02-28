@@ -1,7 +1,10 @@
 <template>
   <div class="login-container">
     <div class="login-card">
-      <h1 class="login-title">Controlling</h1>
+      <div class="login-logo">
+        <LayoutDashboard class="logo-icon" aria-hidden />
+      </div>
+      <h1 class="login-title">Контроллинг-СТ</h1>
       <p class="login-subtitle">Вход в систему</p>
 
       <form class="login-form" @submit.prevent="handleLogin">
@@ -45,6 +48,7 @@
         </div>
 
         <button type="submit" class="login-button" :disabled="isLoading">
+          <LogIn v-if="!isLoading" class="btn-icon" aria-hidden />
           <span v-if="isLoading">Вход...</span>
           <span v-else>Войти</span>
         </button>
@@ -57,6 +61,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { LayoutDashboard, LogIn } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
@@ -120,17 +125,29 @@ async function handleLogin() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #0d9488 100%);
+  background: linear-gradient(165deg, var(--color-sidebar) 0%, var(--color-sidebar-active) 45%, var(--color-primary-hover) 100%);
   padding: 1.5rem;
 }
 
 .login-card {
   background: var(--color-bg-card);
   padding: 2.5rem;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-xl);
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+}
+
+.login-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.logo-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--color-primary);
 }
 
 .login-title {
@@ -139,7 +156,7 @@ async function handleLogin() {
   font-weight: var(--font-bold);
   color: var(--color-text);
   text-align: center;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .login-subtitle {
@@ -167,13 +184,13 @@ async function handleLogin() {
   border-radius: var(--radius-md);
   font-family: var(--font-sans);
   font-size: var(--text-base);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .login-form .form-group input:focus {
   outline: none;
   border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px var(--color-primary-light);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
 }
 
 .password-wrapper {
@@ -197,7 +214,7 @@ async function handleLogin() {
   border-radius: var(--radius-md);
   cursor: pointer;
   white-space: nowrap;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color var(--transition-base), background var(--transition-base);
 }
 
 .password-toggle:hover {
@@ -206,8 +223,12 @@ async function handleLogin() {
 }
 
 .login-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   padding: 0.875rem 1.25rem;
-  background: var(--color-primary);
+  background: linear-gradient(180deg, #14b8a6 0%, var(--color-primary) 100%);
   color: white;
   border: none;
   border-radius: var(--radius-md);
@@ -215,11 +236,11 @@ async function handleLogin() {
   font-size: var(--text-base);
   font-weight: var(--font-semibold);
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition: background var(--transition-base), box-shadow var(--transition-base);
 }
 
 .login-button:hover:not(:disabled) {
-  background: var(--color-primary-hover);
+  background: linear-gradient(180deg, #0d9488 0%, var(--color-primary-hover) 100%);
   box-shadow: var(--shadow-md);
 }
 
@@ -228,12 +249,17 @@ async function handleLogin() {
   cursor: not-allowed;
 }
 
+.btn-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 .build-label {
   position: fixed;
   bottom: 0.75rem;
   right: 1rem;
   font-size: var(--text-xs);
-  color: rgba(248, 250, 252, 0.5);
+  color: rgba(250, 248, 245, 0.5);
   pointer-events: none;
 }
 </style>

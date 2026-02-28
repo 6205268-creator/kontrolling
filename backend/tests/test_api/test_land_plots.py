@@ -248,6 +248,7 @@ async def test_get_land_plot_not_found(
 ) -> None:
     """Тест получения несуществующего участка."""
     import uuid
+
     fake_id = uuid.uuid4()
 
     response = await async_client.get(
@@ -303,6 +304,7 @@ async def test_update_land_plot_not_found(
 ) -> None:
     """Тест обновления несуществующего участка."""
     import uuid
+
     fake_id = uuid.uuid4()
 
     response = await async_client.patch(
@@ -471,6 +473,7 @@ async def test_close_ownership_not_found(
 ) -> None:
     """Тест закрытия несуществующего права собственности."""
     import uuid
+
     fake_id = uuid.uuid4()
 
     response = await async_client.patch(

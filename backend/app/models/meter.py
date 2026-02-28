@@ -25,9 +25,13 @@ class Meter(Base):
     owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("owners.id"), nullable=False, index=True)
     meter_type: Mapped[str] = mapped_column(String(20), nullable=False)
     serial_number: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    installation_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    installation_date: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
@@ -36,4 +40,6 @@ class Meter(Base):
     )
 
     owner: Mapped["Owner"] = relationship("Owner", back_populates="meters")
-    readings: Mapped[list["MeterReading"]] = relationship("MeterReading", back_populates="meter", cascade="all, delete-orphan")
+    readings: Mapped[list["MeterReading"]] = relationship(
+        "MeterReading", back_populates="meter", cascade="all, delete-orphan"
+    )

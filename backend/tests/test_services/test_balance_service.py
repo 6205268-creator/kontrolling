@@ -15,6 +15,7 @@ async def test_calculate_balance_simple(test_db) -> None:
     """Тест расчёта баланса: одно начисление и один платёж."""
     # Создаём СТ
     from app.models.cooperative import Cooperative
+
     coop = Cooperative(name="СТ Тест")
     test_db.add(coop)
     await test_db.flush()
@@ -46,6 +47,7 @@ async def test_calculate_balance_simple(test_db) -> None:
 
     # Создаём владельца для платежа
     from app.models.owner import Owner
+
     owner = Owner(owner_type="physical", name="Тест")
     test_db.add(owner)
     await test_db.flush()
@@ -223,6 +225,7 @@ async def test_calculate_balance_only_created_accruals(test_db) -> None:
 async def test_calculate_balance_subject_not_found(test_db) -> None:
     """Тест: субъект не найден."""
     import uuid
+
     fake_id = uuid.uuid4()
 
     balance = await calculate_balance(test_db, fake_id)

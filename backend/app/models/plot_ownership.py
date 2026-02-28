@@ -24,14 +24,18 @@ class PlotOwnership(Base):
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
-    land_plot_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("land_plots.id"), nullable=False, index=True)
+    land_plot_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("land_plots.id"), nullable=False, index=True
+    )
     owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("owners.id"), nullable=False, index=True)
     share_numerator: Mapped[int] = mapped_column(Integer, nullable=False)
     share_denominator: Mapped[int] = mapped_column(Integer, nullable=False)
     is_primary: Mapped[bool] = mapped_column(nullable=False, default=False)
     valid_from: Mapped[date] = mapped_column(Date, nullable=False)
     valid_to: Mapped[date | None] = mapped_column(Date, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),

@@ -1,4 +1,5 @@
 """Тесты историзации: при изменении сущности создаётся запись в *_history."""
+
 from datetime import date
 
 import pytest

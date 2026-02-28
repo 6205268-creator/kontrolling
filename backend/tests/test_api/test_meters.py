@@ -70,9 +70,10 @@ async def owner_with_plot_fixture(test_db) -> Owner:
     await test_db.flush()
 
     # Создаём участок для владельца
+    from datetime import date
+
     from app.models.land_plot import LandPlot
     from app.models.plot_ownership import PlotOwnership
-    from datetime import date
 
     plot = LandPlot(
         cooperative_id=coop.id,
@@ -174,19 +175,20 @@ async def test_create_meter_auto_creates_financial_subject(
 
     # Проверяем что FinancialSubject создан
     from app.models.financial_subject import FinancialSubject
+
     meter_id = response.json()["id"]
 
     # Проверяем что владелец имеет участок
-    from app.models.plot_ownership import PlotOwnership
     from app.models.land_plot import LandPlot
-    
+    from app.models.plot_ownership import PlotOwnership
+
     ownership_result = await test_db.execute(
         select(PlotOwnership)
         .join(LandPlot, PlotOwnership.land_plot_id == LandPlot.id)
         .where(PlotOwnership.owner_id == owner.id)
     )
     ownership = ownership_result.scalar_one_or_none()
-    
+
     # Если владелец имеет участок, FinancialSubject должен быть создан
     if ownership:
         result = await test_db.execute(
@@ -274,6 +276,7 @@ async def test_get_meter_not_found(
 ) -> None:
     """Тест получения несуществующего счётчика."""
     import uuid
+
     fake_id = uuid.uuid4()
 
     response = await async_client.get(

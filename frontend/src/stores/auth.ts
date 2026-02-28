@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import type { User, LoginCredentials } from '@/types';
+import type { Cooperative } from '@/types';
 import api from '@/services/api';
 
 export const useAuthStore = defineStore('auth', () => {
@@ -9,9 +10,25 @@ export const useAuthStore = defineStore('auth', () => {
   const savedUser = localStorage.getItem('user');
   const user = ref<User | null>(savedUser ? JSON.parse(savedUser) : null);
 
+  const cooperativeName = ref<string | null>(null);
+
   const isAuthenticated = computed(() => !!token.value);
   const userRole = computed(() => user.value?.role);
   const cooperativeId = computed(() => user.value?.cooperative_id);
+
+  async function loadCooperativeName(): Promise<void> {
+    const id = user.value?.cooperative_id;
+    if (!id) {
+      cooperativeName.value = null;
+      return;
+    }
+    try {
+      const { data } = await api.get<Cooperative>(`cooperatives/${id}`);
+      cooperativeName.value = data?.name ?? null;
+    } catch {
+      cooperativeName.value = null;
+    }
+  }
 
   async function login(credentials: LoginCredentials): Promise<void> {
     const response = await api.post<{ access_token: string; token_type: string }>('auth/login', credentials);
@@ -38,11 +55,14 @@ export const useAuthStore = defineStore('auth', () => {
       is_active: payload.is_active ?? true,
     };
     localStorage.setItem('user', JSON.stringify(user.value));
+
+    await loadCooperativeName();
   }
 
   function logout(): void {
     token.value = null;
     user.value = null;
+    cooperativeName.value = null;
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   }
@@ -65,11 +85,13 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     token,
     user,
+    cooperativeName,
     isAuthenticated,
     userRole,
     cooperativeId,
     login,
     logout,
     checkAuth,
+    loadCooperativeName,
   };
 });

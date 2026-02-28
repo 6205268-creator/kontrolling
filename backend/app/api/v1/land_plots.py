@@ -50,7 +50,9 @@ async def get_land_plots(
     for plot in plots:
         data = await land_plot_service.get_land_plot_with_owners(db, plot.id)
         if data:
-            result.append(_build_land_plot_with_owners(plot, data["owners"], data["financial_subject"]))
+            result.append(
+                _build_land_plot_with_owners(plot, data["owners"], data["financial_subject"])
+            )
 
     return result
 

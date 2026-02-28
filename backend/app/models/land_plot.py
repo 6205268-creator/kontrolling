@@ -20,17 +20,23 @@ class LandPlot(Base):
 
     __tablename__ = "land_plots"
     __table_args__ = (
-        UniqueConstraint("cooperative_id", "plot_number", name="uq_land_plots_cooperative_plot_number"),
+        UniqueConstraint(
+            "cooperative_id", "plot_number", name="uq_land_plots_cooperative_plot_number"
+        ),
         {"comment": "Земельные участки в садоводческих товариществах"},
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
-    cooperative_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cooperatives.id"), nullable=False, index=True)
+    cooperative_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("cooperatives.id"), nullable=False, index=True
+    )
     plot_number: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     area_sqm: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     cadastral_number: Mapped[str | None] = mapped_column(String(50), nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
@@ -39,4 +45,6 @@ class LandPlot(Base):
     )
 
     cooperative: Mapped["Cooperative"] = relationship("Cooperative", back_populates="land_plots")
-    plot_ownerships: Mapped[list["PlotOwnership"]] = relationship("PlotOwnership", back_populates="land_plot")
+    plot_ownerships: Mapped[list["PlotOwnership"]] = relationship(
+        "PlotOwnership", back_populates="land_plot"
+    )

@@ -86,6 +86,7 @@ const router = createRouter({
           name: 'reports',
           component: ReportsView,
           children: [
+            { path: '', redirect: { name: 'reports-debtors' } },
             {
               path: 'debtors',
               name: 'reports-debtors',

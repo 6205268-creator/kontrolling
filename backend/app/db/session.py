@@ -3,7 +3,6 @@ from collections.abc import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.config import settings
-from app.db.base import Base
 
 # statement_cache_size=0 нужен для Supabase Transaction pool (pgbouncer не поддерживает PREPARE)
 engine = create_async_engine(

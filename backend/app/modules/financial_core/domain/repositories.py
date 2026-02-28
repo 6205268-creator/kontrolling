@@ -1,0 +1,64 @@
+﻿"""Financial Core domain repository interfaces.
+
+Pure Python - no framework dependencies (FastAPI, SQLAlchemy, Pydantic).
+"""
+
+from abc import ABC, abstractmethod
+from uuid import UUID
+
+from app.modules.shared.kernel.repositories import IRepository
+
+from .entities import Balance, FinancialSubject
+
+
+class IFinancialSubjectRepository(IRepository[FinancialSubject], ABC):
+    """Repository interface for FinancialSubject operations."""
+
+    @abstractmethod
+    async def get_by_id(self, id: UUID, cooperative_id: UUID) -> FinancialSubject | None:
+        """Get financial subject by ID, filtered by cooperative."""
+        pass
+
+    @abstractmethod
+    async def get_all(self, cooperative_id: UUID) -> list[FinancialSubject]:
+        """Get all financial subjects for cooperative."""
+        pass
+
+    @abstractmethod
+    async def get_by_subject(
+        self,
+        subject_type: str,
+        subject_id: UUID,
+        cooperative_id: UUID,
+    ) -> FinancialSubject | None:
+        """Get financial subject by subject type and ID."""
+        pass
+
+    @abstractmethod
+    async def add(self, entity: FinancialSubject) -> FinancialSubject:
+        """Add new financial subject."""
+        pass
+
+    @abstractmethod
+    async def update(self, entity: FinancialSubject) -> FinancialSubject:
+        """Update existing financial subject."""
+        pass
+
+    @abstractmethod
+    async def delete(self, id: UUID, cooperative_id: UUID) -> None:
+        """Delete financial subject by ID."""
+        pass
+
+
+class IBalanceRepository(ABC):
+    """Repository interface for balance calculations."""
+
+    @abstractmethod
+    async def calculate_balance(self, financial_subject_id: UUID) -> Balance | None:
+        """Calculate balance for a financial subject."""
+        pass
+
+    @abstractmethod
+    async def get_balances_by_cooperative(self, cooperative_id: UUID) -> list[Balance]:
+        """Get balances for all financial subjects in cooperative."""
+        pass

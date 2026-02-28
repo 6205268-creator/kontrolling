@@ -17,9 +17,9 @@ async def create_meter(db: AsyncSession, meter_data: MeterCreate) -> Meter:
     с типом WATER_METER или ELECTRICITY_METER.
     """
     # Получаем владельца для определения cooperative_id
+    from app.models.financial_subject import FinancialSubject
     from app.models.owner import Owner
     from app.models.plot_ownership import PlotOwnership
-    from app.models.financial_subject import FinancialSubject
 
     owner_result = await db.execute(select(Owner).where(Owner.id == meter_data.owner_id))
     owner = owner_result.scalar_one_or_none()
@@ -31,14 +31,13 @@ async def create_meter(db: AsyncSession, meter_data: MeterCreate) -> Meter:
 
     # Пробуем получить через PlotOwnership
     plot_ownership_result = await db.execute(
-        select(PlotOwnership)
-        .where(PlotOwnership.owner_id == meter_data.owner_id)
-        .limit(1)
+        select(PlotOwnership).where(PlotOwnership.owner_id == meter_data.owner_id).limit(1)
     )
     plot_ownership = plot_ownership_result.scalar_one_or_none()
     if plot_ownership:
         # Получаем участок чтобы узнать cooperative_id
         from app.models.land_plot import LandPlot
+
         land_plot_result = await db.execute(
             select(LandPlot).where(LandPlot.id == plot_ownership.land_plot_id)
         )
@@ -62,7 +61,7 @@ async def create_meter(db: AsyncSession, meter_data: MeterCreate) -> Meter:
 
     # Если cooperative_id не найден, создаём счётчик без FinancialSubject
     # (пользователь должен сначала создать участок или платёж)
-    
+
     # Создаём счётчик
     db_meter = Meter(
         owner_id=meter_data.owner_id,

@@ -1,4 +1,3 @@
-from collections.abc import AsyncGenerator
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
@@ -52,6 +51,7 @@ async def get_current_user(
 
 def require_role(allowed_roles: list[str]):
     """Проверка роли пользователя (factory для Depends)."""
+
     async def dependency(current_user: Annotated[AppUser, Depends(get_current_user)]) -> AppUser:
         if current_user.role not in allowed_roles:
             raise HTTPException(
@@ -59,4 +59,5 @@ def require_role(allowed_roles: list[str]):
                 detail=f"Требуется одна из ролей: {', '.join(allowed_roles)}",
             )
         return current_user
+
     return dependency

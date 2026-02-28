@@ -54,6 +54,7 @@ async def test_meter_type_values(test_db: AsyncSession) -> None:
     await test_db.commit()
 
     from sqlalchemy import select
+
     result = await test_db.execute(select(Meter))
     meters = result.scalars().all()
     assert len(meters) == 2
@@ -101,11 +102,15 @@ async def test_meter_reading_unique_meter_date(test_db: AsyncSession) -> None:
 
     reading_date = datetime(2026, 2, 1, tzinfo=timezone.utc)
 
-    reading1 = MeterReading(meter_id=meter.id, reading_value=Decimal("100.00"), reading_date=reading_date)
+    reading1 = MeterReading(
+        meter_id=meter.id, reading_value=Decimal("100.00"), reading_date=reading_date
+    )
     test_db.add(reading1)
     await test_db.flush()
 
-    reading2 = MeterReading(meter_id=meter.id, reading_value=Decimal("200.00"), reading_date=reading_date)
+    reading2 = MeterReading(
+        meter_id=meter.id, reading_value=Decimal("200.00"), reading_date=reading_date
+    )
     test_db.add(reading2)
 
     with pytest.raises(IntegrityError):
@@ -144,11 +149,14 @@ async def test_meter_status_values(test_db: AsyncSession) -> None:
     await test_db.flush()
 
     for status in ("active", "inactive"):
-        meter = Meter(owner_id=owner.id, meter_type="WATER", serial_number=f"SN-{status}", status=status)
+        meter = Meter(
+            owner_id=owner.id, meter_type="WATER", serial_number=f"SN-{status}", status=status
+        )
         test_db.add(meter)
     await test_db.commit()
 
     from sqlalchemy import select
+
     result = await test_db.execute(select(Meter))
     meters = result.scalars().all()
     assert len(meters) == 2
@@ -167,12 +175,17 @@ async def test_meter_relationships(test_db: AsyncSession) -> None:
     test_db.add(meter)
     await test_db.flush()
 
-    reading = MeterReading(meter_id=meter.id, reading_value=Decimal("100.00"), reading_date=datetime(2026, 1, 1, tzinfo=timezone.utc))
+    reading = MeterReading(
+        meter_id=meter.id,
+        reading_value=Decimal("100.00"),
+        reading_date=datetime(2026, 1, 1, tzinfo=timezone.utc),
+    )
     test_db.add(reading)
     await test_db.commit()
 
     # Проверяем что owner связан с meter через relationship
     from sqlalchemy import select
+
     result = await test_db.execute(select(Owner).where(Owner.id == owner.id))
     loaded_owner = result.scalar_one()
     await test_db.refresh(loaded_owner)

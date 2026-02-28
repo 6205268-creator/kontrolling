@@ -43,6 +43,7 @@ async def test_get_cooperative(test_db: AsyncSession) -> None:
 async def test_get_cooperative_not_found(test_db: AsyncSession) -> None:
     """Тест получения несуществующего Cooperative."""
     import uuid
+
     result = await get_cooperative(test_db, uuid.uuid4())
     assert result is None
 
@@ -99,6 +100,7 @@ async def test_update_cooperative(test_db: AsyncSession) -> None:
 async def test_update_cooperative_not_found(test_db: AsyncSession) -> None:
     """Тест обновления несуществующего Cooperative."""
     import uuid
+
     update_data = CooperativeUpdate(name="Новое имя")
     result = await update_cooperative(test_db, uuid.uuid4(), update_data)
     assert result is None
@@ -136,5 +138,6 @@ async def test_delete_cooperative(test_db: AsyncSession) -> None:
 async def test_delete_cooperative_not_found(test_db: AsyncSession) -> None:
     """Тест удаления несуществующего Cooperative."""
     import uuid
+
     result = await delete_cooperative(test_db, uuid.uuid4())
     assert result is False

@@ -18,7 +18,7 @@ cd backend
 pip install -r requirements.txt
 
 # Запустите с seed данными
-python scripts/seed_db.py
+python -m app.scripts.seed_db
 
 # Запустите сервер
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
@@ -149,7 +149,7 @@ npx playwright show-trace
 Убедитесь что пользователь существует в БД:
 ```bash
 cd backend
-python scripts/seed_db.py
+python -m app.scripts.seed_db
 ```
 
 ### Проблемы с браузером

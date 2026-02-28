@@ -92,14 +92,17 @@ async def get_debtors_report(
             )
             land_plot = land_plot_result.scalar_one_or_none()
             if land_plot:
-                subject_info = {"plot_number": land_plot.plot_number, "area_sqm": str(land_plot.area_sqm)}
+                subject_info = {
+                    "plot_number": land_plot.plot_number,
+                    "area_sqm": str(land_plot.area_sqm),
+                }
 
                 # Получаем основного владельца (is_primary=True)
                 ownership_result = await db.execute(
                     select(PlotOwnership)
                     .where(
                         PlotOwnership.land_plot_id == land_plot.id,
-                        PlotOwnership.is_primary == True,
+                        PlotOwnership.is_primary,
                     )
                     .limit(1)
                 )
@@ -114,17 +117,16 @@ async def get_debtors_report(
 
         elif subject.subject_type in ("WATER_METER", "ELECTRICITY_METER"):
             # Для счётчика получаем serial_number и владельца
-            meter_result = await db.execute(
-                select(Meter).where(Meter.id == subject.subject_id)
-            )
+            meter_result = await db.execute(select(Meter).where(Meter.id == subject.subject_id))
             meter = meter_result.scalar_one_or_none()
             if meter:
-                subject_info = {"serial_number": meter.serial_number or "N/A", "meter_type": meter.meter_type}
+                subject_info = {
+                    "serial_number": meter.serial_number or "N/A",
+                    "meter_type": meter.meter_type,
+                }
 
                 # Получаем владельца счётчика
-                owner_result = await db.execute(
-                    select(Owner).where(Owner.id == meter.owner_id)
-                )
+                owner_result = await db.execute(select(Owner).where(Owner.id == meter.owner_id))
                 owner = owner_result.scalar_one_or_none()
                 if owner:
                     owner_name = owner.name
@@ -167,6 +169,29 @@ async def get_cash_flow_report(
         select(FinancialSubject.id).where(FinancialSubject.cooperative_id == cooperative_id)
     )
     subject_ids = [row[0] for row in fs_result.all()]
+
+    # Если нет финансовых субъектов, возвращаем отчёт с нулевыми начислениями/платежами
+    if not subject_ids:
+        # Сумма расходов за период (по expense_date, статус confirmed)
+        expenses_result = await db.execute(
+            select(func.sum(Expense.amount)).where(
+                Expense.cooperative_id == cooperative_id,
+                Expense.status == "confirmed",
+                Expense.expense_date >= period_start,
+                Expense.expense_date <= period_end,
+            )
+        )
+        total_expenses = expenses_result.scalar() or Decimal("0.00")
+        net_balance = Decimal("0.00") - total_expenses
+
+        return CashFlowReport(
+            period_start=period_start,
+            period_end=period_end,
+            total_accruals=Decimal("0.00"),
+            total_payments=Decimal("0.00"),
+            total_expenses=total_expenses,
+            net_balance=net_balance,
+        )
 
     # Сумма начислений за период (по accrual_date, статус applied)
     accruals_result = await db.execute(

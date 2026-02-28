@@ -5,8 +5,10 @@
       <button
         v-if="canCreate"
         class="btn btn-primary"
+        type="button"
         @click="showCreateModal = true"
       >
+        <UserPlus class="btn-icon" aria-hidden />
         Добавить владельца
       </button>
     </header>
@@ -131,6 +133,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { UserPlus } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useOwnersStore } from '@/stores/owners';
 import type { Owner } from '@/types';
@@ -228,5 +231,10 @@ onMounted(async () => {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border);
+}
+
+.btn-icon {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 </style>

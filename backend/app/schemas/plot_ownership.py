@@ -18,7 +18,9 @@ class PlotOwnershipBase(BaseModel):
 class PlotOwnershipCreate(PlotOwnershipBase):
     """Схема для создания PlotOwnership."""
 
-    land_plot_id: UUID | None = Field(None, description="ID земельного участка (устанавливается сервисом)")
+    land_plot_id: UUID | None = Field(
+        None, description="ID земельного участка (устанавливается сервисом)"
+    )
 
 
 class PlotOwnershipUpdate(BaseModel):

@@ -5,9 +5,11 @@ Revises: 0002
 Create Date: 2026-02-22
 
 """
+
 from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "0003"
@@ -28,10 +30,20 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(["cooperative_id"], ["cooperatives.id"]),
-        sa.UniqueConstraint("subject_type", "subject_id", "cooperative_id", name="uq_financial_subjects_type_subject_coop"),
+        sa.UniqueConstraint(
+            "subject_type",
+            "subject_id",
+            "cooperative_id",
+            name="uq_financial_subjects_type_subject_coop",
+        ),
         sa.UniqueConstraint("code", name="uq_financial_subjects_code"),
     )
-    op.create_index(op.f("ix_financial_subjects_cooperative_id"), "financial_subjects", ["cooperative_id"], unique=False)
+    op.create_index(
+        op.f("ix_financial_subjects_cooperative_id"),
+        "financial_subjects",
+        ["cooperative_id"],
+        unique=False,
+    )
 
 
 def downgrade() -> None:

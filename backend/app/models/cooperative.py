@@ -17,13 +17,17 @@ class Cooperative(Base):
     """
 
     __tablename__ = "cooperatives"
-    __table_args__ = {"comment": "Садоводческие товарищества (СТ) — основные организации в системе"}
+    __table_args__ = (
+        {"comment": "Садоводческие товарищества (СТ) — основные организации в системе", "extend_existing": True}
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     unp: Mapped[str | None] = mapped_column(String(20), unique=True, nullable=True)
     address: Mapped[str | None] = mapped_column(String(512), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
@@ -32,6 +36,8 @@ class Cooperative(Base):
     )
 
     land_plots: Mapped[list["LandPlot"]] = relationship("LandPlot", back_populates="cooperative")
-    financial_subjects: Mapped[list["FinancialSubject"]] = relationship("FinancialSubject", back_populates="cooperative")
+    financial_subjects: Mapped[list["FinancialSubject"]] = relationship(
+        "FinancialSubject", back_populates="cooperative"
+    )
     expenses: Mapped[list["Expense"]] = relationship("Expense", back_populates="cooperative")
     users: Mapped[list["AppUser"]] = relationship("AppUser", back_populates="cooperative")

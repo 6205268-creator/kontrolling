@@ -7,6 +7,7 @@
         to="/land-plots/create"
         class="btn btn-primary"
       >
+        <Plus class="btn-icon" aria-hidden />
         Добавить участок
       </router-link>
     </header>
@@ -30,9 +31,15 @@
       </select>
     </div>
 
-    <p v-if="landPlotsStore.error" class="error-message">
-      {{ landPlotsStore.error }}
-    </p>
+    <div v-if="landPlotsStore.error" class="error-message">
+      <div class="error-summary">
+        <AlertCircle class="error-icon" aria-hidden />
+        <strong>{{ landPlotsStore.error.summary }}</strong>
+      </div>
+      <div v-if="landPlotsStore.error.details" class="error-details">
+        {{ landPlotsStore.error.details }}
+      </div>
+    </div>
 
     <div v-if="landPlotsStore.loading" class="loading">Загрузка…</div>
 
@@ -67,6 +74,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { Plus, AlertCircle } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useLandPlotsStore } from '@/stores/landPlots';
 import type { Cooperative } from '@/types';
@@ -152,5 +160,39 @@ onMounted(async () => {
   font-weight: var(--font-medium);
   font-size: var(--text-sm);
   color: var(--color-text-muted);
+}
+
+.btn-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.error-message {
+  background: var(--color-bg-danger);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  padding: 1rem 1rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-danger);
+}
+
+.error-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-base);
+}
+
+.error-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.error-details {
+  margin-top: 0.5rem;
+  margin-left: 1.75rem;
+  font-size: var(--text-sm);
+  opacity: 0.9;
+  font-family: var(--font-mono);
 }
 </style>

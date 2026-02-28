@@ -7,6 +7,7 @@
         to="/accruals/create"
         class="btn btn-primary"
       >
+        <Plus class="btn-icon" aria-hidden />
         Создать начисление
       </router-link>
     </header>
@@ -101,6 +102,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { Plus } from 'lucide-vue-next';
 import api from '@/services/api';
 import { useAuthStore } from '@/stores/auth';
 import { useAccrualsStore } from '@/stores/accruals';
@@ -278,5 +280,10 @@ onMounted(async () => {
 
 .accruals-view .btn {
   margin-right: 0.5rem;
+}
+
+.btn-icon {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 </style>

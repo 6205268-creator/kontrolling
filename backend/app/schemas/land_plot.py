@@ -20,7 +20,9 @@ class LandPlotBase(BaseModel):
 class LandPlotCreate(LandPlotBase):
     """Схема для создания LandPlot."""
 
-    ownerships: list[PlotOwnershipCreate] = Field(default_factory=list, description="Список владельцев")
+    ownerships: list[PlotOwnershipCreate] = Field(
+        default_factory=list, description="Список владельцев"
+    )
 
 
 class LandPlotUpdate(BaseModel):

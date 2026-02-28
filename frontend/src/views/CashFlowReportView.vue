@@ -64,7 +64,8 @@
       </div>
 
       <div class="report-actions">
-        <button class="btn btn-secondary" @click="exportToCSV">
+        <button class="btn btn-secondary" type="button" @click="exportToCSV">
+          <Download class="btn-icon" aria-hidden />
           Экспорт в CSV
         </button>
       </div>
@@ -78,6 +79,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { Download } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useReportsStore } from '@/stores/reports';
 import type { CashFlowReport } from '@/types';
@@ -281,5 +283,10 @@ onMounted(() => {
 .report-actions {
   display: flex;
   gap: 0.75rem;
+}
+
+.btn-icon {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 </style>

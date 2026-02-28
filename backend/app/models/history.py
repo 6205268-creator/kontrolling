@@ -4,10 +4,11 @@
 у PlotOwnership, Accrual, Payment, Expense. FK на исходные таблицы не ставим,
 чтобы история сохранялась при удалении записи.
 """
+
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, date, datetime
+from datetime import date, datetime
 from decimal import Decimal
 
 from sqlalchemy import Date, DateTime, Integer, Numeric, String

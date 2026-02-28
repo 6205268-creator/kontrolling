@@ -5,9 +5,11 @@ Revises: 0008
 Create Date: 2026-02-24
 
 """
+
 from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "0009"
@@ -121,5 +123,7 @@ def downgrade() -> None:
     op.drop_table("payments_history")
     op.drop_index(op.f("ix_accruals_history_entity_id"), table_name="accruals_history")
     op.drop_table("accruals_history")
-    op.drop_index(op.f("ix_plot_ownerships_history_entity_id"), table_name="plot_ownerships_history")
+    op.drop_index(
+        op.f("ix_plot_ownerships_history_entity_id"), table_name="plot_ownerships_history"
+    )
     op.drop_table("plot_ownerships_history")

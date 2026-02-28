@@ -4,7 +4,7 @@ import uuid
 from datetime import UTC, date, datetime
 from decimal import Decimal
 
-from sqlalchemy import Date, DateTime, ForeignKey, Numeric, String, CheckConstraint
+from sqlalchemy import CheckConstraint, Date, DateTime, ForeignKey, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, Guid
@@ -27,17 +27,25 @@ class Expense(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
     cooperative_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("cooperatives.id"), nullable=False, index=True, comment="ID СТ, совершившего расход"
+        ForeignKey("cooperatives.id"),
+        nullable=False,
+        index=True,
+        comment="ID СТ, совершившего расход",
     )
     category_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("expense_categories.id"), nullable=False, index=True, comment="ID категории расхода"
+        ForeignKey("expense_categories.id"),
+        nullable=False,
+        index=True,
+        comment="ID категории расхода",
     )
     amount: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     expense_date: Mapped[date] = mapped_column(Date, nullable=False)
     document_number: Mapped[str | None] = mapped_column(String(50), nullable=True)
     description: Mapped[str | None] = mapped_column(String(512), nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="created")
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),

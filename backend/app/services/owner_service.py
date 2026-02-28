@@ -80,9 +80,10 @@ async def search_owners(
     Ищет частичное совпадение в name или tax_id.
     """
     search_pattern = f"%{query}%"
-    stmt = select(Owner).where(
-        (Owner.name.ilike(search_pattern)) |
-        (Owner.tax_id.ilike(search_pattern))
-    ).limit(limit)
+    stmt = (
+        select(Owner)
+        .where((Owner.name.ilike(search_pattern)) | (Owner.tax_id.ilike(search_pattern)))
+        .limit(limit)
+    )
     result = await db.execute(stmt)
     return list(result.scalars().all())

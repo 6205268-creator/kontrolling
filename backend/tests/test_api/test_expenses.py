@@ -352,6 +352,7 @@ async def test_create_expense_category_not_found(
 ) -> None:
     """Тест 404 при создании расхода с несуществующей категорией."""
     import uuid
+
     coop = Cooperative(name="СТ Для категории")
     test_db.add(coop)
     await test_db.commit()

@@ -34,17 +34,27 @@ class FinancialSubject(Base):
             "cooperative_id",
             name="uq_financial_subjects_type_subject_coop",
         ),
-        {"comment": "Финансовые субъекты — центры финансовой ответственности (участки, счётчики, решения)"},
+        {
+            "comment": "Финансовые субъекты — центры финансовой ответственности (участки, счётчики, решения)"
+        },
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
     subject_type: Mapped[str] = mapped_column(String(30), nullable=False)
     subject_id: Mapped[uuid.UUID] = mapped_column(Guid(), nullable=False)
-    cooperative_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cooperatives.id"), nullable=False, index=True)
-    code: Mapped[str] = mapped_column(String(50), nullable=False, unique=True, default=generate_financial_subject_code)
+    cooperative_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("cooperatives.id"), nullable=False, index=True
+    )
+    code: Mapped[str] = mapped_column(
+        String(50), nullable=False, unique=True, default=generate_financial_subject_code
+    )
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
 
-    cooperative: Mapped["Cooperative"] = relationship("Cooperative", back_populates="financial_subjects")
+    cooperative: Mapped["Cooperative"] = relationship(
+        "Cooperative", back_populates="financial_subjects"
+    )
     accruals: Mapped[list["Accrual"]] = relationship("Accrual", back_populates="financial_subject")
     payments: Mapped[list["Payment"]] = relationship("Payment", back_populates="financial_subject")

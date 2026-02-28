@@ -5,9 +5,11 @@ Revises: 0001
 Create Date: 2026-02-22
 
 """
+
 from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "0002"
@@ -29,9 +31,13 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(["cooperative_id"], ["cooperatives.id"]),
-        sa.UniqueConstraint("cooperative_id", "plot_number", name="uq_land_plots_cooperative_plot_number"),
+        sa.UniqueConstraint(
+            "cooperative_id", "plot_number", name="uq_land_plots_cooperative_plot_number"
+        ),
     )
-    op.create_index(op.f("ix_land_plots_cooperative_id"), "land_plots", ["cooperative_id"], unique=False)
+    op.create_index(
+        op.f("ix_land_plots_cooperative_id"), "land_plots", ["cooperative_id"], unique=False
+    )
     op.create_index(op.f("ix_land_plots_plot_number"), "land_plots", ["plot_number"], unique=False)
 
     op.create_table(
@@ -51,8 +57,12 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["owner_id"], ["owners.id"]),
         sa.CheckConstraint("share_numerator <= share_denominator", name="ck_plot_ownership_share"),
     )
-    op.create_index(op.f("ix_plot_ownerships_land_plot_id"), "plot_ownerships", ["land_plot_id"], unique=False)
-    op.create_index(op.f("ix_plot_ownerships_owner_id"), "plot_ownerships", ["owner_id"], unique=False)
+    op.create_index(
+        op.f("ix_plot_ownerships_land_plot_id"), "plot_ownerships", ["land_plot_id"], unique=False
+    )
+    op.create_index(
+        op.f("ix_plot_ownerships_owner_id"), "plot_ownerships", ["owner_id"], unique=False
+    )
 
 
 def downgrade() -> None:

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
-
 from decimal import Decimal
 
 from sqlalchemy import DateTime, ForeignKey, UniqueConstraint
@@ -32,6 +31,8 @@ class MeterReading(Base):
     meter_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("meters.id"), nullable=False, index=True)
     reading_value: Mapped[Decimal] = mapped_column(nullable=False)
     reading_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
 
     meter: Mapped["Meter"] = relationship("Meter", back_populates="readings")

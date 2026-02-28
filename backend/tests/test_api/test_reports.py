@@ -13,7 +13,6 @@ from app.models.expense import Expense
 from app.models.expense_category import ExpenseCategory
 from app.models.financial_subject import FinancialSubject
 from app.models.land_plot import LandPlot
-from app.models.meter import Meter
 from app.models.owner import Owner
 from app.models.payment import Payment
 from app.models.plot_ownership import PlotOwnership
@@ -98,37 +97,117 @@ async def report_data_fixture(test_db) -> dict:
     await test_db.flush()
 
     # Создаём права собственности (основные владельцы)
-    ownership1 = PlotOwnership(land_plot_id=plot1.id, owner_id=owner1.id, share_numerator=1, share_denominator=1, is_primary=True, valid_from=date.today())
-    ownership2 = PlotOwnership(land_plot_id=plot2.id, owner_id=owner2.id, share_numerator=1, share_denominator=1, is_primary=True, valid_from=date.today())
-    ownership3 = PlotOwnership(land_plot_id=plot3.id, owner_id=owner1.id, share_numerator=1, share_denominator=1, is_primary=True, valid_from=date.today())
+    ownership1 = PlotOwnership(
+        land_plot_id=plot1.id,
+        owner_id=owner1.id,
+        share_numerator=1,
+        share_denominator=1,
+        is_primary=True,
+        valid_from=date.today(),
+    )
+    ownership2 = PlotOwnership(
+        land_plot_id=plot2.id,
+        owner_id=owner2.id,
+        share_numerator=1,
+        share_denominator=1,
+        is_primary=True,
+        valid_from=date.today(),
+    )
+    ownership3 = PlotOwnership(
+        land_plot_id=plot3.id,
+        owner_id=owner1.id,
+        share_numerator=1,
+        share_denominator=1,
+        is_primary=True,
+        valid_from=date.today(),
+    )
     test_db.add_all([ownership1, ownership2, ownership3])
     await test_db.flush()
 
     # Создаём финансовые субъекты
-    subject1 = FinancialSubject(subject_type="LAND_PLOT", subject_id=plot1.id, cooperative_id=coop.id, code="FS-001")
-    subject2 = FinancialSubject(subject_type="LAND_PLOT", subject_id=plot2.id, cooperative_id=coop.id, code="FS-002")
-    subject3 = FinancialSubject(subject_type="LAND_PLOT", subject_id=plot3.id, cooperative_id=coop.id, code="FS-003")
+    subject1 = FinancialSubject(
+        subject_type="LAND_PLOT", subject_id=plot1.id, cooperative_id=coop.id, code="FS-001"
+    )
+    subject2 = FinancialSubject(
+        subject_type="LAND_PLOT", subject_id=plot2.id, cooperative_id=coop.id, code="FS-002"
+    )
+    subject3 = FinancialSubject(
+        subject_type="LAND_PLOT", subject_id=plot3.id, cooperative_id=coop.id, code="FS-003"
+    )
     test_db.add_all([subject1, subject2, subject3])
     await test_db.flush()
 
     # Создаём начисления (разные суммы для разных долгов)
     # Участок 1: задолженность 500 (1000 начислено - 500 оплачено)
-    accrual1 = Accrual(financial_subject_id=subject1.id, contribution_type_id=contribution_type.id, amount=Decimal("1000.00"), accrual_date=date.today(), period_start=date.today().replace(month=1, day=1), status="applied")
-    payment1 = Payment(financial_subject_id=subject1.id, payer_owner_id=owner1.id, amount=Decimal("500.00"), payment_date=date.today(), status="confirmed")
+    accrual1 = Accrual(
+        financial_subject_id=subject1.id,
+        contribution_type_id=contribution_type.id,
+        amount=Decimal("1000.00"),
+        accrual_date=date.today(),
+        period_start=date.today().replace(month=1, day=1),
+        status="applied",
+    )
+    payment1 = Payment(
+        financial_subject_id=subject1.id,
+        payer_owner_id=owner1.id,
+        amount=Decimal("500.00"),
+        payment_date=date.today(),
+        status="confirmed",
+    )
 
     # Участок 2: задолженность 0 (1000 начислено - 1000 оплачено)
-    accrual2 = Accrual(financial_subject_id=subject2.id, contribution_type_id=contribution_type.id, amount=Decimal("1000.00"), accrual_date=date.today(), period_start=date.today().replace(month=1, day=1), status="applied")
-    payment2 = Payment(financial_subject_id=subject2.id, payer_owner_id=owner2.id, amount=Decimal("1000.00"), payment_date=date.today(), status="confirmed")
+    accrual2 = Accrual(
+        financial_subject_id=subject2.id,
+        contribution_type_id=contribution_type.id,
+        amount=Decimal("1000.00"),
+        accrual_date=date.today(),
+        period_start=date.today().replace(month=1, day=1),
+        status="applied",
+    )
+    payment2 = Payment(
+        financial_subject_id=subject2.id,
+        payer_owner_id=owner2.id,
+        amount=Decimal("1000.00"),
+        payment_date=date.today(),
+        status="confirmed",
+    )
 
     # Участок 3: задолженность 1500 (2000 начислено - 500 оплачено)
-    accrual3 = Accrual(financial_subject_id=subject3.id, contribution_type_id=contribution_type.id, amount=Decimal("2000.00"), accrual_date=date.today(), period_start=date.today().replace(month=1, day=1), status="applied")
-    payment3 = Payment(financial_subject_id=subject3.id, payer_owner_id=owner1.id, amount=Decimal("500.00"), payment_date=date.today(), status="confirmed")
+    accrual3 = Accrual(
+        financial_subject_id=subject3.id,
+        contribution_type_id=contribution_type.id,
+        amount=Decimal("2000.00"),
+        accrual_date=date.today(),
+        period_start=date.today().replace(month=1, day=1),
+        status="applied",
+    )
+    payment3 = Payment(
+        financial_subject_id=subject3.id,
+        payer_owner_id=owner1.id,
+        amount=Decimal("500.00"),
+        payment_date=date.today(),
+        status="confirmed",
+    )
 
     test_db.add_all([accrual1, payment1, accrual2, payment2, accrual3, payment3])
 
     # Создаём расходы
-    expense1 = Expense(cooperative_id=coop.id, category_id=category.id, amount=Decimal("5000.00"), expense_date=date.today(), status="confirmed", description="Ремонт дороги")
-    expense2 = Expense(cooperative_id=coop.id, category_id=category.id, amount=Decimal("3000.00"), expense_date=date.today(), status="confirmed", description="Закупка материалов")
+    expense1 = Expense(
+        cooperative_id=coop.id,
+        category_id=category.id,
+        amount=Decimal("5000.00"),
+        expense_date=date.today(),
+        status="confirmed",
+        description="Ремонт дороги",
+    )
+    expense2 = Expense(
+        cooperative_id=coop.id,
+        category_id=category.id,
+        amount=Decimal("3000.00"),
+        expense_date=date.today(),
+        status="confirmed",
+        description="Закупка материалов",
+    )
     test_db.add_all([expense1, expense2])
 
     await test_db.commit()
@@ -260,7 +339,6 @@ async def test_get_cash_flow_report_partial_period(
     coop = report_data_fixture["coop"]
 
     # Создаём начисление и платёж за вчерашний день
-    from app.models.financial_subject import FinancialSubject
 
     yesterday = date.today().replace(day=1)
 

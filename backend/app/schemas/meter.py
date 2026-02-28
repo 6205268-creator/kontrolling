@@ -24,7 +24,9 @@ class MeterCreate(MeterBase):
 class MeterUpdate(BaseModel):
     """Схема для обновления Meter."""
 
-    meter_type: str | None = Field(None, description="Тип счётчика", pattern="^(WATER|ELECTRICITY)$")
+    meter_type: str | None = Field(
+        None, description="Тип счётчика", pattern="^(WATER|ELECTRICITY)$"
+    )
     serial_number: str | None = Field(None, description="Серийный номер", max_length=100)
     installation_date: datetime | None = Field(None, description="Дата установки")
     status: str | None = Field(None, description="Статус", pattern="^(active|inactive)$")

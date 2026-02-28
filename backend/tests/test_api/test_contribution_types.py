@@ -1,11 +1,10 @@
 import pytest
 from httpx import AsyncClient
 
-from app.core.security import create_access_token
+from app.core.security import create_access_token, get_password_hash
+from app.models.app_user import AppUser
 from app.models.contribution_type import ContributionType
 from app.models.cooperative import Cooperative
-from app.models.app_user import AppUser
-from app.core.security import get_password_hash
 
 
 @pytest.fixture
