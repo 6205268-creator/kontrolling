@@ -5,6 +5,7 @@ import MainLayout from '@/components/MainLayout.vue';
 import DashboardView from '@/views/DashboardView.vue';
 import LandPlotsView from '@/views/LandPlotsView.vue';
 import LandPlotCreateView from '@/views/LandPlotCreateView.vue';
+import LandPlotEditView from '@/views/LandPlotEditView.vue';
 import OwnersView from '@/views/OwnersView.vue';
 import AccrualsView from '@/views/AccrualsView.vue';
 import AccrualCreateView from '@/views/AccrualCreateView.vue';
@@ -45,6 +46,11 @@ const router = createRouter({
           path: 'land-plots/create',
           name: 'land-plots-create',
           component: LandPlotCreateView,
+        },
+        {
+          path: 'land-plots/:id/edit',
+          name: 'land-plots-edit',
+          component: LandPlotEditView,
         },
         {
           path: 'owners',

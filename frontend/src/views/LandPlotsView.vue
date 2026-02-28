@@ -51,11 +51,12 @@
             <th>Площадь, м²</th>
             <th>Статус</th>
             <th>Владельцы</th>
+            <th v-if="canEdit">Действия</th>
           </tr>
         </thead>
         <tbody>
           <tr v-if="landPlotsStore.plots.length === 0">
-            <td colspan="4" class="empty">Нет участков</td>
+            <td colspan="5" class="empty">Нет участков</td>
           </tr>
           <tr
             v-for="plot in landPlotsStore.plots"
@@ -65,6 +66,15 @@
             <td>{{ formatArea(plot.area_sqm) }}</td>
             <td>{{ statusLabel(plot.status) }}</td>
             <td>{{ ownersSummary(plot.owners) }}</td>
+            <td v-if="canEdit">
+              <router-link
+                :to="`/land-plots/${plot.id}/edit`"
+                class="btn-icon-link"
+                title="Редактировать"
+              >
+                <Edit2 class="action-icon" aria-hidden />
+              </router-link>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -74,7 +84,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { Plus, AlertCircle } from 'lucide-vue-next';
+import { Plus, AlertCircle, Edit2 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useLandPlotsStore } from '@/stores/landPlots';
 import type { Cooperative } from '@/types';
@@ -88,6 +98,9 @@ const selectedCooperativeId = ref<string>('');
 
 const isAdmin = computed(() => authStore.userRole === 'admin');
 const canCreate = computed(() =>
+  authStore.userRole === 'admin' || authStore.userRole === 'treasurer'
+);
+const canEdit = computed(() =>
   authStore.userRole === 'admin' || authStore.userRole === 'treasurer'
 );
 
@@ -163,6 +176,26 @@ onMounted(async () => {
 }
 
 .btn-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.btn-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 4px;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+
+.btn-icon-link:hover {
+  background: #f3f4f6;
+  color: #667eea;
+}
+
+.action-icon {
   width: 1.125rem;
   height: 1.125rem;
 }
