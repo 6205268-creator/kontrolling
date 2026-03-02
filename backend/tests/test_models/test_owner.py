@@ -3,7 +3,7 @@ import uuid
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.owner import Owner
+from app.modules.land_management.infrastructure.models import OwnerModel as Owner
 
 
 @pytest.mark.asyncio

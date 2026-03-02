@@ -104,7 +104,7 @@ async def test_create_accrual(
     ct = contribution_type_fixture
 
     response = await async_client.post(
-        "/api/v1/accruals/",
+        f"/api/accruals/?cooperative_id={str(subject.cooperative_id)}",
         json={
             "financial_subject_id": str(subject.id),
             "contribution_type_id": str(ct.id),
@@ -148,7 +148,7 @@ async def test_apply_accrual(
 
     # Применяем
     response = await async_client.post(
-        f"/api/v1/accruals/{accrual.id}/apply",
+        f"/api/accruals/{accrual.id}/apply?cooperative_id={str(subject.cooperative_id)}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -183,7 +183,7 @@ async def test_cancel_accrual(
 
     # Отменяем
     response = await async_client.post(
-        f"/api/v1/accruals/{accrual.id}/cancel",
+        f"/api/accruals/{accrual.id}/cancel?cooperative_id={str(subject.cooperative_id)}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -218,7 +218,7 @@ async def test_cancel_already_cancelled_accrual(
 
     # Пытаемся отменить
     response = await async_client.post(
-        f"/api/v1/accruals/{accrual.id}/cancel",
+        f"/api/accruals/{accrual.id}/cancel?cooperative_id={str(subject.cooperative_id)}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -251,7 +251,7 @@ async def test_apply_non_created_accrual(
 
     # Пытаемся применить
     response = await async_client.post(
-        f"/api/v1/accruals/{accrual.id}/apply",
+        f"/api/accruals/{accrual.id}/apply?cooperative_id={str(subject.cooperative_id)}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -306,7 +306,7 @@ async def test_mass_create_accruals(
     }
 
     response = await async_client.post(
-        "/api/v1/accruals/batch",
+        f"/api/accruals/batch?cooperative_id={str(coop.id)}",
         json=accruals_data,
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -344,8 +344,11 @@ async def test_get_accruals_by_financial_subject(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/accruals/",
-        params={"financial_subject_id": str(subject.id)},
+        "/api/accruals/",
+        params={
+            "financial_subject_id": str(subject.id),
+            "cooperative_id": str(subject.cooperative_id),
+        },
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -392,7 +395,7 @@ async def test_get_accruals_by_cooperative(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/accruals/",
+        "/api/accruals/",
         params={"cooperative_id": str(coop.id)},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -430,7 +433,7 @@ async def test_create_accrual_forbidden_for_other_cooperative(
     ct = contribution_type_fixture
 
     response = await async_client.post(
-        "/api/v1/accruals/",
+        f"/api/accruals/?cooperative_id={str(other_coop.id)}",
         json={
             "financial_subject_id": str(subject.id),
             "contribution_type_id": str(ct.id),
@@ -451,7 +454,7 @@ async def test_create_accrual_missing_params(
 ) -> None:
     """Тест 400 при отсутствии financial_subject_id или cooperative_id."""
     response = await async_client.get(
-        "/api/v1/accruals/",
+        "/api/accruals/",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 

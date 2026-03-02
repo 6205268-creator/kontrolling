@@ -19,21 +19,22 @@ globs: backend/**/*.py, backend/tests/**/*
 ## Порядок в conftest.py (критично)
 
 1. Установить `os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"` до любого импорта приложения.
-2. Импортировать `Base` и затем `app.models` (чтобы таблицы попали в `Base.metadata`).
-3. Только после этого импортировать `app` из `app.main`. Иначе приложение создаст движок из `.env` (PostgreSQL).
+2. Импортировать модели из модулей Clean Architecture: `app.modules.<module>.infrastructure.models` (перечень модулей см. в `app.db.register_models` и в текущем `conftest.py`). Импорт моделей регистрирует таблицы в `Base.metadata`.
+3. Импортировать `Base` из `app.db.base`.
+4. Только после этого импортировать `app` из `app.main`. Иначе приложение создаст движок из `.env` (PostgreSQL).
 
-## Переопределение get_db в тестах API
+## Каноническая точка get_db
 
-При использовании `async_client` нужно подменить зависимость БД. В текущем проекте переопределяются оба:
+Единственная каноническая точка инъекции сессии БД в роутах — **`app.api.deps.get_db`**. Она реэкспортирует/использует `app.db.session.get_db`. При тестировании API нужно подменять зависимость так, чтобы использовалась тестовая БД. В текущем проекте переопределяются **оба**:
 
 - `app.dependency_overrides[deps.get_db] = override_get_db`
 - `app.dependency_overrides[db_session.get_db] = override_get_db`
 
-Иначе часть кода может получить сессию из глобального движка, а не из `test_db`.
+Иначе часть кода (например, слой, вызывающий `get_db` напрямую из `db.session`) может получить сессию из глобального движка, а не из `test_db`.
 
 ## Модели и Alembic
 
-- Каждая новая ORM-модель должна быть импортирована в `app/models/__init__.py` и добавлена в `__all__`. Иначе Alembic не увидит таблицу при `autogenerate`, а в тестах `Base.metadata.create_all` не создаст её.
+- ORM-модели существуют только в `app.modules.<module>.infrastructure.models`. Регистрация для Alembic — через вызов `import_all_models()` из `app.db.register_models` в `alembic/env.py`. Каждая новая ORM-модель добавляется в соответствующий модуль и импортируется в `register_models.py`; иначе Alembic не увидит таблицу при `autogenerate`, а в тестах `Base.metadata.create_all` не создаст её.
 
 ## UUID в моделях
 

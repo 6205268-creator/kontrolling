@@ -5,10 +5,10 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.cooperative import Cooperative
-from app.models.financial_subject import FinancialSubject
-from app.models.owner import Owner
-from app.models.payment import Payment
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
+from app.modules.financial_core.infrastructure.models import FinancialSubjectModel as FinancialSubject
+from app.modules.land_management.infrastructure.models import OwnerModel as Owner
+from app.modules.payments.infrastructure.models import PaymentModel as Payment
 
 
 @pytest.mark.asyncio

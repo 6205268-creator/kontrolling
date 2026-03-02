@@ -101,7 +101,7 @@ async def test_register_payment(
     owner = owner_fixture
 
     response = await async_client.post(
-        "/api/v1/payments/",
+        f"/api/payments/?cooperative_id={str(subject.cooperative_id)}",
         json={
             "financial_subject_id": str(subject.id),
             "payer_owner_id": str(owner.id),
@@ -145,7 +145,7 @@ async def test_cancel_payment(
 
     # Отменяем
     response = await async_client.post(
-        f"/api/v1/payments/{payment.id}/cancel",
+        f"/api/payments/{payment.id}/cancel?cooperative_id={str(subject.cooperative_id)}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -179,7 +179,7 @@ async def test_cancel_already_cancelled_payment(
 
     # Пытаемся отменить
     response = await async_client.post(
-        f"/api/v1/payments/{payment.id}/cancel",
+        f"/api/payments/{payment.id}/cancel?cooperative_id={str(subject.cooperative_id)}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -212,8 +212,11 @@ async def test_get_payments_by_financial_subject(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/payments/",
-        params={"financial_subject_id": str(subject.id)},
+        "/api/payments/",
+        params={
+            "financial_subject_id": str(subject.id),
+            "cooperative_id": str(subject.cooperative_id),
+        },
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -248,8 +251,11 @@ async def test_get_payments_by_owner(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/payments/",
-        params={"owner_id": str(owner.id)},
+        "/api/payments/",
+        params={
+            "owner_id": str(owner.id),
+            "cooperative_id": str(subject.cooperative_id),
+        },
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -293,7 +299,7 @@ async def test_get_payments_by_cooperative(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/payments/",
+        "/api/payments/",
         params={"cooperative_id": str(coop.id)},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -329,7 +335,7 @@ async def test_create_payment_forbidden_for_other_cooperative(
     await test_db.commit()
 
     response = await async_client.post(
-        "/api/v1/payments/",
+        f"/api/payments/?cooperative_id={str(other_coop.id)}",
         json={
             "financial_subject_id": str(subject.id),
             "payer_owner_id": str(owner_fixture.id),
@@ -349,7 +355,7 @@ async def test_create_payment_missing_params(
 ) -> None:
     """Тест 400 при отсутствии параметров фильтра."""
     response = await async_client.get(
-        "/api/v1/payments/",
+        "/api/payments/",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -368,7 +374,7 @@ async def test_create_payment_invalid_amount(
     owner = owner_fixture
 
     response = await async_client.post(
-        "/api/v1/payments/",
+        "/api/payments/",
         json={
             "financial_subject_id": str(subject.id),
             "payer_owner_id": str(owner.id),
@@ -391,7 +397,7 @@ async def test_get_payments_treasurer_own_cooperative(
     """Тест что treasurer видит только платежи своего СТ."""
     # Получаем СТ казначея
     coop_response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
     coop_id = coop_response.json()[0]["id"]
@@ -420,7 +426,7 @@ async def test_get_payments_treasurer_own_cooperative(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/payments/",
+        "/api/payments/",
         params={"cooperative_id": coop_id},
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )

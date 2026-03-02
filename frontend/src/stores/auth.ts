@@ -31,7 +31,14 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function login(credentials: LoginCredentials): Promise<void> {
-    const response = await api.post<{ access_token: string; token_type: string }>('auth/login', credentials);
+    const formData = new URLSearchParams();
+    formData.append('username', credentials.username);
+    formData.append('password', credentials.password);
+    const response = await api.post<{ access_token: string; token_type: string }>(
+      'auth/login',
+      formData,
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+    );
 
     token.value = response.data.access_token;
     localStorage.setItem('token', response.data.access_token);

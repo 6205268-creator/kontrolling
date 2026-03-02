@@ -20,28 +20,25 @@ from sqlalchemy import select
 
 from app.core.security import get_password_hash
 from app.db.session import async_session_maker
-from app.models import (
-    Accrual,
-    AppUser,
-    ContributionType,
-    Cooperative,
-    Expense,
-    ExpenseCategory,
-    FinancialSubject,
-    LandPlot,
-    Meter,
-    MeterReading,
-    Owner,
-    Payment,
-    PlotOwnership,
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel
+from app.modules.land_management.infrastructure.models import (
+    LandPlotModel,
+    OwnerModel,
+    PlotOwnershipModel,
 )
+from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
+from app.modules.accruals.infrastructure.models import AccrualModel, ContributionTypeModel
+from app.modules.expenses.infrastructure.models import ExpenseCategoryModel, ExpenseModel
+from app.modules.payments.infrastructure.models import PaymentModel
+from app.modules.meters.infrastructure.models import MeterModel, MeterReadingModel
+from app.modules.administration.infrastructure.models import AppUserModel
 
 
 async def seed(session) -> None:
     """Создаёт все тестовые сущности в переданной сессии (идемпотентно)."""
     # 2 СТ (только если нет)
     result = await session.execute(
-        select(Cooperative).where(Cooperative.unp.in_(["100000001", "100000002"]))
+        select(CooperativeModel).where(CooperativeModel.unp.in_(["100000001", "100000002"]))
     )
     existing_coops = result.scalars().all()
     if len(existing_coops) == 2:
@@ -49,10 +46,10 @@ async def seed(session) -> None:
         coop_romashka = existing_coops[0]
         coop_vasilek = existing_coops[1]
     else:
-        coop_romashka = Cooperative(
+        coop_romashka = CooperativeModel(
             name='СТ "Ромашка"', unp="100000001", address="Минский р-н, д. Ромашки"
         )
-        coop_vasilek = Cooperative(
+        coop_vasilek = CooperativeModel(
             name='СТ "Василёк"', unp="100000002", address="Минский р-н, д. Васильки"
         )
         session.add_all([coop_romashka, coop_vasilek])
@@ -61,26 +58,26 @@ async def seed(session) -> None:
 
     # 5 владельцев: 3 физ., 2 юр.
     owners = [
-        Owner(
+        OwnerModel(
             owner_type="physical",
             name="Иванов Иван Иванович",
             tax_id="123456789A",
             contact_phone="+375291111111",
         ),
-        Owner(
+        OwnerModel(
             owner_type="physical",
             name="Петрова Мария Сергеевна",
             tax_id="123456789B",
             contact_phone="+375292222222",
         ),
-        Owner(owner_type="physical", name="Сидоров Пётр Алексеевич", tax_id="123456789C"),
-        Owner(
+        OwnerModel(owner_type="physical", name="Сидоров Пётр Алексеевич", tax_id="123456789C"),
+        OwnerModel(
             owner_type="legal",
             name="ООО «Дачник»",
             tax_id="123456789",
             contact_email="dachnik@example.by",
         ),
-        Owner(owner_type="legal", name="ИП Козлов", tax_id="987654321"),
+        OwnerModel(owner_type="legal", name="ИП Козлов", tax_id="987654321"),
     ]
     session.add_all(owners)
     await session.flush()
@@ -90,7 +87,7 @@ async def seed(session) -> None:
     for i, coop in enumerate([coop_romashka, coop_vasilek]):
         for j in range(1, 6):
             num = i * 5 + j
-            plot = LandPlot(
+            plot = LandPlotModel(
                 cooperative_id=coop.id,
                 plot_number=str(num),
                 area_sqm=Decimal("600.00") + Decimal(num * 10),
@@ -106,7 +103,7 @@ async def seed(session) -> None:
     for idx, plot in enumerate(plots):
         owner = owners[idx % 5]
         session.add(
-            PlotOwnership(
+            PlotOwnershipModel(
                 land_plot_id=plot.id,
                 owner_id=owner.id,
                 share_numerator=1,
@@ -122,7 +119,7 @@ async def seed(session) -> None:
     subjects = []
     for i, plot in enumerate(plots):
         coop = coop_romashka if plot.cooperative_id == coop_romashka.id else coop_vasilek
-        fs = FinancialSubject(
+        fs = FinancialSubjectModel(
             subject_type="LAND_PLOT",
             subject_id=plot.id,
             cooperative_id=coop.id,
@@ -135,9 +132,9 @@ async def seed(session) -> None:
 
     # 3 вида взносов
     ctypes = [
-        ContributionType(name="Членский", code="MEMBER", description="Членский взнос"),
-        ContributionType(name="Целевой", code="TARGET", description="Целевой взнос"),
-        ContributionType(
+        ContributionTypeModel(name="Членский", code="MEMBER", description="Членский взнос"),
+        ContributionTypeModel(name="Целевой", code="TARGET", description="Целевой взнос"),
+        ContributionTypeModel(
             name="Электроэнергия", code="ELECTRICITY", description="Взнос за электроэнергию"
         ),
     ]
@@ -146,9 +143,9 @@ async def seed(session) -> None:
 
     # 3 категории расходов
     ecats = [
-        ExpenseCategory(name="Дороги", code="ROADS", description="Ремонт и содержание дорог"),
-        ExpenseCategory(name="Зарплата", code="SALARY", description="Оплата труда"),
-        ExpenseCategory(name="Материалы", code="MATERIALS", description="Стройматериалы"),
+        ExpenseCategoryModel(name="Дороги", code="ROADS", description="Ремонт и содержание дорог"),
+        ExpenseCategoryModel(name="Зарплата", code="SALARY", description="Оплата труда"),
+        ExpenseCategoryModel(name="Материалы", code="MATERIALS", description="Стройматериалы"),
     ]
     session.add_all(ecats)
     await session.flush()
@@ -160,7 +157,7 @@ async def seed(session) -> None:
         ct = ctypes[i % 3]
         owner = owners[i % 5]
         session.add(
-            Accrual(
+            AccrualModel(
                 financial_subject_id=subj.id,
                 contribution_type_id=ct.id,
                 amount=Decimal("500.00") + Decimal(i * 100),
@@ -172,13 +169,13 @@ async def seed(session) -> None:
         )
     await session.flush()
 
-    result = await session.execute(select(Accrual).order_by(Accrual.id))
+    result = await session.execute(select(AccrualModel).order_by(AccrualModel.id))
     accruals = list(result.scalars().all())
 
     for i, acc in enumerate(accruals[:4]):
         owner = owners[i % 5]
         session.add(
-            Payment(
+            PaymentModel(
                 financial_subject_id=acc.financial_subject_id,
                 payer_owner_id=owner.id,
                 amount=Decimal("300.00") + Decimal(i * 50),
@@ -192,7 +189,7 @@ async def seed(session) -> None:
     # Несколько расходов
     for coop in [coop_romashka, coop_vasilek]:
         session.add(
-            Expense(
+            ExpenseModel(
                 cooperative_id=coop.id,
                 category_id=ecats[0].id,
                 amount=Decimal("10000.00"),
@@ -203,7 +200,7 @@ async def seed(session) -> None:
             )
         )
         session.add(
-            Expense(
+            ExpenseModel(
                 cooperative_id=coop.id,
                 category_id=ecats[1].id,
                 amount=Decimal("5000.00"),
@@ -217,7 +214,7 @@ async def seed(session) -> None:
     # 3 счётчика с показаниями (привязываем к первым 3 владельцам)
     meters = []
     for i, owner in enumerate(owners[:3]):
-        m = Meter(
+        m = MeterModel(
             owner_id=owner.id,
             meter_type="ELECTRICITY" if i % 2 == 0 else "WATER",
             serial_number=f"M-{1000 + i}",
@@ -231,7 +228,7 @@ async def seed(session) -> None:
     rd = datetime.now(UTC)
     for m in meters:
         session.add(
-            MeterReading(
+            MeterReadingModel(
                 meter_id=m.id,
                 reading_value=Decimal("100.5") + Decimal(meters.index(m) * 10),
                 reading_date=rd,
@@ -241,12 +238,12 @@ async def seed(session) -> None:
 
     # 3 пользователя: admin (без СТ), chairman и treasurer (с СТ Ромашка) — только если ещё нет
     for username in ("admin", "chairman", "treasurer"):
-        result = await session.execute(select(AppUser).where(AppUser.username == username))
+        result = await session.execute(select(AppUserModel).where(AppUserModel.username == username))
         if result.scalar_one_or_none() is not None:
             continue
         role = "admin" if username == "admin" else username
         cooperative_id = None if username == "admin" else coop_romashka.id
-        user = AppUser(
+        user = AppUserModel(
             username=username,
             email=f"{username}@controlling.local",
             hashed_password=get_password_hash(username),

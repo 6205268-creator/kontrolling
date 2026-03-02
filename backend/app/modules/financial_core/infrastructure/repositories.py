@@ -111,13 +111,9 @@ class BalanceRepository(IBalanceRepository):
         
         balance = total_accruals (applied) - total_payments (confirmed)
         """
-        # Import models - will be updated when modules are migrated
-        try:
-            from app.modules.accruals.infrastructure.models import AccrualModel as Accrual
-            from app.modules.payments.infrastructure.models import PaymentModel as Payment
-        except ImportError:
-            from app.models.accrual import Accrual
-            from app.models.payment import Payment
+        # Import models from modules
+        from app.modules.accruals.infrastructure.models import AccrualModel as Accrual
+        from app.modules.payments.infrastructure.models import PaymentModel as Payment
 
         # Get financial subject
         result = await self.session.execute(
@@ -159,12 +155,9 @@ class BalanceRepository(IBalanceRepository):
 
     async def get_balances_by_cooperative(self, cooperative_id: UUID) -> list[Balance]:
         """Get balances for all financial subjects in cooperative."""
-        try:
-            from app.modules.accruals.infrastructure.models import AccrualModel as Accrual
-            from app.modules.payments.infrastructure.models import PaymentModel as Payment
-        except ImportError:
-            from app.models.accrual import Accrual
-            from app.models.payment import Payment
+        # Import models from modules
+        from app.modules.accruals.infrastructure.models import AccrualModel as Accrual
+        from app.modules.payments.infrastructure.models import PaymentModel as Payment
 
         # Get all financial subjects for cooperative
         result = await self.session.execute(

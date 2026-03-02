@@ -74,7 +74,7 @@ async def test_get_expense_categories(
 ) -> None:
     """Тест получения списка категорий расходов."""
     response = await async_client.get(
-        "/api/v1/expenses/categories",
+        "/api/expenses/categories",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -98,7 +98,7 @@ async def test_create_expense(
     await test_db.commit()
 
     response = await async_client.post(
-        "/api/v1/expenses/",
+        "/api/expenses/",
         json={
             "cooperative_id": str(coop.id),
             "category_id": str(expense_category_fixture.id),
@@ -140,7 +140,7 @@ async def test_confirm_expense(
     await test_db.commit()
 
     response = await async_client.post(
-        f"/api/v1/expenses/{expense.id}/confirm",
+        f"/api/expenses/{expense.id}/confirm",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -172,7 +172,7 @@ async def test_cancel_expense(
     await test_db.commit()
 
     response = await async_client.post(
-        f"/api/v1/expenses/{expense.id}/cancel",
+        f"/api/expenses/{expense.id}/cancel",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -204,7 +204,7 @@ async def test_cancel_already_cancelled_expense(
     await test_db.commit()
 
     response = await async_client.post(
-        f"/api/v1/expenses/{expense.id}/cancel",
+        f"/api/expenses/{expense.id}/cancel",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -234,7 +234,7 @@ async def test_confirm_non_created_expense(
     await test_db.commit()
 
     response = await async_client.post(
-        f"/api/v1/expenses/{expense.id}/confirm",
+        f"/api/expenses/{expense.id}/confirm",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -267,7 +267,7 @@ async def test_get_expenses_by_cooperative(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/expenses/",
+        "/api/expenses/",
         params={"cooperative_id": str(coop.id)},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -291,7 +291,7 @@ async def test_create_expense_forbidden_for_other_cooperative(
     await test_db.commit()
 
     response = await async_client.post(
-        "/api/v1/expenses/",
+        "/api/expenses/",
         json={
             "cooperative_id": str(other_coop.id),
             "category_id": str(expense_category_fixture.id),
@@ -317,7 +317,7 @@ async def test_create_expense_invalid_amount(
     await test_db.commit()
 
     response = await async_client.post(
-        "/api/v1/expenses/",
+        "/api/expenses/",
         json={
             "cooperative_id": str(coop.id),
             "category_id": str(expense_category_fixture.id),
@@ -337,7 +337,7 @@ async def test_get_expenses_missing_cooperative_id(
 ) -> None:
     """Тест что treasurer без cooperative_id получает список своего СТ."""
     response = await async_client.get(
-        "/api/v1/expenses/",
+        "/api/expenses/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -359,7 +359,7 @@ async def test_create_expense_category_not_found(
     await test_db.commit()
 
     response = await async_client.post(
-        "/api/v1/expenses/",
+        "/api/expenses/",
         json={
             "cooperative_id": str(coop.id),
             "category_id": str(uuid.uuid4()),  # Не существует

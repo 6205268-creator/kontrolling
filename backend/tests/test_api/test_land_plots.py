@@ -94,13 +94,13 @@ async def test_create_land_plot_with_single_owner(
     """Тест создания участка с одним владельцем."""
     # Получаем cooperative_id из токена
     coop_response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
     coop_id = coop_response.json()[0]["id"]
 
     response = await async_client.post(
-        "/api/v1/land-plots/",
+        "/api/land-plots/",
         json={
             "cooperative_id": coop_id,
             "plot_number": "123",
@@ -143,7 +143,7 @@ async def test_create_land_plot_with_multiple_owners(
     await test_db.flush()
 
     response = await async_client.post(
-        "/api/v1/land-plots/",
+        "/api/land-plots/",
         json={
             "cooperative_id": str(coop.id),
             "plot_number": "456",
@@ -184,7 +184,7 @@ async def test_get_land_plots_list(
     """Тест получения списка участков."""
     # Получаем СТ казначея
     coop_response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
     coop_id = coop_response.json()[0]["id"]
@@ -201,7 +201,7 @@ async def test_get_land_plots_list(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/land-plots/",
+        "/api/land-plots/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -219,7 +219,7 @@ async def test_get_land_plot_by_id(
     """Тест получения участка по ID с владельцами."""
     # Получаем СТ казначея
     coop_response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
     coop_id = coop_response.json()[0]["id"]
@@ -234,7 +234,7 @@ async def test_get_land_plot_by_id(
     await test_db.commit()
 
     response = await async_client.get(
-        f"/api/v1/land-plots/{plot.id}",
+        f"/api/land-plots/{plot.id}",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -256,7 +256,7 @@ async def test_get_land_plot_not_found(
     fake_id = uuid.uuid4()
 
     response = await async_client.get(
-        f"/api/v1/land-plots/{fake_id}",
+        f"/api/land-plots/{fake_id}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -272,7 +272,7 @@ async def test_update_land_plot(
     """Тест обновления участка."""
     # Получаем СТ казначея
     coop_response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
     coop_id = coop_response.json()[0]["id"]
@@ -287,7 +287,7 @@ async def test_update_land_plot(
     await test_db.commit()
 
     response = await async_client.patch(
-        f"/api/v1/land-plots/{plot.id}",
+        f"/api/land-plots/{plot.id}",
         json={
             "plot_number": "После обновления",
             "status": "archived",
@@ -312,7 +312,7 @@ async def test_update_land_plot_not_found(
     fake_id = uuid.uuid4()
 
     response = await async_client.patch(
-        f"/api/v1/land-plots/{fake_id}",
+        f"/api/land-plots/{fake_id}",
         json={"plot_number": "Новый номер"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -341,7 +341,7 @@ async def test_delete_land_plot_by_admin(
     plot_id = plot.id
 
     response = await async_client.delete(
-        f"/api/v1/land-plots/{plot_id}",
+        f"/api/land-plots/{plot_id}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -357,7 +357,7 @@ async def test_delete_land_plot_by_treasurer_forbidden(
     """Тест 403 при попытке treasurer удалить участок."""
     # Получаем СТ казначея
     coop_response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
     coop_id = coop_response.json()[0]["id"]
@@ -371,7 +371,7 @@ async def test_delete_land_plot_by_treasurer_forbidden(
     await test_db.commit()
 
     response = await async_client.delete(
-        f"/api/v1/land-plots/{plot.id}",
+        f"/api/land-plots/{plot.id}",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -388,7 +388,7 @@ async def test_add_ownership_to_plot(
     """Тест добавления владельца к участку."""
     # Получаем СТ казначея
     coop_response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
     coop_id = coop_response.json()[0]["id"]
@@ -403,7 +403,7 @@ async def test_add_ownership_to_plot(
     await test_db.commit()
 
     response = await async_client.post(
-        f"/api/v1/land-plots/{plot.id}/ownerships",
+        f"/api/land-plots/{plot.id}/ownerships",
         json={
             "land_plot_id": str(plot.id),
             "owner_id": str(owner_test_data.id),
@@ -432,7 +432,7 @@ async def test_close_ownership(
     """Тест закрытия права собственности (установка valid_to)."""
     # Получаем СТ казначея
     coop_response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
     coop_id = coop_response.json()[0]["id"]
@@ -460,7 +460,7 @@ async def test_close_ownership(
 
     # Закрываем владение
     response = await async_client.patch(
-        f"/api/v1/land-plots/ownerships/{ownership.id}/close",
+        f"/api/land-plots/ownerships/{ownership.id}/close",
         params={"valid_to": str(date.today())},
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
@@ -481,7 +481,7 @@ async def test_close_ownership_not_found(
     fake_id = uuid.uuid4()
 
     response = await async_client.patch(
-        f"/api/v1/land-plots/ownerships/{fake_id}/close",
+        f"/api/land-plots/ownerships/{fake_id}/close",
         params={"valid_to": str(date.today())},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -501,7 +501,7 @@ async def test_create_land_plot_auto_creates_financial_subject(
     await test_db.flush()
 
     response = await async_client.post(
-        "/api/v1/land-plots/",
+        "/api/land-plots/",
         json={
             "cooperative_id": str(coop.id),
             "plot_number": "ФС Тест",

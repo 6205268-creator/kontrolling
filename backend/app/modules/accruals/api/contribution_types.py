@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, get_db
-from app.models.app_user import AppUser
+from app.modules.administration.domain.entities import AppUser
 
 from ..infrastructure.repositories import ContributionTypeRepository
 from ..application.use_cases import GetContributionTypesUseCase

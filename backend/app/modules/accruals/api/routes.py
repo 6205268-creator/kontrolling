@@ -1,4 +1,4 @@
-﻿"""FastAPI routes for accruals module."""
+"""FastAPI routes for accruals module."""
 
 from typing import Annotated
 from uuid import UUID
@@ -6,7 +6,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.deps import get_current_user, require_role
-from app.models.app_user import AppUser
+from app.modules.administration.domain.entities import AppUser
+from app.modules.shared.kernel.exceptions import ValidationError
 
 from .schemas import AccrualBatchCreate, AccrualCreate, AccrualInDB
 from app.modules.deps import (
@@ -86,9 +87,25 @@ async def create_accrual(
     accrual_data: AccrualCreate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
     use_case=Depends(get_create_accrual_use_case),
+    cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
 ) -> AccrualInDB:
     """Создать начисление (treasurer, admin)."""
-    accrual = await use_case.execute(data=accrual_data, cooperative_id=current_user.cooperative_id)
+    # Для admin используем cooperative_id из query или выбрасываем ошибку
+    if current_user.role != "admin":
+        cooperative_id = current_user.cooperative_id
+    elif cooperative_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="cooperative_id is required for admin users",
+        )
+    
+    try:
+        accrual = await use_case.execute(data=accrual_data, cooperative_id=cooperative_id)
+    except ValidationError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
 
     return AccrualInDB(
         id=accrual.id,
@@ -115,12 +132,28 @@ async def mass_create_accruals(
     batch_data: AccrualBatchCreate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
     use_case=Depends(get_mass_create_accruals_use_case),
+    cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
 ) -> list[AccrualInDB]:
     """Массовое создание начислений (treasurer, admin)."""
-    accruals = await use_case.execute(
-        accruals_data=batch_data.accruals,
-        cooperative_id=current_user.cooperative_id,
-    )
+    # Для admin используем cooperative_id из query или выбрасываем ошибку
+    if current_user.role != "admin":
+        cooperative_id = current_user.cooperative_id
+    elif cooperative_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="cooperative_id is required for admin users",
+        )
+    
+    try:
+        accruals = await use_case.execute(
+            accruals_data=batch_data.accruals,
+            cooperative_id=cooperative_id,
+        )
+    except ValidationError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
 
     return [
         AccrualInDB(
@@ -149,12 +182,27 @@ async def apply_accrual(
     accrual_id: UUID,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
     use_case=Depends(get_apply_accrual_use_case),
+    cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
 ) -> AccrualInDB:
     """Применить начисление (смена статуса на "applied") (treasurer, admin)."""
+    # Для admin используем cooperative_id из query или выбрасываем ошибку
+    if current_user.role != "admin":
+        cooperative_id = current_user.cooperative_id
+    elif cooperative_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="cooperative_id is required for admin users",
+        )
+    
     try:
         accrual = await use_case.execute(
             accrual_id=accrual_id,
-            cooperative_id=current_user.cooperative_id,
+            cooperative_id=cooperative_id,
+        )
+    except ValidationError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
         )
     except ValueError as e:
         raise HTTPException(
@@ -186,16 +234,31 @@ async def cancel_accrual(
     accrual_id: UUID,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
     use_case=Depends(get_cancel_accrual_use_case),
+    cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
 ) -> AccrualInDB:
     """Отменить начисление (смена статуса на "cancelled") (treasurer, admin)."""
+    # Для admin используем cooperative_id из query или выбрасываем ошибку
+    if current_user.role != "admin":
+        cooperative_id = current_user.cooperative_id
+    elif cooperative_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="cooperative_id is required for admin users",
+        )
+    
     try:
         accrual = await use_case.execute(
             accrual_id=accrual_id,
-            cooperative_id=current_user.cooperative_id,
+            cooperative_id=cooperative_id,
+        )
+    except ValidationError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
         )
     except ValueError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=str(e),
         )
 

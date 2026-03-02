@@ -5,9 +5,9 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.cooperative import Cooperative
-from app.models.expense import Expense
-from app.models.expense_category import ExpenseCategory
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
+from app.modules.expenses.infrastructure.models import ExpenseModel as Expense
+from app.modules.expenses.infrastructure.models import ExpenseCategoryModel as ExpenseCategory
 
 
 @pytest.mark.asyncio

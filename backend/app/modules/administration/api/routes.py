@@ -1,4 +1,4 @@
-﻿"""FastAPI routes for administration module (auth)."""
+"""FastAPI routes for administration module (auth)."""
 
 from typing import Annotated
 from datetime import timedelta
@@ -8,7 +8,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, get_db
-from app.models.app_user import AppUser
+from app.modules.administration.domain.entities import AppUser
+from app.modules.administration.api.user_loader import get_user_by_identifier
 from app.config import settings
 from app.core.security import create_access_token, verify_password
 
@@ -17,14 +18,9 @@ from .schemas import Token, UserInDB
 router = APIRouter()
 
 
-async def authenticate_user(db: AsyncSession, email: str, password: str) -> AppUser | None:
-    """Authenticate user by email and password."""
-    from app.modules.administration.infrastructure.models import AppUserModel
-    from sqlalchemy import select
-    
-    result = await db.execute(select(AppUserModel).where(AppUserModel.email == email))
-    user = result.scalar_one_or_none()
-    
+async def authenticate_user(db: AsyncSession, identifier: str, password: str) -> AppUser | None:
+    """Authenticate user by email/username and password. Returns domain entity or None."""
+    user = await get_user_by_identifier(db, identifier)
     if not user:
         return None
     if not verify_password(password, user.hashed_password):
@@ -52,8 +48,14 @@ async def login(
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+            detail="Неверное имя пользователя или пароль",
             headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Пользователь не активен",
         )
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)

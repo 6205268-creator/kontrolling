@@ -19,7 +19,7 @@ globs: docs/architecture/**, docs/processes/**, docs/data-model/**, domains/**, 
    - Centralize actor and system definitions in `/docs/architecture/common/` to prevent naming inconsistencies.
 
 5. **Repository Structure (DDD-based):** Enforce folder organization by business domains, not technical layers.
-   - `/docs/architecture/adr/` — Archive of Architecture Decision Records.
+   - `/docs/architecture/adr/` — Archive of Architecture Decision Records; index and process: [adr/README.md](../docs/architecture/adr/README.md).
    - `/docs/architecture/glossary/` — Ubiquitous language per domain.
    - `/domains/{domain_name}/` — Domain-specific logic and Level 2 diagrams.
 

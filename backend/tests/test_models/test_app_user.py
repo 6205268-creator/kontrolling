@@ -4,8 +4,8 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.app_user import AppUser
-from app.models.cooperative import Cooperative
+from app.modules.administration.infrastructure.models import AppUserModel as AppUser
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
 
 
 @pytest.mark.asyncio

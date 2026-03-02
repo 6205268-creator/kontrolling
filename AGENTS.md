@@ -37,6 +37,8 @@ npm run dev
 
 ### Backend отдельно
 
+**Запуск backend — всегда из каталога `backend/`.** Конфиг (`backend/app/config.py`) читает переменные из файла `.env` относительно текущей рабочей директории; при CWD = `backend/` подхватывается `backend/.env`. Подробнее: [Environment Policy](docs/architecture/environment-policy.md).
+
 All backend commands run from `backend/`.
 
 ```powershell
@@ -69,29 +71,33 @@ ruff check . --fix
 ruff format .
 ```
 
-Configuration is loaded from `backend/.env` (see `.env.example`). Tests override `DATABASE_URL` to `sqlite+aiosqlite:///:memory:` in `conftest.py` before importing the app.
+Configuration is loaded from `backend/.env` (see `.env.example`). The path to `.env` is resolved relative to the current working directory (CWD), so **run the backend from the `backend/` directory** so that `backend/.env` is used. Tests override `DATABASE_URL` to `sqlite+aiosqlite:///:memory:` in `conftest.py` before importing the app.
 
 ## Seed Database (test data)
 
-To populate the database with test data (2 cooperatives, owners, plots, users, accruals, payments, expenses, meters):
+**Канонический entry point** — скрипт `seed_db.py`. Он создаёт полный набор тестовых данных (2 СТ, владельцы, участки, пользователи, начисления, платежи, расходы, счётчики). Скрипт идемпотентен: повторный запуск не дублирует данные.
 
-```powershell
-cd backend
-python -m app.scripts.seed_db
-```
+- **Обычный сценарий (разработка/демо):**
+  ```powershell
+  cd backend
+  python -m app.scripts.seed_db
+  ```
+- **Отдельный скрипт `seed_user.py`** — утилитарный: создаёт только пользователя `admin`/`admin`, если его ещё нет. Используй отдельно, когда нужен только один пользователь без полного seed (например, первичная настройка). Для полного набора данных всегда используй `seed_db` (он тоже создаёт пользователей admin, chairman, treasurer).
 
-This is the **only** canonical seed script. The file is located at `backend/app/scripts/seed_db.py`.
+Модели для скриптов наполнения импортируются только из модулей: `app.modules.<module>.infrastructure.models`. Общего фасада `app.models` нет; ORM-модели существуют только в модулях.
 
 ## Testing (backend)
 
-- **Layout:** `tests/test_api/`, `tests/test_services/`, `tests/test_schemas/`, `tests/test_models/`, `tests/test_core/`. Fixtures in `tests/conftest.py`: `test_db`, `async_client`, role tokens (e.g. `admin_token`, `treasurer_token`).
-- **Critical:** In `conftest.py`, set `DATABASE_URL` and import `Base` + `app.models` before importing `app.main`; otherwise tests may use the production DB driver.
+- **Layout:** `tests/test_api/`, `tests/test_models/`, `tests/test_core/`. Fixtures in `tests/conftest.py`: `test_db`, `async_client`, role tokens (e.g. `admin_token`, `treasurer_token`).
+- **CI:** Backend tests in GitHub Actions **do not require PostgreSQL**. `conftest.py` sets `DATABASE_URL=sqlite+aiosqlite:///:memory:` before importing the app, so tests run against in-memory SQLite. Do not add a PostgreSQL service or DATABASE_URL to the backend-tests workflow for unit/API tests. If you add an e2e job that needs a real DB, document it in the workflow and in [Environment Policy](docs/architecture/environment-policy.md).
+- **Critical:** In `conftest.py`, set `DATABASE_URL` and import `Base` + `register_models` before importing `app.main`; otherwise tests may use the production DB driver.
 - **Library docs:** For pytest, FastAPI, httpx patterns use Context7 MCP (see "For AI assistants" below and `.cursor/rules/context7-docs.mdc`). Details and pitfalls: `.cursor/rules/backend-testing-and-pitfalls.mdc`.
 
 ## Pitfalls
 
 - Do not import `app` (or anything that loads `app.main`) before setting `DATABASE_URL` and importing models in test setup — the app would attach to the default engine.
-- New ORM models must be imported and listed in `app/models/__init__.py` so Alembic and test `Base.metadata.create_all` see them.
+- New ORM models must be added in the respective module's `infrastructure/models.py` and imported in `db/register_models.py` so Alembic and test `Base.metadata.create_all` see them.
+- **Presentation (API) must not import from Infrastructure.** The type of the current user in `app.api.deps` is the domain entity (`administration.domain.entities.AppUser`); loading from DB is done via the administration module's API layer (e.g. `user_loader.get_user_by_identifier`), which performs ORM→domain mapping inside the module.
 - Use `Guid` from `app.db.base` for UUID columns (PostgreSQL + SQLite test compatibility).
 - When testing endpoints that use `get_db`, override both `deps.get_db` and `db_session.get_db` in the test client fixture.
 
@@ -105,15 +111,48 @@ This is the **only** canonical seed script. The file is located at `backend/app/
 
 ### Backend Structure (`backend/app/`)
 
+The backend follows Clean Architecture / DDD principles with modular structure:
+
 - `main.py` — FastAPI app factory and middleware setup
 - `config.py` — `pydantic-settings` config, reads from `.env`
 - `db/base.py` — `DeclarativeBase` and custom `Guid` type (UUID on PostgreSQL, CHAR(36) on SQLite for test compatibility)
 - `db/session.py` — async engine, session maker, `get_db()` dependency
-- `models/` — SQLAlchemy ORM models (all re-exported in `__init__.py` so Alembic sees them)
-- `schemas/` — Pydantic schemas (request/response DTOs)
-- `api/` — route handlers; `deps.py` for shared FastAPI dependencies
-- `services/` — domain business logic (land_plot_service, owner_service, balance_service, etc.)
-- `core/` — shared utilities (e.g. security, auth helpers)
+- `db/register_models.py` — imports all models from modules for Alembic
+- `modules/` — modular Clean Architecture structure (see below)
+- `api/deps.py` — shared FastAPI dependencies
+- `core/security.py` — shared utilities (JWT, bcrypt)
+
+### Module Structure (`backend/app/modules/`)
+
+Each module follows the same Clean Architecture pattern:
+
+```
+{module_name}/
+├── domain/           # Pure Python (entities, repositories, events)
+│   ├── entities.py   # Business objects (no framework dependencies)
+│   ├── repositories.py # Repository interfaces (ABC)
+│   └── events.py     # Domain events
+├── application/      # Use cases and DTOs
+│   ├── use_cases.py  # Business operations
+│   └── dtos.py       # Data transfer objects (Pydantic)
+├── infrastructure/   # Framework-specific implementations
+│   ├── models.py     # SQLAlchemy ORM models
+│   └── repositories.py # Repository implementations
+└── api/              # FastAPI layer
+    ├── routes.py     # API endpoints
+    └── schemas.py    # API request/response schemas
+```
+
+**Modules:**
+- `cooperative_core` — Cooperative management
+- `land_management` — Land plots, owners, ownerships
+- `financial_core` — Financial subjects, balances
+- `accruals` — Contributions and accruals
+- `payments` — Payment processing
+- `expenses` — Expense tracking
+- `meters` — Meters and readings
+- `reporting` — Reports and analytics
+- `administration` — Authentication and user management
 
 ### Key Domain Concepts
 
@@ -133,7 +172,7 @@ Role prompts for backend, frontend, QA, DevOps, security, UX/UI, project orchest
 - `docs/project-design.md` — full system design (data model, roles, domain events)
 - `docs/project-implementation.md` — feature implementation roadmap
 - `docs/data-model/` — conceptual model, entity specs, interactive schema viewer (`schema-viewer.html`)
-- `docs/architecture/` — C4 diagrams, ADRs (`adr/`), glossary per domain (`glossary/`), common definitions (`common/`)
+- `docs/architecture/` — ADRs (`adr/` — индекс и процесс см. [adr/README.md](docs/architecture/adr/README.md)), glossary per domain (`glossary/`), common definitions (`common/`)
 - `docs/processes/` — BPMN 2.0 business process files, interactive viewer (`bpmn-viewer.html`)
 - `domains/{domain_name}/` — domain-specific L2 diagrams (e.g. `domains/bank_statements/container-diagram.mmd`)
 
@@ -146,8 +185,8 @@ Architecture diagrams and data model diagrams **must be updated before** any cod
 - **Diagrams:** Mermaid only. No PlantUML. C4 Model for architecture (L1 System Context, L2 Container priority). BPMN 2.0 for business processes (stored as `.bpmn` in `docs/processes/{domain}/`).
 - **C4 naming:** `Person_`, `Service_`, `System_`, `Database_` prefixes (e.g. `Person_Sobstvennik`, `Service_ContributionManager`, `Database_PostgreSQL_ST`)
 - **Soft deletion** for financial entities (`status = archived|cancelled`); hard delete is forbidden for Accrual, Payment, Expense.
-- **ADR required** for every significant architectural decision (`docs/architecture/adr/`).
-- **Glossary** required per domain (`docs/architecture/glossary/{domain}.md`).
+- **ADR required** for every significant architectural decision. Index and process: [docs/architecture/adr/README.md](docs/architecture/adr/README.md). Format: Context / Decision / Consequences.
+- **Glossary** required per domain (`docs/architecture/glossary/{domain}.md`). **Only Lead Architect** may create or modify glossary files; no other role or agent may edit them. Rationale: single source of truth for ubiquitous language; see [docs/architecture/glossary/README.md](docs/architecture/glossary/README.md). Full restricted paths: [docs/architecture/OWNERSHIP.md](docs/architecture/OWNERSHIP.md).
 - **Don't invent business requirements.** When sources, formulas, or processes are unclear — stop, ask explicit questions, list missing information.
 - **Folder structure is DDD-based** — organized by business domain, not technical layer.
 

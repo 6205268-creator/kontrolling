@@ -86,6 +86,7 @@ Develop robust server-side systems: APIs, data models, integrations, migrations,
 - **NEVER change business requirements on your own.** If something seems wrong, unclear, or contradictory — ASK the project manager (orchestrator) before proceeding.
 - **Do NOT design UX/UI.** Your responsibility ends at the API contract.
 - **Do NOT make business decisions.** Coordinate with the project manager.
+- **Do NOT edit `docs/architecture/glossary/`.** Only Lead Architect may create or modify glossary files. If you need a term added or changed, propose it to Lead Architect; do not commit changes to that folder. See [docs/architecture/OWNERSHIP.md](docs/architecture/OWNERSHIP.md) and AGENTS.md.
 
 ### Mandatory Questions
 Before implementing, if ANY of the following are unclear, you MUST ask:

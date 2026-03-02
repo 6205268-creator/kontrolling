@@ -21,10 +21,10 @@ async def test_login_success(async_client: AsyncClient, test_db) -> None:
     test_db.add(user)
     await test_db.commit()
 
-    # Логин
+    # Логин (OAuth2 form: application/x-www-form-urlencoded)
     response = await async_client.post(
-        "/api/v1/auth/login",
-        json={"username": "testuser", "password": "testpassword123"},
+        "/api/auth/login",
+        data={"username": "testuser", "password": "testpassword123"},
     )
 
     assert response.status_code == 200
@@ -47,8 +47,8 @@ async def test_login_wrong_password(async_client: AsyncClient, test_db) -> None:
     await test_db.commit()
 
     response = await async_client.post(
-        "/api/v1/auth/login",
-        json={"username": "testuser2", "password": "wrongpassword"},
+        "/api/auth/login",
+        data={"username": "testuser2", "password": "wrongpassword"},
     )
 
     assert response.status_code == 401
@@ -59,8 +59,8 @@ async def test_login_wrong_password(async_client: AsyncClient, test_db) -> None:
 async def test_login_nonexistent_user(async_client: AsyncClient) -> None:
     """Тест логина с несуществующим пользователем."""
     response = await async_client.post(
-        "/api/v1/auth/login",
-        json={"username": "nonexistent", "password": "somepassword"},
+        "/api/auth/login",
+        data={"username": "nonexistent", "password": "somepassword"},
     )
 
     assert response.status_code == 401
@@ -81,8 +81,8 @@ async def test_login_inactive_user(async_client: AsyncClient, test_db) -> None:
     await test_db.commit()
 
     response = await async_client.post(
-        "/api/v1/auth/login",
-        json={"username": "inactiveuser", "password": "testpassword"},
+        "/api/auth/login",
+        data={"username": "inactiveuser", "password": "testpassword"},
     )
 
     assert response.status_code == 403
@@ -122,8 +122,8 @@ async def test_invalid_token(async_client: AsyncClient) -> None:
     # Пытаемся получить доступ к защищённому эндпоинту с невалидным токеном
     # Пока проверяем что login возвращает ошибку при пустых данных
     response = await async_client.post(
-        "/api/v1/auth/login",
-        json={"username": "", "password": ""},
+        "/api/auth/login",
+        data={"username": "", "password": ""},
     )
 
     assert response.status_code == 422  # Validation error
@@ -145,8 +145,8 @@ async def test_login_different_roles(async_client: AsyncClient, test_db) -> None
 
     for role in ["admin", "chairman", "treasurer"]:
         response = await async_client.post(
-            "/api/v1/auth/login",
-            json={"username": f"user_{role}", "password": "testpassword"},
+            "/api/auth/login",
+            data={"username": f"user_{role}", "password": "testpassword"},
         )
 
         assert response.status_code == 200

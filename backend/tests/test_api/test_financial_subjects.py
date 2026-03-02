@@ -138,7 +138,7 @@ async def test_get_financial_subjects_list(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/financial-subjects/",
+        "/api/financial-subjects/",
         params={"cooperative_id": str(coop.id)},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -158,7 +158,7 @@ async def test_get_financial_subject_balance(
     subject = financial_subject_fixture
 
     response = await async_client.get(
-        f"/api/v1/financial-subjects/{subject.id}/balance",
+        f"/api/financial-subjects/{subject.id}/balance",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -181,7 +181,7 @@ async def test_get_financial_subject_balance_not_found(
     fake_id = uuid.uuid4()
 
     response = await async_client.get(
-        f"/api/v1/financial-subjects/{fake_id}/balance",
+        f"/api/financial-subjects/{fake_id}/balance",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -218,7 +218,7 @@ async def test_get_balances_by_cooperative(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/financial-subjects/balances",
+        "/api/financial-subjects/balances",
         params={"cooperative_id": str(coop.id)},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -237,7 +237,7 @@ async def test_get_balances_by_cooperative_treasurer(
     """Тест что treasurer видит только балансы своего СТ."""
     # Получаем СТ казначея
     coop_response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
     coop_id = coop_response.json()[0]["id"]
@@ -256,7 +256,7 @@ async def test_get_balances_by_cooperative_treasurer(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/financial-subjects/balances",
+        "/api/financial-subjects/balances",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -272,7 +272,7 @@ async def test_get_financial_subjects_no_cooperative_id(
 ) -> None:
     """Тест что treasurer без cooperative_id получает список своего СТ."""
     response = await async_client.get(
-        "/api/v1/financial-subjects/",
+        "/api/financial-subjects/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -305,7 +305,7 @@ async def test_get_balance_forbidden_for_other_cooperative(
     await test_db.commit()
 
     response = await async_client.get(
-        f"/api/v1/financial-subjects/{subject.id}/balance",
+        f"/api/financial-subjects/{subject.id}/balance",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 

@@ -1,4 +1,4 @@
-﻿"""FastAPI routes for land_management module."""
+"""FastAPI routes for land_management module."""
 
 from typing import Annotated
 from uuid import UUID
@@ -6,7 +6,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.deps import get_current_user, require_role
-from app.models.app_user import AppUser
+from app.modules.administration.domain.entities import AppUser
 
 from .schemas import (
     LandPlotCreate,

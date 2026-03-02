@@ -41,6 +41,8 @@
 
 ## Переменные окружения
 
+Политика окружений (local dev, CI, production), источники переменных и работа с секретами описаны в [Environment Policy](docs/architecture/environment-policy.md).
+
 ### Backend
 - `DATABASE_URL` — строка подключения к PostgreSQL (настраивается автоматически в docker-compose)
 - `SECRET_KEY` — секретный ключ для JWT

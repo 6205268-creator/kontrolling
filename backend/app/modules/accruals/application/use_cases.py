@@ -12,25 +12,34 @@ from ..domain.repositories import IAccrualRepository, IContributionTypeRepositor
 class CreateAccrualUseCase:
     """Use case for creating an Accrual."""
 
-    def __init__(self, accrual_repo: IAccrualRepository):
+    def __init__(self, accrual_repo: IAccrualRepository, fs_repo=None):
         self.accrual_repo = accrual_repo
+        self.fs_repo = fs_repo
 
     async def execute(self, data: AccrualCreate, cooperative_id: UUID) -> Accrual:
         """Create a new accrual.
-        
+
         Args:
             data: DTO with accrual data.
             cooperative_id: ID of cooperative for access control.
-            
+
         Returns:
             Created Accrual entity.
+
+        Raises:
+            ValidationError: If financial subject doesn't belong to cooperative.
         """
+        # Verify financial subject belongs to cooperative
+        if self.fs_repo:
+            fs = await self.fs_repo.get_by_id(data.financial_subject_id, cooperative_id)
+            if fs is None:
+                raise ValidationError("Financial subject does not belong to the specified cooperative")
+
         # Domain validation
         if data.amount < 0:
             raise ValidationError("Amount must be non-negative")
 
         entity = Accrual(
-            id=UUID(int=0),  # Will be set by repository
             financial_subject_id=data.financial_subject_id,
             contribution_type_id=data.contribution_type_id,
             amount=data.amount,
@@ -39,7 +48,7 @@ class CreateAccrualUseCase:
             period_end=data.period_end,
             status="created",
         )
-        
+
         return await self.accrual_repo.add(entity)
 
 
@@ -147,8 +156,9 @@ class CancelAccrualUseCase:
 class MassCreateAccrualsUseCase:
     """Use case for mass creating accruals."""
 
-    def __init__(self, accrual_repo: IAccrualRepository):
+    def __init__(self, accrual_repo: IAccrualRepository, fs_repo=None):
         self.accrual_repo = accrual_repo
+        self.fs_repo = fs_repo
 
     async def execute(
         self,
@@ -156,19 +166,27 @@ class MassCreateAccrualsUseCase:
         cooperative_id: UUID,
     ) -> list[Accrual]:
         """Create multiple accruals in one transaction.
-        
+
         Args:
             accruals_data: List of DTOs with accrual data.
             cooperative_id: ID of cooperative for access control.
-            
+
         Returns:
             List of created Accrual entities.
+            
+        Raises:
+            ValidationError: If any financial subject doesn't belong to cooperative.
         """
         created_accruals = []
-        
+
         for data in accruals_data:
+            # Verify financial subject belongs to cooperative
+            if self.fs_repo:
+                fs = await self.fs_repo.get_by_id(data.financial_subject_id, cooperative_id)
+                if fs is None:
+                    raise ValidationError("Financial subject does not belong to the specified cooperative")
+            
             entity = Accrual(
-                id=UUID(int=0),
                 financial_subject_id=data.financial_subject_id,
                 contribution_type_id=data.contribution_type_id,
                 amount=data.amount,
@@ -179,7 +197,7 @@ class MassCreateAccrualsUseCase:
             )
             created = await self.accrual_repo.add(entity)
             created_accruals.append(created)
-        
+
         return created_accruals
 
 

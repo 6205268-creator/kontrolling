@@ -4,10 +4,10 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.cooperative import Cooperative
-from app.models.land_plot import LandPlot
-from app.models.owner import Owner
-from app.models.plot_ownership import PlotOwnership
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
+from app.modules.land_management.infrastructure.models import LandPlotModel as LandPlot
+from app.modules.land_management.infrastructure.models import OwnerModel as Owner
+from app.modules.land_management.infrastructure.models import PlotOwnershipModel as PlotOwnership
 
 
 async def _make_coop_plot_owner(test_db: AsyncSession):

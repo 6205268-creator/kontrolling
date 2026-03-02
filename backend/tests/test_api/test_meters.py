@@ -73,8 +73,8 @@ async def owner_with_plot_fixture(test_db) -> Owner:
     # Создаём участок для владельца
     from datetime import date
 
-    from app.models.land_plot import LandPlot
-    from app.models.plot_ownership import PlotOwnership
+    from app.modules.land_management.infrastructure.models import LandPlotModel as LandPlot
+    from app.modules.land_management.infrastructure.models import PlotOwnershipModel as PlotOwnership
 
     plot = LandPlot(
         cooperative_id=coop.id,
@@ -109,7 +109,7 @@ async def test_create_meter_water(
     owner = owner_with_plot_fixture
 
     response = await async_client.post(
-        "/api/v1/meters/",
+        "/api/meters/",
         json={
             "owner_id": str(owner.id),
             "meter_type": "WATER",
@@ -136,7 +136,7 @@ async def test_create_meter_electricity(
     owner = owner_with_plot_fixture
 
     response = await async_client.post(
-        "/api/v1/meters/",
+        "/api/meters/",
         json={
             "owner_id": str(owner.id),
             "meter_type": "ELECTRICITY",
@@ -162,7 +162,7 @@ async def test_create_meter_auto_creates_financial_subject(
     owner = owner_with_plot_fixture
 
     response = await async_client.post(
-        "/api/v1/meters/",
+        "/api/meters/",
         json={
             "owner_id": str(owner.id),
             "meter_type": "WATER",
@@ -175,13 +175,13 @@ async def test_create_meter_auto_creates_financial_subject(
     assert response.status_code == 201
 
     # Проверяем что FinancialSubject создан
-    from app.models.financial_subject import FinancialSubject
+    from app.modules.financial_core.infrastructure.models import FinancialSubjectModel as FinancialSubject
 
     meter_id = response.json()["id"]
 
     # Проверяем что владелец имеет участок
-    from app.models.land_plot import LandPlot
-    from app.models.plot_ownership import PlotOwnership
+    from app.modules.land_management.infrastructure.models import LandPlotModel as LandPlot
+    from app.modules.land_management.infrastructure.models import PlotOwnershipModel as PlotOwnership
 
     ownership_result = await test_db.execute(
         select(PlotOwnership)
@@ -231,7 +231,7 @@ async def test_get_meters_by_owner(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/meters/",
+        "/api/meters/",
         params={"owner_id": str(owner.id)},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -261,7 +261,7 @@ async def test_get_meter_by_id(
     await test_db.commit()
 
     response = await async_client.get(
-        f"/api/v1/meters/{meter.id}",
+        f"/api/meters/{meter.id}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -281,7 +281,7 @@ async def test_get_meter_not_found(
     fake_id = uuid.uuid4()
 
     response = await async_client.get(
-        f"/api/v1/meters/{fake_id}",
+        f"/api/meters/{fake_id}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -308,7 +308,7 @@ async def test_add_meter_reading(
     await test_db.commit()
 
     response = await async_client.post(
-        f"/api/v1/meters/{meter.id}/readings",
+        f"/api/meters/{meter.id}/readings",
         json={
             "meter_id": str(meter.id),
             "reading_value": "125.500",
@@ -353,7 +353,7 @@ async def test_get_meter_readings(
     await test_db.commit()
 
     response = await async_client.get(
-        f"/api/v1/meters/{meter.id}/readings",
+        f"/api/meters/{meter.id}/readings",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -393,7 +393,7 @@ async def test_add_meter_reading_duplicate_date(
 
     # Пытаемся добавить второе на ту же дату
     response = await async_client.post(
-        f"/api/v1/meters/{meter.id}/readings",
+        f"/api/meters/{meter.id}/readings",
         json={
             "meter_id": str(meter.id),
             "reading_value": "150.000",
@@ -414,7 +414,7 @@ async def test_create_meter_owner_not_found(
     import uuid
 
     response = await async_client.post(
-        "/api/v1/meters/",
+        "/api/meters/",
         json={
             "owner_id": str(uuid.uuid4()),
             "meter_type": "WATER",
@@ -434,7 +434,7 @@ async def test_get_meters_missing_owner_id(
 ) -> None:
     """Тест 400 при отсутствии owner_id."""
     response = await async_client.get(
-        "/api/v1/meters/",
+        "/api/meters/",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 

@@ -251,22 +251,18 @@ def get_accruals_by_cooperative_use_case(accrual_repo=Depends(get_accrual_reposi
 
 def get_apply_accrual_use_case(
     accrual_repo=Depends(get_accrual_repository),
-    fs_repo=Depends(get_financial_subject_repository),
-    balance_repo=Depends(get_balance_repository),
 ):
     """Get ApplyAccrualUseCase instance."""
     from app.modules.accruals.application.use_cases import ApplyAccrualUseCase
-    return ApplyAccrualUseCase(accrual_repo, fs_repo, balance_repo)
+    return ApplyAccrualUseCase(accrual_repo)
 
 
 def get_cancel_accrual_use_case(
     accrual_repo=Depends(get_accrual_repository),
-    fs_repo=Depends(get_financial_subject_repository),
-    balance_repo=Depends(get_balance_repository),
 ):
     """Get CancelAccrualUseCase instance."""
     from app.modules.accruals.application.use_cases import CancelAccrualUseCase
-    return CancelAccrualUseCase(accrual_repo, fs_repo, balance_repo)
+    return CancelAccrualUseCase(accrual_repo)
 
 
 def get_mass_create_accruals_use_case(
@@ -297,11 +293,10 @@ def get_payment_repository(db: AsyncSession = Depends(get_db)):
 def get_register_payment_use_case(
     payment_repo=Depends(get_payment_repository),
     fs_repo=Depends(get_financial_subject_repository),
-    balance_repo=Depends(get_balance_repository),
 ):
     """Get RegisterPaymentUseCase instance."""
     from app.modules.payments.application.use_cases import RegisterPaymentUseCase
-    return RegisterPaymentUseCase(payment_repo, fs_repo, balance_repo)
+    return RegisterPaymentUseCase(payment_repo, fs_repo)
 
 
 def get_get_payment_use_case(payment_repo=Depends(get_payment_repository)):
@@ -330,12 +325,10 @@ def get_payments_by_cooperative_use_case(payment_repo=Depends(get_payment_reposi
 
 def get_cancel_payment_use_case(
     payment_repo=Depends(get_payment_repository),
-    fs_repo=Depends(get_financial_subject_repository),
-    balance_repo=Depends(get_balance_repository),
 ):
     """Get CancelPaymentUseCase instance."""
     from app.modules.payments.application.use_cases import CancelPaymentUseCase
-    return CancelPaymentUseCase(payment_repo, fs_repo, balance_repo)
+    return CancelPaymentUseCase(payment_repo)
 
 
 # =============================================================================

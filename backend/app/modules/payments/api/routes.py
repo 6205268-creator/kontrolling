@@ -1,4 +1,4 @@
-﻿"""FastAPI routes for payments module."""
+"""FastAPI routes for payments module."""
 
 from typing import Annotated
 from uuid import UUID
@@ -6,7 +6,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.deps import get_current_user, require_role
-from app.models.app_user import AppUser
+from app.modules.administration.domain.entities import AppUser
+from app.modules.shared.kernel.exceptions import ValidationError
 
 from .schemas import PaymentCreate, PaymentInDB
 from app.modules.deps import (
@@ -85,9 +86,25 @@ async def create_payment(
     payment_data: PaymentCreate,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
     use_case=Depends(get_register_payment_use_case),
+    cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
 ) -> PaymentInDB:
     """Register a payment."""
-    payment = await use_case.execute(data=payment_data, cooperative_id=current_user.cooperative_id)
+    # Для admin используем cooperative_id из query или выбрасываем ошибку
+    if current_user.role != "admin":
+        cooperative_id = current_user.cooperative_id
+    elif cooperative_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="cooperative_id is required for admin users",
+        )
+    
+    try:
+        payment = await use_case.execute(data=payment_data, cooperative_id=cooperative_id)
+    except ValidationError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
 
     return PaymentInDB(
         id=payment.id,
@@ -113,10 +130,25 @@ async def cancel_payment(
     payment_id: UUID,
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
     use_case=Depends(get_cancel_payment_use_case),
+    cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
 ) -> PaymentInDB:
     """Cancel a payment."""
+    # Для admin используем cooperative_id из query или выбрасываем ошибку
+    if current_user.role != "admin":
+        cooperative_id = current_user.cooperative_id
+    elif cooperative_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="cooperative_id is required for admin users",
+        )
+    
     try:
-        payment = await use_case.execute(payment_id=payment_id, cooperative_id=current_user.cooperative_id)
+        payment = await use_case.execute(payment_id=payment_id, cooperative_id=cooperative_id)
+    except ValidationError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

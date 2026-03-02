@@ -4,7 +4,7 @@ from datetime import datetime
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.cooperative import Cooperative
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
 
 
 @pytest.mark.asyncio

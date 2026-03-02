@@ -5,10 +5,10 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.accrual import Accrual
-from app.models.contribution_type import ContributionType
-from app.models.cooperative import Cooperative
-from app.models.financial_subject import FinancialSubject
+from app.modules.accruals.infrastructure.models import AccrualModel as Accrual
+from app.modules.accruals.infrastructure.models import ContributionTypeModel as ContributionType
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
+from app.modules.financial_core.infrastructure.models import FinancialSubjectModel as FinancialSubject
 
 
 @pytest.mark.asyncio

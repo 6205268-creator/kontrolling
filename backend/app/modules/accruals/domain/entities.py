@@ -8,11 +8,9 @@ from datetime import date, datetime
 from decimal import Decimal
 from uuid import UUID
 
-from app.modules.shared.kernel.entities import BaseEntity
-
 
 @dataclass
-class ContributionType(BaseEntity):
+class ContributionType:
     """Вид взноса — справочник типов начислений.
 
     Используется для классификации начислений (Accrual):
@@ -30,7 +28,7 @@ class ContributionType(BaseEntity):
 
 
 @dataclass
-class Accrual(BaseEntity):
+class Accrual:
     """Начисление по финансовому субъекту.
 
     Представляет собой задолженность по взносу или услуге за определённый период.
@@ -47,3 +45,4 @@ class Accrual(BaseEntity):
     status: str = "created"  # created, applied, cancelled
     created_at: datetime | None = None
     updated_at: datetime | None = None
+    id: UUID | None = None

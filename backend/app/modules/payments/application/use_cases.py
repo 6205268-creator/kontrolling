@@ -12,11 +12,22 @@ from ..domain.repositories import IPaymentRepository
 class RegisterPaymentUseCase:
     """Use case for registering a Payment."""
 
-    def __init__(self, repo: IPaymentRepository):
+    def __init__(self, repo: IPaymentRepository, fs_repo=None):
         self.repo = repo
+        self.fs_repo = fs_repo
 
     async def execute(self, data: PaymentCreate, cooperative_id: UUID) -> Payment:
-        """Register a new payment."""
+        """Register a new payment.
+        
+        Raises:
+            ValidationError: If financial subject doesn't belong to cooperative.
+        """
+        # Verify financial subject belongs to cooperative
+        if self.fs_repo:
+            fs = await self.fs_repo.get_by_id(data.financial_subject_id, cooperative_id)
+            if fs is None:
+                raise ValidationError("Financial subject does not belong to the specified cooperative")
+        
         # Domain validation
         if data.amount <= 0:
             raise ValidationError("Amount must be positive")
@@ -31,7 +42,7 @@ class RegisterPaymentUseCase:
             description=data.description,
             status="confirmed",
         )
-        
+
         return await self.repo.add(entity)
 
 

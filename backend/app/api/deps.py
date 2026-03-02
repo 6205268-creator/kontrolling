@@ -6,11 +6,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import decode_access_token
 from app.db.session import get_db
-from app.models.app_user import AppUser
+from app.modules.administration.domain.entities import AppUser
+from app.modules.administration.api.user_loader import get_user_by_identifier
 
 __all__ = ["get_db", "get_current_user", "require_role", "oauth2_scheme"]
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
 async def get_current_user(
@@ -18,8 +19,6 @@ async def get_current_user(
     db: AsyncSession = Depends(get_db),
 ) -> AppUser:
     """Получение текущего пользователя из JWT токена."""
-    from sqlalchemy import select
-
     payload = decode_access_token(token)
     if payload is None:
         raise HTTPException(
@@ -36,8 +35,7 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    result = await db.execute(select(AppUser).where(AppUser.username == username))
-    user = result.scalar_one_or_none()
+    user = await get_user_by_identifier(db, username)
 
     if user is None or not user.is_active:
         raise HTTPException(

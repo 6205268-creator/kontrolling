@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, get_db, require_role
-from app.models.app_user import AppUser
+from app.modules.administration.domain.entities import AppUser
 
 from .schemas import CooperativeCreate, CooperativeInDB, CooperativeUpdate
 from ..infrastructure.repositories import CooperativeRepository

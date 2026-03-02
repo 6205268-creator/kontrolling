@@ -72,7 +72,7 @@ async def test_create_owner_physical(
 ) -> None:
     """Тест создания владельца (физическое лицо) от имени treasurer."""
     response = await async_client.post(
-        "/api/v1/owners/",
+        "/api/owners/",
         json={
             "owner_type": "physical",
             "name": "Петров Пётр Петрович",
@@ -97,7 +97,7 @@ async def test_create_owner_legal(
 ) -> None:
     """Тест создания владельца (юридическое лицо) от имени admin."""
     response = await async_client.post(
-        "/api/v1/owners/",
+        "/api/owners/",
         json={
             "owner_type": "legal",
             "name": "ООО Ромашка",
@@ -121,7 +121,7 @@ async def test_create_owner_invalid_type(
 ) -> None:
     """Тест создания владельца с недопустимым owner_type."""
     response = await async_client.post(
-        "/api/v1/owners/",
+        "/api/owners/",
         json={
             "owner_type": "invalid",
             "name": "Тест",
@@ -150,7 +150,7 @@ async def test_get_owners_list(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/owners/",
+        "/api/owners/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -167,7 +167,7 @@ async def test_get_owner_by_id(
 ) -> None:
     """Тест получения владельца по ID."""
     response = await async_client.get(
-        f"/api/v1/owners/{owner_test_data.id}",
+        f"/api/owners/{owner_test_data.id}",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -188,7 +188,7 @@ async def test_get_owner_not_found(
     fake_id = uuid.uuid4()
 
     response = await async_client.get(
-        f"/api/v1/owners/{fake_id}",
+        f"/api/owners/{fake_id}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -209,7 +209,7 @@ async def test_search_owners_by_name(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/owners/search?q=Иван",
+        "/api/owners/search?q=Иван",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -234,7 +234,7 @@ async def test_search_owners_by_tax_id(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/owners/search?q=123",
+        "/api/owners/search?q=123",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -252,7 +252,7 @@ async def test_update_owner(
 ) -> None:
     """Тест обновления владельца."""
     response = await async_client.patch(
-        f"/api/v1/owners/{owner_test_data.id}",
+        f"/api/owners/{owner_test_data.id}",
         json={
             "name": "Иванов Иван Иванович (обновлено)",
             "contact_phone": "+375290000000",
@@ -279,7 +279,7 @@ async def test_update_owner_not_found(
     fake_id = uuid.uuid4()
 
     response = await async_client.patch(
-        f"/api/v1/owners/{fake_id}",
+        f"/api/owners/{fake_id}",
         json={"name": "Новое имя"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -300,7 +300,7 @@ async def test_delete_owner_by_admin(
     owner_id = owner.id
 
     response = await async_client.delete(
-        f"/api/v1/owners/{owner_id}",
+        f"/api/owners/{owner_id}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -308,7 +308,7 @@ async def test_delete_owner_by_admin(
 
     # Проверяем что удалено
     response = await async_client.get(
-        f"/api/v1/owners/{owner_id}",
+        f"/api/owners/{owner_id}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
     assert response.status_code == 404
@@ -322,7 +322,7 @@ async def test_delete_owner_by_treasurer_forbidden(
 ) -> None:
     """Тест 403 при попытке treasurer удалить владельца."""
     response = await async_client.delete(
-        f"/api/v1/owners/{owner_test_data.id}",
+        f"/api/owners/{owner_test_data.id}",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -336,7 +336,7 @@ async def test_create_owner_without_required_fields(
 ) -> None:
     """Тест создания владельца без обязательных полей."""
     response = await async_client.post(
-        "/api/v1/owners/",
+        "/api/owners/",
         json={"owner_type": "physical"},  # отсутствует name
         headers={"Authorization": f"Bearer {admin_token}"},
     )

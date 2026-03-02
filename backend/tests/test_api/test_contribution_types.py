@@ -47,9 +47,9 @@ async def test_get_contribution_types_returns_list(
     auth_token: str,
     contribution_type_records: list[ContributionType],
 ) -> None:
-    """GET /api/v1/contribution-types/ возвращает список видов взносов."""
+    """GET /api/contribution-types/ возвращает список видов взносов."""
     response = await async_client.get(
-        "/api/v1/contribution-types/",
+        "/api/contribution-types/",
         headers={"Authorization": f"Bearer {auth_token}"},
     )
     assert response.status_code == 200
@@ -67,6 +67,6 @@ async def test_get_contribution_types_returns_list(
 
 @pytest.mark.asyncio
 async def test_get_contribution_types_requires_auth(async_client: AsyncClient) -> None:
-    """GET /api/v1/contribution-types/ без токена возвращает 401."""
-    response = await async_client.get("/api/v1/contribution-types/")
+    """GET /api/contribution-types/ без токена возвращает 401."""
+    response = await async_client.get("/api/contribution-types/")
     assert response.status_code == 401

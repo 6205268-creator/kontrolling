@@ -28,7 +28,7 @@ kontrolling/
 │   ├── project-implementation.md # План реализации (35 фич)
 │   ├── decomposition.md         # Декомпозиция модулей
 │   ├── data-model/              # Модель данных (диаграммы)
-│   ├── architecture/            # C4-диаграммы
+│   ├── architecture/            # Архитектурные диаграммы
 │   ├── source-material/         # Исходные материалы
 │   └── processes/               # BPMN-процессы
 └── README.md
@@ -43,3 +43,4 @@ kontrolling/
 - [Дизайн системы](docs/project-design.md)
 - [План реализации](docs/project-implementation.md)
 - [Модель данных](docs/data-model/schema-viewer.html)
+- [Политика окружений и переменных](docs/architecture/environment-policy.md) — local dev, CI, production; где лежит .env, запуск backend из `backend/`.

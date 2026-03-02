@@ -77,7 +77,7 @@ async def test_create_cooperative_by_admin(
 ) -> None:
     """Тест создания СТ от имени admin."""
     response = await async_client.post(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         json={"name": "Новое СТ", "unp": "123456789"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -95,7 +95,7 @@ async def test_create_cooperative_by_treasurer_forbidden(
 ) -> None:
     """Тест 403 при попытке treasurer создать СТ."""
     response = await async_client.post(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         json={"name": "СТ Казначея 2"},
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
@@ -117,7 +117,7 @@ async def test_get_cooperatives_admin_sees_all(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -134,7 +134,7 @@ async def test_get_cooperatives_treasurer_sees_only_own(
 ) -> None:
     """Тест что treasurer видит только своё СТ."""
     response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -156,7 +156,7 @@ async def test_get_cooperative_by_id_admin(
     await test_db.commit()
 
     response = await async_client.get(
-        f"/api/v1/cooperatives/{coop.id}",
+        f"/api/cooperatives/{coop.id}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -174,13 +174,13 @@ async def test_get_cooperative_by_id_treasurer_own(
     """Тест получения своего СТ по ID для treasurer."""
     # Получаем СТ казначея
     response = await async_client.get(
-        "/api/v1/cooperatives/",
+        "/api/cooperatives/",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
     coop_id = response.json()[0]["id"]
 
     response = await async_client.get(
-        f"/api/v1/cooperatives/{coop_id}",
+        f"/api/cooperatives/{coop_id}",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -200,7 +200,7 @@ async def test_get_cooperative_by_id_treasurer_foreign_forbidden(
     await test_db.commit()
 
     response = await async_client.get(
-        f"/api/v1/cooperatives/{other_coop.id}",
+        f"/api/cooperatives/{other_coop.id}",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
@@ -219,7 +219,7 @@ async def test_update_cooperative_by_admin(
     await test_db.commit()
 
     response = await async_client.patch(
-        f"/api/v1/cooperatives/{coop.id}",
+        f"/api/cooperatives/{coop.id}",
         json={"name": "СТ После обновления"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -241,7 +241,7 @@ async def test_update_cooperative_by_treasurer_forbidden(
     await test_db.commit()
 
     response = await async_client.patch(
-        f"/api/v1/cooperatives/{coop.id}",
+        f"/api/cooperatives/{coop.id}",
         json={"name": "Новое название"},
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
@@ -262,7 +262,7 @@ async def test_delete_cooperative_by_admin(
     coop_id = coop.id
 
     response = await async_client.delete(
-        f"/api/v1/cooperatives/{coop_id}",
+        f"/api/cooperatives/{coop_id}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -270,7 +270,7 @@ async def test_delete_cooperative_by_admin(
 
     # Проверяем что удалено
     response = await async_client.get(
-        f"/api/v1/cooperatives/{coop_id}",
+        f"/api/cooperatives/{coop_id}",
         headers={"Authorization": f"Bearer {admin_token}"},
     )
     assert response.status_code == 404
@@ -288,7 +288,7 @@ async def test_delete_cooperative_by_treasurer_forbidden(
     await test_db.commit()
 
     response = await async_client.delete(
-        f"/api/v1/cooperatives/{coop.id}",
+        f"/api/cooperatives/{coop.id}",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 

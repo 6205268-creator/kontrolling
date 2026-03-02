@@ -1,21 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-# Old v1 routers — подключены для текущего фронта (Vue), пока он использует /api/v1
-from app.api.v1.accruals import router as accruals_router_v1
-from app.api.v1.auth import router as auth_router
-from app.api.v1.contribution_types import router as contribution_types_router_v1
-from app.api.v1.cooperatives import router as cooperatives_router
-from app.api.v1.expenses import router as expenses_router_v1
-from app.api.v1.financial_subjects import router as financial_subjects_router
-from app.api.v1.land_plots import router as land_plots_router
-from app.api.v1.meters import router as meters_router_v1
-from app.api.v1.owners import router as owners_router
-from app.api.v1.payments import router as payments_router_v1
-from app.api.v1.reports import router as reports_router
 from app.config import settings
 
-# Modular routers (Clean Architecture migration in progress)
+# Modular API routers (Clean Architecture)
 from app.modules.cooperative_core.api.routes import router as cooperative_core_router
 from app.modules.land_management.api.routes import router as land_management_router
 from app.modules.financial_core.api.routes import router as financial_core_router
@@ -26,9 +15,6 @@ from app.modules.meters.api.routes import router as meters_router
 from app.modules.expenses.api.routes import router as expenses_router
 from app.modules.reporting.api.routes import router as reporting_router
 from app.modules.administration.api.routes import router as administration_router
-
-# Register history events - commented out temporarily to test routes
-# register_history_events()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -58,7 +44,7 @@ app = FastAPI(
 ### Безопасность
 
 Все защищённые эндпоинты требуют JWT токен в заголовке `Authorization: Bearer <token>`.
-Получение токена: `POST /api/v1/auth/login`.
+Получение токена: `POST /api/auth/login`.
 """,
     docs_url="/docs",
     openapi_tags=[
@@ -117,34 +103,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Old API v1 routers — для текущего фронта (Vue)
-app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
-app.include_router(cooperatives_router, prefix="/api/v1/cooperatives", tags=["cooperatives"])
-app.include_router(owners_router, prefix="/api/v1/owners", tags=["owners"])
-app.include_router(land_plots_router, prefix="/api/v1/land-plots", tags=["land-plots"])
-app.include_router(
-    financial_subjects_router, prefix="/api/v1/financial-subjects", tags=["financial-subjects"]
-)
-app.include_router(
-    contribution_types_router_v1, prefix="/api/v1/contribution-types", tags=["contribution-types"]
-)
-app.include_router(accruals_router_v1, prefix="/api/v1/accruals", tags=["accruals"])
-app.include_router(payments_router_v1, prefix="/api/v1/payments", tags=["payments"])
-app.include_router(expenses_router_v1, prefix="/api/v1/expenses", tags=["expenses"])
-app.include_router(meters_router_v1, prefix="/api/v1/meters", tags=["meters"])
-app.include_router(reports_router, prefix="/api/v1/reports", tags=["reports"])
+# API routers
+app.include_router(cooperative_core_router, prefix="/api/cooperatives", tags=["cooperatives"])
+app.include_router(land_management_router, prefix="/api/land-plots", tags=["land-plots"])
+app.include_router(financial_core_router, prefix="/api/financial-subjects", tags=["financial-subjects"])
+app.include_router(accruals_router, prefix="/api/accruals", tags=["accruals"])
+app.include_router(contribution_types_router, prefix="/api/contribution-types", tags=["contribution-types"])
+app.include_router(payments_router, prefix="/api/payments", tags=["payments"])
+app.include_router(meters_router, prefix="/api/meters", tags=["meters"])
+app.include_router(expenses_router, prefix="/api/expenses", tags=["expenses"])
+app.include_router(reporting_router, prefix="/api/reports", tags=["reports"])
+app.include_router(administration_router, prefix="/api/auth", tags=["auth"])
 
-# Modular API routers (Clean Architecture)
-app.include_router(cooperative_core_router, prefix="/api/v2/cooperatives", tags=["cooperatives-v2"])
-app.include_router(land_management_router, prefix="/api/v2/land-plots", tags=["land-plots-v2"])
-app.include_router(financial_core_router, prefix="/api/v2/financial-subjects", tags=["financial-subjects-v2"])
-app.include_router(accruals_router, prefix="/api/v2/accruals", tags=["accruals-v2"])
-app.include_router(contribution_types_router, prefix="/api/v2/contribution-types", tags=["contribution-types-v2"])
-app.include_router(payments_router, prefix="/api/v2/payments", tags=["payments-v2"])
-app.include_router(meters_router, prefix="/api/v2/meters", tags=["meters-v2"])
-app.include_router(expenses_router, prefix="/api/v2/expenses", tags=["expenses-v2"])
-app.include_router(reporting_router, prefix="/api/v2/reports", tags=["reports-v2"])
-app.include_router(administration_router, prefix="/api/v2/auth", tags=["auth-v2"])
+
+def _get_error_detail(exc: Exception) -> str:
+    """Формирует сообщение об ошибке для ответа 500 (без утечки внутренних деталей в prod)."""
+    msg = str(exc).lower()
+    if "connection" in msg or "refused" in msg or "timeout" in msg or "5432" in msg or "asyncpg" in msg:
+        return "Нет связи с базой данных. Проверьте, что PostgreSQL запущен и в backend/.env задан верный DATABASE_URL."
+    return "Внутренняя ошибка сервера. Проверьте консоль бэкенда."
+
+
+@app.exception_handler(Exception)
+def unhandled_exception_handler(_request: object, exc: Exception) -> JSONResponse:
+    """Обработка необработанных исключений — возвращаем 500 с понятным текстом."""
+    detail = _get_error_detail(exc)
+    return JSONResponse(status_code=500, content={"detail": detail})
 
 
 @app.get("/api/health")

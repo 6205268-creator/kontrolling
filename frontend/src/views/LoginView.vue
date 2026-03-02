@@ -88,13 +88,14 @@ async function handleLogin() {
   } catch (err: unknown) {
     if (err && typeof err === 'object' && 'response' in err) {
       const axiosError = err as {
-        response?: { status?: number; data?: { detail?: string | string[] } };
+        response?: { status?: number; data?: { detail?: unknown; message?: string } };
         message?: string;
       };
       if (axiosError.response?.status === 401) {
         error.value = 'Неверное имя пользователя или пароль';
       } else {
-        const detail = axiosError.response?.data?.detail;
+        const data = axiosError.response?.data;
+        const detail = data && typeof data === 'object' && 'detail' in data ? (data as { detail: unknown }).detail : undefined;
         let msg: string;
         if (typeof detail === 'string') {
           msg = detail;
@@ -104,13 +105,18 @@ async function handleLogin() {
             .join(', ');
         } else if (axiosError.response?.status === 502 || axiosError.response?.status === 503) {
           msg = 'Сервер недоступен. Проверьте, что бэкенд запущен на порту 8000.';
+        } else if (axiosError.response?.status === 500) {
+          msg = typeof detail === 'string' ? detail : 'Ошибка сервера. Проверьте консоль бэкенда и подключение к БД.';
         } else {
           msg = 'Ошибка сервера. Попробуйте позже.';
         }
         error.value = msg;
       }
     } else {
-      const msg = err instanceof Error ? err.message : 'Произошла ошибка. Попробуйте позже.';
+      const msg =
+        err instanceof Error
+          ? err.message
+          : 'Произошла ошибка. Убедитесь, что бэкенд запущен (порт 8000).';
       error.value = msg;
     }
   } finally {

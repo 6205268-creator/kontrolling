@@ -237,7 +237,7 @@ async def test_get_debtors_report(
     coop_id = str(report_data_fixture["coop"].id)
 
     response = await async_client.get(
-        "/api/v1/reports/debtors",
+        "/api/reports/debtors",
         params={"cooperative_id": coop_id, "min_debt": "0.00"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -264,7 +264,7 @@ async def test_get_debtors_report_with_min_debt(
     coop_id = str(report_data_fixture["coop"].id)
 
     response = await async_client.get(
-        "/api/v1/reports/debtors",
+        "/api/reports/debtors",
         params={"cooperative_id": coop_id, "min_debt": "1000.00"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -288,7 +288,7 @@ async def test_get_debtors_report_empty(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/reports/debtors",
+        "/api/reports/debtors",
         params={"cooperative_id": str(coop.id)},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -309,7 +309,7 @@ async def test_get_cash_flow_report(
     today = date.today()
 
     response = await async_client.get(
-        "/api/v1/reports/cash-flow",
+        "/api/reports/cash-flow",
         params={
             "cooperative_id": coop_id,
             "period_start": str(today.replace(day=1)),
@@ -381,7 +381,7 @@ async def test_get_cash_flow_report_partial_period(
     await test_db.commit()
 
     response = await async_client.get(
-        "/api/v1/reports/cash-flow",
+        "/api/reports/cash-flow",
         params={
             "cooperative_id": str(coop.id),
             "period_start": str(yesterday),
@@ -406,7 +406,7 @@ async def test_get_debtors_report_treasurer_auto_cooperative(
 ) -> None:
     """Тест что treasurer получает отчёт по своему СТ автоматически."""
     response = await async_client.get(
-        "/api/v1/reports/debtors",
+        "/api/reports/debtors",
         params={"min_debt": "0.00"},
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
@@ -427,7 +427,7 @@ async def test_get_cash_flow_report_treasurer_auto_cooperative(
     today = date.today()
 
     response = await async_client.get(
-        "/api/v1/reports/cash-flow",
+        "/api/reports/cash-flow",
         params={
             "period_start": str(today.replace(day=1)),
             "period_end": str(today),
@@ -445,7 +445,7 @@ async def test_get_debtors_report_no_cooperative_id(
 ) -> None:
     """Тест 400 при отсутствии cooperative_id для admin."""
     response = await async_client.get(
-        "/api/v1/reports/debtors",
+        "/api/reports/debtors",
         params={"min_debt": "0.00"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -463,7 +463,7 @@ async def test_get_cash_flow_report_no_cooperative_id(
     today = date.today()
 
     response = await async_client.get(
-        "/api/v1/reports/cash-flow",
+        "/api/reports/cash-flow",
         params={
             "period_start": str(today.replace(day=1)),
             "period_end": str(today),
@@ -482,7 +482,7 @@ async def test_get_debtors_report_invalid_cooperative_id(
 ) -> None:
     """Тест 400 при неверном формате cooperative_id."""
     response = await async_client.get(
-        "/api/v1/reports/debtors",
+        "/api/reports/debtors",
         params={"cooperative_id": "invalid-uuid", "min_debt": "0.00"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
@@ -500,7 +500,7 @@ async def test_debtors_report_subject_info_land_plot(
     coop_id = str(report_data_fixture["coop"].id)
 
     response = await async_client.get(
-        "/api/v1/reports/debtors",
+        "/api/reports/debtors",
         params={"cooperative_id": coop_id, "min_debt": "0.00"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )

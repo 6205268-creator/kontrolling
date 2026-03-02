@@ -74,7 +74,7 @@ class PaymentRepository(IPaymentRepository):
     async def get_by_cooperative(self, cooperative_id: UUID) -> list[Payment]:
         """Get all payments for a cooperative."""
         from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-        
+
         query = (
             select(PaymentModel)
             .join(FinancialSubjectModel, PaymentModel.financial_subject_id == FinancialSubjectModel.id)
@@ -84,6 +84,10 @@ class PaymentRepository(IPaymentRepository):
         result = await self.session.execute(query)
         models = result.scalars().all()
         return [model.to_domain() for model in models]
+
+    async def get_all(self, cooperative_id: UUID) -> list[Payment]:
+        """Get all payments for a cooperative (alias for get_by_cooperative)."""
+        return await self.get_by_cooperative(cooperative_id)
 
     async def add(self, entity: Payment) -> Payment:
         """Add new payment."""

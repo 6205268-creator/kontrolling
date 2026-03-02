@@ -1,0 +1,8 @@
+# CODEOWNERS
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Changes under these paths require review/approval from the listed owner(s).
+# Replace @lead-architect with the actual GitHub username of Lead Architect
+# (or create a GitHub team "lead-architect" and use @org/lead-architect).
+
+docs/architecture/glossary/ @lead-architect

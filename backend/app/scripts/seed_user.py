@@ -16,19 +16,19 @@ from sqlalchemy import select
 
 from app.core.security import get_password_hash
 from app.db.session import async_session_maker
-from app.models import AppUser
+from app.modules.administration.infrastructure.models import AppUserModel
 
 
 async def main() -> int:
     async with async_session_maker() as session:
-        result = await session.execute(select(AppUser).where(AppUser.username == "admin"))
+        result = await session.execute(select(AppUserModel).where(AppUserModel.username == "admin"))
         if result.scalar_one_or_none() is not None:
             print(
                 "Пользователь admin уже существует. Вход: admin / <пароль, заданный при создании>"
             )
             return 0
 
-        user = AppUser(
+        user = AppUserModel(
             username="admin",
             email="admin@controlling.local",
             hashed_password=get_password_hash("admin"),

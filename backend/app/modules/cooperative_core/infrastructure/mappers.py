@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from app.models.cooperative import Cooperative as CooperativeORM
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as CooperativeORM
 
 from app.modules.cooperative_core.domain.entities import Cooperative
 
