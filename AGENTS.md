@@ -2,6 +2,44 @@
 
 This file provides guidance to AI assistants (WARP, Cursor, etc.) when working with code in this repository.
 
+---
+
+## Как общаться с владельцем проекта (пользователем)
+
+**Важно для всех агентов и разработчиков.**
+
+Владелец проекта — взрослый пользователь (за 50), не разработчик. Ему сложно:
+- воспринимать технические термины и команды;
+- удерживать в голове длинные технические объяснения;
+- понимать примеры команд и кода — он их не вводит и не разбирает.
+
+**Правила общения с ним:**
+
+1. **Простой язык.** Объясняй по сути, без жаргона. Вместо «сделай fetch и checkout ветки» — «подтяни его ветку и переключи проект на неё».
+2. **Без примеров команд.** Не давай ему блоки с командами для ввода. Опиши словами, что нужно сделать; если нужны команды — выполнит агент по твоей подсказке.
+3. **Суть в словах.** Говори, *что* произойдёт и *зачем*, а не *как* это сделать технически (если он не спросит сам).
+4. **Если что-то неясно — задавай вопросы.** В формате «вопрос — ответ»: один короткий вопрос, дождаться ответа, следующий вопрос. Так ему проще отвечать и тебе — не терять контекст.
+5. **При сомнениях в требованиях или процессе — спроси.** Лучше один чёткий вопрос, чем додумывать и ошибиться.
+
+Эти правила должны соблюдать все, кто общается с владельцем проекта в этом репозитории.
+
+---
+
+## Quick Start — Единая точка входа
+
+**Первым делом открой:** [`docs/development-index.md`](docs/development-index.md) — единый индекс разработки. Это единственный главный план работ; дорожная карта, Топ-5 и остальные источники ссылаются на него.
+
+Содержит:
+- 🎯 **Топ-5 задач** — что делать прямо сейчас
+- 🗺️ **Дорожная карта** — статус всех 35 фич (100% завершено)
+- 📚 **Архитектура** — ссылки на ADR, глоссарии, модель данных
+- 👥 **Роли агентов** — кто за что отвечает
+- 🔧 **Инфраструктура** — сборка, тесты, деплой
+
+**Правило:** перед работой над планом, фичей или архитектурной задачей — прочитать [`docs/development-index.md`](docs/development-index.md).
+
+---
+
 ## Project Overview
 
 **Controlling** — accounting system for garden cooperatives (Садоводческие Товарищества, СТ) in Belarus. Handles contributions, payments, debt tracking, land plots, meters, and reporting. All monetary amounts are in **BYN** (Belarusian rubles) only; no multi-currency support.
@@ -11,9 +49,9 @@ This file provides guidance to AI assistants (WARP, Cursor, etc.) when working w
 ## Tech Stack
 
 - **Backend:** Python 3.11+, FastAPI, SQLAlchemy 2.0 (async), Alembic, PostgreSQL 15+ (asyncpg)
-- **Frontend:** Vue 3 + TypeScript + Vite + Pinia (not yet scaffolded — `frontend/` is empty)
+- **Frontend:** Vue 3 + TypeScript + Vite + Pinia (15 views, 6 Pinia stores, Playwright e2e tests, Dockerfile + nginx)
 - **Auth:** JWT + bcrypt (python-jose, passlib)
-- **Tests:** pytest + pytest-asyncio (backend), Vitest (frontend, planned)
+- **Tests:** pytest + pytest-asyncio (backend), Vitest (frontend)
 - **Linting:** ruff (line-length 100, target py311)
 
 ## Build & Development Commands
@@ -163,14 +201,15 @@ Each module follows the same Clean Architecture pattern:
 - **FinancialSubject** — the central financial abstraction; all `Accrual` and `Payment` records must go through a FinancialSubject, never directly to a plot or meter
 - **Multi-tenancy** is data-level: `cooperative_id` on LandPlot, FinancialSubject, Expense; Owner has no direct cooperative FK
 
-### Role-specific guidance (`docs/agents/`)
+### Role-specific guidance (`.cursor/rules/agents/`)
 
-Role prompts for backend, frontend, QA, DevOps, security, UX/UI, project orchestration, SEO. Use when you need to follow a specific role’s checklist or style (e.g. “work as backend-developer” → see [docs/agents/backend-developer.md](docs/agents/backend-developer.md)). Index: [docs/agents/README.md](docs/agents/README.md).
+Role prompts for backend, frontend, QA, DevOps, security, UX/UI, project orchestration, SEO. Use when you need to follow a specific role's checklist or style (e.g. "work as backend-developer" → see [`.cursor/rules/agents/backend-developer.mdc`](.cursor/rules/agents/backend-developer.mdc)). Index: [`.cursor/rules/agents/README.mdc`](.cursor/rules/agents/README.mdc).
 
 ### Documentation & Diagrams (`docs/`)
 
 - `docs/project-design.md` — full system design (data model, roles, domain events)
 - `docs/project-implementation.md` — feature implementation roadmap
+- `docs/plan/single_development_index_and_roadmap.plan.md` — план консолидации индекса и дорожной карты (единая точка входа для агентов)
 - `docs/data-model/` — conceptual model, entity specs, interactive schema viewer (`schema-viewer.html`)
 - `docs/architecture/` — ADRs (`adr/` — индекс и процесс см. [adr/README.md](docs/architecture/adr/README.md)), glossary per domain (`glossary/`), common definitions (`common/`)
 - `docs/processes/` — BPMN 2.0 business process files, interactive viewer (`bpmn-viewer.html`)

@@ -39,6 +39,36 @@ def get_cooperative_repository(db: AsyncSession = Depends(get_db)):
     return CooperativeRepository(db)
 
 
+def get_get_cooperatives_use_case(coop_repo=Depends(get_cooperative_repository)):
+    """Get GetCooperativesUseCase instance."""
+    from app.modules.cooperative_core.application.use_cases import GetCooperativesUseCase
+    return GetCooperativesUseCase(coop_repo)
+
+
+def get_get_cooperative_use_case(coop_repo=Depends(get_cooperative_repository)):
+    """Get GetCooperativeUseCase instance."""
+    from app.modules.cooperative_core.application.use_cases import GetCooperativeUseCase
+    return GetCooperativeUseCase(coop_repo)
+
+
+def get_create_cooperative_use_case(coop_repo=Depends(get_cooperative_repository)):
+    """Get CreateCooperativeUseCase instance."""
+    from app.modules.cooperative_core.application.use_cases import CreateCooperativeUseCase
+    return CreateCooperativeUseCase(coop_repo)
+
+
+def get_update_cooperative_use_case(coop_repo=Depends(get_cooperative_repository)):
+    """Get UpdateCooperativeUseCase instance."""
+    from app.modules.cooperative_core.application.use_cases import UpdateCooperativeUseCase
+    return UpdateCooperativeUseCase(coop_repo)
+
+
+def get_delete_cooperative_use_case(coop_repo=Depends(get_cooperative_repository)):
+    """Get DeleteCooperativeUseCase instance."""
+    from app.modules.cooperative_core.application.use_cases import DeleteCooperativeUseCase
+    return DeleteCooperativeUseCase(coop_repo)
+
+
 # =============================================================================
 # Financial Core Dependencies (needed by other modules)
 # =============================================================================
@@ -467,6 +497,22 @@ def get_reporting_read_service(db: AsyncSession = Depends(get_db)):
     """Get ReportingReadService instance."""
     from app.modules.reporting.infrastructure.read_models import ReportingReadService
     return ReportingReadService(db)
+
+
+def get_generate_debtor_report_use_case(
+    read_service=Depends(get_reporting_read_service),
+):
+    """Get GenerateDebtorReportUseCase instance."""
+    from app.modules.reporting.application.use_cases import GenerateDebtorReportUseCase
+    return GenerateDebtorReportUseCase(read_service)
+
+
+def get_generate_cash_flow_use_case(
+    read_service=Depends(get_reporting_read_service),
+):
+    """Get GenerateCashFlowUseCase instance."""
+    from app.modules.reporting.application.use_cases import GenerateCashFlowUseCase
+    return GenerateCashFlowUseCase(read_service)
 
 
 # =============================================================================

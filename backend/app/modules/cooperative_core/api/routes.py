@@ -4,27 +4,20 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db, require_role
+from app.api.deps import get_current_user, require_role
 from app.modules.administration.domain.entities import AppUser
-
-from .schemas import CooperativeCreate, CooperativeInDB, CooperativeUpdate
-from ..infrastructure.repositories import CooperativeRepository
-from ..application.use_cases import (
-    CreateCooperativeUseCase,
-    GetCooperativeUseCase,
-    GetCooperativesUseCase,
-    UpdateCooperativeUseCase,
-    DeleteCooperativeUseCase,
+from app.modules.deps import (
+    get_get_cooperatives_use_case,
+    get_get_cooperative_use_case,
+    get_create_cooperative_use_case,
+    get_update_cooperative_use_case,
+    get_delete_cooperative_use_case,
 )
 
+from .schemas import CooperativeCreate, CooperativeInDB, CooperativeUpdate
+
 router = APIRouter()
-
-
-def _get_cooperative_repo(db: AsyncSession) -> CooperativeRepository:
-    """Get cooperative repository instance."""
-    return CooperativeRepository(db)
 
 
 @router.get(
@@ -35,7 +28,7 @@ def _get_cooperative_repo(db: AsyncSession) -> CooperativeRepository:
 )
 async def get_cooperatives(
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_get_cooperatives_use_case),
     skip: int = 0,
     limit: int = 100,
 ) -> list[CooperativeInDB]:
@@ -45,12 +38,9 @@ async def get_cooperatives(
     - **admin**: видит все СТ
     - **chairman/treasurer**: видят только своё СТ
     """
-    repo = _get_cooperative_repo(db)
-    use_case = GetCooperativesUseCase(repo)
-    
     cooperative_id = None if current_user.role == "admin" else current_user.cooperative_id
     cooperatives = await use_case.execute(cooperative_id=cooperative_id)
-    
+
     # Apply pagination after fetching
     return cooperatives[skip : skip + limit]
 
@@ -64,7 +54,7 @@ async def get_cooperatives(
 async def get_cooperative(
     cooperative_id: UUID,
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_get_cooperative_use_case),
 ) -> CooperativeInDB:
     """Получить Cooperative по ID."""
     # Проверка доступа: admin видит все, остальные только своё
@@ -74,14 +64,11 @@ async def get_cooperative(
             detail="Нет доступа к данному СТ",
         )
 
-    repo = _get_cooperative_repo(db)
-    use_case = GetCooperativeUseCase(repo)
-    
     cooperative = await use_case.execute(
         cooperative_id=cooperative_id,
         current_cooperative_id=current_user.cooperative_id,
     )
-    
+
     if cooperative is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -100,12 +87,9 @@ async def get_cooperative(
 async def create_cooperative(
     cooperative_data: CooperativeCreate,
     _: Annotated[AppUser, Depends(require_role(["admin"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_create_cooperative_use_case),
 ) -> CooperativeInDB:
     """Создать новое СТ (только admin)."""
-    repo = _get_cooperative_repo(db)
-    use_case = CreateCooperativeUseCase(repo)
-    
     cooperative = await use_case.execute(data=cooperative_data)
     return cooperative
 
@@ -120,18 +104,15 @@ async def update_cooperative(
     cooperative_id: UUID,
     cooperative_data: CooperativeUpdate,
     _: Annotated[AppUser, Depends(require_role(["admin"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_update_cooperative_use_case),
 ) -> CooperativeInDB:
     """Обновить СТ (только admin)."""
-    repo = _get_cooperative_repo(db)
-    use_case = UpdateCooperativeUseCase(repo)
-    
     cooperative = await use_case.execute(
         cooperative_id=cooperative_id,
         data=cooperative_data,
         current_cooperative_id=cooperative_id,  # admin operation
     )
-    
+
     if cooperative is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -149,17 +130,14 @@ async def update_cooperative(
 async def delete_cooperative(
     cooperative_id: UUID,
     _: Annotated[AppUser, Depends(require_role(["admin"]))],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_delete_cooperative_use_case),
 ) -> None:
     """Удалить СТ (только admin)."""
-    repo = _get_cooperative_repo(db)
-    use_case = DeleteCooperativeUseCase(repo)
-    
     deleted = await use_case.execute(
         cooperative_id=cooperative_id,
         current_cooperative_id=cooperative_id,  # admin operation
     )
-    
+
     if not deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

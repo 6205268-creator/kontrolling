@@ -9,6 +9,10 @@
     "memory-bank": {
       "command": "python",
       "args": ["-m", "mcp_memory_bank"]
+    },
+    "shadcn-ui": {
+      "command": "npx",
+      "args": ["-y", "@paul/shadcn-ui-mcp-server"]
     }
   }
 }

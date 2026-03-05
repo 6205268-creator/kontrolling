@@ -40,6 +40,8 @@ kontrolling/
 
 ## Документация
 
+**Единая точка входа:** [Индекс разработки](docs/development-index.md) — Топ-5 задач, дорожная карта, архитектура, роли агентов.
+
 - [Дизайн системы](docs/project-design.md)
 - [План реализации](docs/project-implementation.md)
 - [Модель данных](docs/data-model/schema-viewer.html)

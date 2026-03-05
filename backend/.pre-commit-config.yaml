@@ -7,3 +7,10 @@ repos:
       - id: ruff-format
       - id: ruff-check
         args: [--fix]
+  - repo: local
+    hooks:
+      - id: architecture-linter
+        name: Architecture Linter
+        entry: python -m app.scripts.architecture_linter
+        language: system
+        pass_filenames: false

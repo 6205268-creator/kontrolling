@@ -12,25 +12,6 @@
       </router-link>
     </header>
 
-    <div v-if="isAdmin" class="filter-bar">
-      <label for="cooperative-filter">СТ:</label>
-      <select
-        id="cooperative-filter"
-        v-model="selectedCooperativeId"
-        class="filter-select"
-        @change="onFilterChange"
-      >
-        <option value="">Все СТ</option>
-        <option
-          v-for="c in cooperatives"
-          :key="c.id"
-          :value="c.id"
-        >
-          {{ c.name }}
-        </option>
-      </select>
-    </div>
-
     <div v-if="landPlotsStore.error" class="error-message">
       <div class="error-summary">
         <AlertCircle class="error-icon" aria-hidden />
@@ -43,52 +24,75 @@
 
     <div v-if="landPlotsStore.loading" class="loading">Загрузка…</div>
 
-    <div v-else class="table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Номер участка</th>
-            <th>Площадь, м²</th>
-            <th>Статус</th>
-            <th>Владельцы</th>
-            <th v-if="canEdit">Действия</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="landPlotsStore.plots.length === 0">
-            <td colspan="5" class="empty">Нет участков</td>
-          </tr>
-          <tr
-            v-for="plot in landPlotsStore.plots"
-            :key="plot.id"
+    <DataTable
+      v-else
+      :data="filteredPlots"
+      :columns="columns"
+      :pagination="true"
+      :page-size="10"
+      search-placeholder="Поиск участков..."
+      empty-message="Нет участков"
+      @row-click="handleRowClick"
+    >
+      <!-- Filters slot -->
+      <template #filters>
+        <div v-if="isAdmin" class="filter-group">
+          <label for="cooperative-filter">СТ:</label>
+          <select
+            id="cooperative-filter"
+            v-model="selectedCooperativeId"
+            class="filter-select"
+            @change="onFilterChange"
           >
-            <td>{{ plot.plot_number }}</td>
-            <td>{{ formatArea(plot.area_sqm) }}</td>
-            <td>{{ statusLabel(plot.status) }}</td>
-            <td>{{ ownersSummary(plot.owners) }}</td>
-            <td v-if="canEdit">
-              <router-link
-                :to="`/land-plots/${plot.id}/edit`"
-                class="btn-icon-link"
-                title="Редактировать"
-              >
-                <Edit2 class="action-icon" aria-hidden />
-              </router-link>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+            <option value="">Все СТ</option>
+            <option
+              v-for="c in cooperatives"
+              :key="c.id"
+              :value="c.id"
+            >
+              {{ c.name }}
+            </option>
+          </select>
+        </div>
+      </template>
+
+      <!-- Custom cell renderers -->
+      <template #cell-status="{ value }">
+        <span :class="['badge', `badge-${getStatusType(value as string)}`]">
+          {{ statusLabel(value as string) }}
+        </span>
+      </template>
+
+      <template #cell-owners="{ value }">
+        <span class="owners-cell">
+          <Users class="owners-icon" />
+          {{ value }}
+        </span>
+      </template>
+
+      <template #cell-actions="{ item }">
+        <div class="actions-cell">
+          <router-link
+            :to="`/land-plots/${(item as any).id}/edit`"
+            class="btn-icon-link"
+            title="Редактировать"
+          >
+            <Edit2 class="action-icon" aria-hidden />
+          </router-link>
+        </div>
+      </template>
+    </DataTable>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { Plus, AlertCircle, Edit2 } from 'lucide-vue-next';
+import { Plus, AlertCircle, Edit2, Users } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useLandPlotsStore } from '@/stores/landPlots';
 import type { Cooperative } from '@/types';
 import api from '@/services/api';
+import DataTable from '@/components/DataTable.vue';
 
 const authStore = useAuthStore();
 const landPlotsStore = useLandPlotsStore();
@@ -100,9 +104,36 @@ const isAdmin = computed(() => authStore.userRole === 'admin');
 const canCreate = computed(() =>
   authStore.userRole === 'admin' || authStore.userRole === 'treasurer'
 );
-const canEdit = computed(() =>
-  authStore.userRole === 'admin' || authStore.userRole === 'treasurer'
-);
+
+// Table columns
+const columns = [
+  { key: 'plot_number', label: 'Номер участка', sortable: true },
+  { key: 'area_sqm', label: 'Площадь, м²', sortable: true, format: 'number' as const },
+  { key: 'status', label: 'Статус', sortable: true },
+  { key: 'owners', label: 'Владельцы', sortable: false },
+  { key: 'actions', label: 'Действия', sortable: false },
+];
+
+// Filtered plots
+const filteredPlots = computed(() => {
+  const plots = landPlotsStore.plots.map((plot) => ({
+    ...plot,
+    area_sqm: plot.area_sqm,
+    status: plot.status,
+    owners: ownersSummary(plot.owners),
+  }));
+  
+  return plots;
+});
+
+function getStatusType(status: string): string {
+  const types: Record<string, string> = {
+    active: 'success',
+    vacant: 'info',
+    archived: 'warning',
+  };
+  return types[status] || 'info';
+}
 
 function statusLabel(status: string): string {
   const labels: Record<string, string> = {
@@ -111,10 +142,6 @@ function statusLabel(status: string): string {
     archived: 'Архивный',
   };
   return labels[status] ?? status;
-}
-
-function formatArea(sqm: number): string {
-  return Number(sqm).toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 }
 
 function ownersSummary(owners: { is_primary: boolean }[]): string {
@@ -134,6 +161,11 @@ function loadPlots(): void {
   } else {
     landPlotsStore.fetchPlots(authStore.cooperativeId ?? undefined);
   }
+}
+
+function handleRowClick(item: unknown) {
+  // Could navigate to edit page or show details
+  console.log('Row clicked:', item);
 }
 
 onMounted(async () => {
@@ -162,17 +194,31 @@ onMounted(async () => {
   border: 1px solid var(--color-border);
 }
 
-.filter-bar {
-  margin-bottom: 1rem;
+.view-header {
+  margin-bottom: 1.5rem;
+}
+
+.filter-group {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.filter-bar label {
+.filter-group label {
   font-weight: var(--font-medium);
   font-size: var(--text-sm);
   color: var(--color-text-muted);
+}
+
+.filter-select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  background: var(--color-bg-card);
+  color: var(--color-text);
+  cursor: pointer;
 }
 
 .btn-icon {
@@ -184,29 +230,48 @@ onMounted(async () => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
-  border-radius: 4px;
-  color: #6b7280;
-  transition: all 0.2s;
+  padding: 0.375rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  transition: all var(--transition-fast);
 }
 
 .btn-icon-link:hover {
-  background: #f3f4f6;
-  color: #667eea;
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
 }
 
 .action-icon {
-  width: 1.125rem;
-  height: 1.125rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+.owners-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.owners-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .error-message {
-  background: var(--color-bg-danger);
-  border: 1px solid var(--color-danger);
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
   border-radius: var(--radius-md);
   padding: 1rem 1rem;
   margin-bottom: 1rem;
-  color: var(--color-text-danger);
+  color: var(--color-error);
 }
 
 .error-summary {
@@ -226,6 +291,5 @@ onMounted(async () => {
   margin-left: 1.75rem;
   font-size: var(--text-sm);
   opacity: 0.9;
-  font-family: var(--font-mono);
 }
 </style>

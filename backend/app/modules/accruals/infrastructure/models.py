@@ -152,10 +152,12 @@ class ContributionTypeModel(Base):
     @classmethod
     def from_domain(cls, entity: "ContributionType") -> "ContributionTypeModel":
         """Create SQLAlchemy model from domain entity."""
-        return cls(
-            id=entity.id,
-            name=entity.name,
-            code=entity.code,
-            description=entity.description,
-            created_at=entity.created_at,
-        )
+        kwargs: dict = {
+            "name": entity.name,
+            "code": entity.code,
+            "description": entity.description,
+            "created_at": entity.created_at,
+        }
+        if entity.id is not None:
+            kwargs["id"] = entity.id
+        return cls(**kwargs)

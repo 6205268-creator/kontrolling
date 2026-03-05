@@ -30,11 +30,12 @@
 |--------|------|----------|
 | PostgreSQL | 5432 | База данных |
 | Backend (FastAPI) | 8000 | API сервер |
-| Frontend (Nginx) | 80 | Веб-интерфейс |
+
+Фронтенд в Docker **не запускается**. Для разработки фронтенд запускается локально: из корня `npm run dev`, приложение — http://localhost:5173.
 
 ## Доступ к приложениям
 
-- **Frontend:** http://localhost
+- **Frontend (приложение):** после `npm run dev` из корня — http://localhost:5173
 - **Backend API:** http://localhost:8000
 - **API Документация (Swagger):** http://localhost:8000/docs
 - **Health Check:** http://localhost:8000/api/health
@@ -50,14 +51,14 @@
 - `ACCESS_TOKEN_EXPIRE_MINUTES` — время жизни токена
 
 ### Frontend
-- API проксируется через Nginx на backend (не требует настройки)
+- Фронтенд для разработки запускается **локально**: из корня `npm run dev`, приложение — http://localhost:5173 (прокси `/api` на backend).
+- Для production-сборки можно собрать образ из `frontend/Dockerfile` (Nginx + статика) отдельно.
 
 ## Полезные команды
 
 ```bash
 # Просмотр логов
 docker compose logs -f backend
-docker compose logs -f frontend
 
 # Перезапуск отдельного сервиса
 docker compose restart backend
@@ -88,4 +89,4 @@ kontrolling/
 
 - Данные PostgreSQL сохраняются в volume `postgres_data`
 - Backend автоматически применяет миграции Alembic при запуске
-- Frontend собирает проект при сборке Docker образа
+- Фронтенд в разработке один: локальный Vite (`npm run dev`) на http://localhost:5173; в docker-compose фронтенд не входит

@@ -17,6 +17,7 @@
             placeholder="Введите имя пользователя"
             required
             :disabled="isLoading"
+            @input="clearError"
           />
         </div>
 
@@ -30,6 +31,7 @@
               placeholder="Введите пароль"
               required
               :disabled="isLoading"
+              @input="clearError"
             />
             <button
               type="button"
@@ -41,10 +43,6 @@
               {{ showPassword ? 'Скрыть' : 'Показать' }}
             </button>
           </div>
-        </div>
-
-        <div v-if="error" class="error-message">
-          {{ error }}
         </div>
 
         <button type="submit" class="login-button" :disabled="isLoading">
@@ -63,6 +61,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { LayoutDashboard, LogIn } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
+import { error as errorToast, success as successToast } from '@/utils/toast';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -72,11 +71,16 @@ const buildTimestamp = typeof __BUILD_TIMESTAMP__ !== 'undefined' ? __BUILD_TIME
 const username = ref('');
 const password = ref('');
 const showPassword = ref(false);
-const error = ref('');
 const isLoading = ref(false);
 
+function clearError() {
+  // Clear error state when user starts typing
+  if (isLoading.value === false) {
+    // User is editing, clear any previous error state
+  }
+}
+
 async function handleLogin() {
-  error.value = '';
   isLoading.value = true;
 
   try {
@@ -84,41 +88,34 @@ async function handleLogin() {
       username: username.value,
       password: password.value,
     });
+    
+    successToast('Добро пожаловать!', `Вы вошли как ${username.value}`);
     router.push('/dashboard');
   } catch (err: unknown) {
+    let errorMessage = 'Произошла ошибка при входе';
+    
     if (err && typeof err === 'object' && 'response' in err) {
       const axiosError = err as {
         response?: { status?: number; data?: { detail?: unknown; message?: string } };
         message?: string;
       };
+      
       if (axiosError.response?.status === 401) {
-        error.value = 'Неверное имя пользователя или пароль';
-      } else {
+        errorMessage = 'Неверное имя пользователя или пароль';
+      } else if (axiosError.response?.status === 502 || axiosError.response?.status === 503) {
+        errorMessage = 'Сервер недоступен. Проверьте, что бэкенд запущен на порту 8000.';
+      } else if (axiosError.response?.status === 500) {
         const data = axiosError.response?.data;
         const detail = data && typeof data === 'object' && 'detail' in data ? (data as { detail: unknown }).detail : undefined;
-        let msg: string;
-        if (typeof detail === 'string') {
-          msg = detail;
-        } else if (Array.isArray(detail)) {
-          msg = detail
-            .map((d) => (typeof d === 'string' ? d : (d as { msg?: string }).msg ?? String(d)))
-            .join(', ');
-        } else if (axiosError.response?.status === 502 || axiosError.response?.status === 503) {
-          msg = 'Сервер недоступен. Проверьте, что бэкенд запущен на порту 8000.';
-        } else if (axiosError.response?.status === 500) {
-          msg = typeof detail === 'string' ? detail : 'Ошибка сервера. Проверьте консоль бэкенда и подключение к БД.';
-        } else {
-          msg = 'Ошибка сервера. Попробуйте позже.';
-        }
-        error.value = msg;
+        errorMessage = typeof detail === 'string' ? detail : 'Ошибка сервера. Проверьте подключение к БД.';
+      } else if (axiosError.response?.data?.message) {
+        errorMessage = axiosError.response.data.message;
       }
-    } else {
-      const msg =
-        err instanceof Error
-          ? err.message
-          : 'Произошла ошибка. Убедитесь, что бэкенд запущен (порт 8000).';
-      error.value = msg;
+    } else if (err instanceof Error) {
+      errorMessage = err.message;
     }
+    
+    errorToast('Ошибка входа', errorMessage);
   } finally {
     isLoading.value = false;
   }
@@ -196,7 +193,7 @@ async function handleLogin() {
 .login-form .form-group input:focus {
   outline: none;
   border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
 }
 
 .password-wrapper {
@@ -225,7 +222,7 @@ async function handleLogin() {
 
 .password-toggle:hover {
   border-color: var(--color-primary);
-  background: var(--color-primary-light);
+  background: var(--color-primary-subtle);
 }
 
 .login-button {
@@ -234,7 +231,7 @@ async function handleLogin() {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.875rem 1.25rem;
-  background: linear-gradient(180deg, #14b8a6 0%, var(--color-primary) 100%);
+  background: linear-gradient(135deg, var(--color-primary-gradient-from) 0%, var(--color-primary-gradient-to) 100%);
   color: white;
   border: none;
   border-radius: var(--radius-md);
@@ -243,11 +240,13 @@ async function handleLogin() {
   font-weight: var(--font-semibold);
   cursor: pointer;
   transition: background var(--transition-base), box-shadow var(--transition-base);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
 }
 
 .login-button:hover:not(:disabled) {
-  background: linear-gradient(180deg, #0d9488 0%, var(--color-primary-hover) 100%);
-  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, #059669 0%, var(--color-primary-hover) 100%);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.25);
+  transform: translateY(-1px);
 }
 
 .login-button:disabled {
@@ -265,7 +264,8 @@ async function handleLogin() {
   bottom: 0.75rem;
   right: 1rem;
   font-size: var(--text-xs);
-  color: rgba(250, 248, 245, 0.5);
+  color: var(--color-text-muted);
+  opacity: 0.6;
   pointer-events: none;
 }
 </style>

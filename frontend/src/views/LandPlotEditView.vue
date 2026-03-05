@@ -291,7 +291,7 @@ async function loadPlot(): Promise<void> {
       status: data.status,
     };
     if (data.owners && data.owners.length > 0) {
-      ownerships.value = data.owners.map((o: any) => ({
+      ownerships.value = data.owners.map((o: Record<string, unknown>) => ({
         owner_id: o.owner_id,
         owner_name: '',
         searchQuery: '',

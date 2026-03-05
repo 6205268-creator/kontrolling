@@ -1,4 +1,4 @@
-﻿"""Accruals domain entities.
+"""Accruals domain entities.
 
 Pure Python - no framework dependencies (FastAPI, SQLAlchemy, Pydantic).
 """
@@ -25,6 +25,7 @@ class ContributionType:
     code: str
     description: str | None = None
     created_at: datetime | None = None
+    id: UUID | None = None
 
 
 @dataclass

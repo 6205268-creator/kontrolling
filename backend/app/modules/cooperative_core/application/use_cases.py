@@ -53,12 +53,12 @@ class GetCooperativeUseCase:
     def __init__(self, repo: ICooperativeRepository):
         self.repo = repo
 
-    async def execute(self, cooperative_id: UUID, current_cooperative_id: UUID) -> Cooperative | None:
+    async def execute(self, cooperative_id: UUID, current_cooperative_id: UUID | None) -> Cooperative | None:
         """Get cooperative by ID.
         
         Args:
             cooperative_id: ID of cooperative to get.
-            current_cooperative_id: ID of current user's cooperative (for access control).
+            current_cooperative_id: ID of current user's cooperative (None for admin).
             
         Returns:
             Cooperative entity or None.
