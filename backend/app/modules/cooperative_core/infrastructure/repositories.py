@@ -21,12 +21,11 @@ class CooperativeRepository(ICooperativeRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_by_id(self, id: UUID, cooperative_id: UUID) -> Cooperative | None:
-        """Get cooperative by ID, filtered by cooperative_id for multitenancy."""
-        query = select(CooperativeModel).where(
-            CooperativeModel.id == id,
-            CooperativeModel.id == cooperative_id,
-        )
+    async def get_by_id(self, id: UUID, cooperative_id: UUID | None) -> Cooperative | None:
+        """Get cooperative by ID. If cooperative_id is None (admin), return by id only."""
+        query = select(CooperativeModel).where(CooperativeModel.id == id)
+        if cooperative_id is not None:
+            query = query.where(CooperativeModel.id == cooperative_id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
         return orm_to_domain(model) if model else None

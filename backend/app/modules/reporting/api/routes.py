@@ -6,20 +6,17 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db
+from app.api.deps import get_current_user
 from app.modules.administration.domain.entities import AppUser
+from app.modules.deps import (
+    get_generate_debtor_report_use_case,
+    get_generate_cash_flow_use_case,
+)
 
 from .schemas import CashFlowReport, DebtorInfo
-from ..infrastructure.read_models import ReportingReadService
-from ..application.use_cases import GenerateDebtorReportUseCase, GenerateCashFlowUseCase
 
 router = APIRouter()
-
-
-def _get_reporting_service(db: AsyncSession) -> ReportingReadService:
-    return ReportingReadService(db)
 
 
 @router.get(
@@ -30,7 +27,7 @@ def _get_reporting_service(db: AsyncSession) -> ReportingReadService:
 )
 async def get_debtors_report(
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_generate_debtor_report_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ для отчёта"),
     min_debt: Decimal = Query(Decimal("0.00"), description="Минимальная сумма задолженности"),
 ) -> list[DebtorInfo]:
@@ -44,8 +41,6 @@ async def get_debtors_report(
             detail="Необходимо указать cooperative_id",
         )
 
-    service = _get_reporting_service(db)
-    use_case = GenerateDebtorReportUseCase(service)
     debtors = await use_case.execute(cooperative_id=cooperative_id, min_debt=min_debt)
     
     return [
@@ -68,7 +63,7 @@ async def get_debtors_report(
 )
 async def get_cash_flow_report(
     current_user: Annotated[AppUser, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    use_case=Depends(get_generate_cash_flow_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ для отчёта"),
     period_start: date = Query(..., description="Начало отчётного периода"),
     period_end: date = Query(..., description="Конец отчётного периода"),
@@ -83,14 +78,11 @@ async def get_cash_flow_report(
             detail="Необходимо указать cooperative_id",
         )
 
-    service = _get_reporting_service(db)
-    use_case = GenerateCashFlowUseCase(service)
     report = await use_case.execute(
         cooperative_id=cooperative_id,
         period_start=period_start,
         period_end=period_end,
     )
-    
     return CashFlowReport(
         period_start=report.period_start,
         period_end=report.period_end,

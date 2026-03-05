@@ -47,3 +47,6 @@ jobs:
 
       - name: Ruff format (check)
         run: ruff format --check .
+
+      - name: Architecture linter
+        run: python -m app.scripts.architecture_linter

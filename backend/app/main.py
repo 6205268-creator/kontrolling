@@ -7,6 +7,7 @@ from app.config import settings
 # Modular API routers (Clean Architecture)
 from app.modules.cooperative_core.api.routes import router as cooperative_core_router
 from app.modules.land_management.api.routes import router as land_management_router
+from app.modules.land_management.api.owners_routes import router as owners_router
 from app.modules.financial_core.api.routes import router as financial_core_router
 from app.modules.accruals.api.routes import router as accruals_router
 from app.modules.accruals.api.contribution_types import router as contribution_types_router
@@ -105,6 +106,7 @@ app.add_middleware(
 
 # API routers
 app.include_router(cooperative_core_router, prefix="/api/cooperatives", tags=["cooperatives"])
+app.include_router(owners_router, prefix="/api/owners", tags=["owners"])
 app.include_router(land_management_router, prefix="/api/land-plots", tags=["land-plots"])
 app.include_router(financial_core_router, prefix="/api/financial-subjects", tags=["financial-subjects"])
 app.include_router(accruals_router, prefix="/api/accruals", tags=["accruals"])

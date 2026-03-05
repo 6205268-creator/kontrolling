@@ -1,0 +1,37 @@
+---
+description: "Единая точка входа: в начале сессии, при вопросе «что делать?» или перед работой над планом, фичей, архитектурой — прочитай docs/development-index.md"
+alwaysApply: true
+---
+
+# Development Index Rule
+
+## Обязательное правило
+
+**При начале сессии или при неясности «что делать» — первым действием открой [`docs/development-index.md`](docs/development-index.md).** Перед работой над планом разработки, фичей или архитектурной задачей — прочитать тот же документ.
+
+## Источник «что дальше»
+
+- **Секция «Топ-5»** в [`docs/development-index.md`](docs/development-index.md) — приоритизированный список ближайших задач
+- При закрытии задачи из `docs/tasks/` — обновить `PENDING_GAPS/RESOLVED_GAPS`
+- При выполнении фичи — следовать `feature-workflow-prompt.md` → обновить `project-implementation.md` → создать `context-tree/features/Fxx-vN-date.md`
+
+## Процесс обновления
+
+1. **Закрыта задача `docs/tasks/TASK_*`** → обновить [`docs/history/PENDING_GAPS.md`](docs/history/PENDING_GAPS.md) (удалить/пометить) и добавить в [`docs/history/RESOLVED_GAPS.md`](docs/history/RESOLVED_GAPS.md)
+2. **Выполнена фича** → отметить шаги `[x]` в [`docs/project-implementation.md`](docs/project-implementation.md) и создать версионный файл в [`docs/context-tree/features/`](docs/context-tree/features/)
+3. **Новое архитектурное решение** → запись в [`docs/history/DECISIONS_LOG.md`](docs/history/DECISIONS_LOG.md) и ADR в [`docs/architecture/adr/`](docs/architecture/adr/)
+4. **Обновление «Топ-5»** — при закрытии задачи из списка; при расхождении приоритет у `project-implementation` для фич
+
+## Приоритет источников
+
+**При конфликте данных:**
+1. `docs/` и `AGENTS.md` — наивысший приоритет
+2. `.cursor/rules/` — средний приоритет
+3. Всё остальное — низкий приоритет
+
+## Ссылки
+
+- **Индекс:** [`docs/development-index.md`](docs/development-index.md)
+- **Дорожная карта:** [`docs/project-implementation.md`](docs/project-implementation.md)
+- **Открытые дыры:** [`docs/history/PENDING_GAPS.md`](docs/history/PENDING_GAPS.md)
+- **Закрытые дыры:** [`docs/history/RESOLVED_GAPS.md`](docs/history/RESOLVED_GAPS.md)

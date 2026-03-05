@@ -12,6 +12,7 @@ from alembic import context
 from app.config import settings
 from app.db.base import Base
 
+config = context.config
 target_metadata = Base.metadata
 
 if config.config_file_name is not None:

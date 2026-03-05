@@ -1563,7 +1563,7 @@
 
 ---
 
-### Фича 33: Деплой — Docker контейнеризация
+### ✅ Фича 33: Деплой — Docker контейнеризация
 
 **Цель:** Создать Docker образы для backend и frontend, docker-compose для локального запуска.
 
@@ -1575,32 +1575,32 @@
 
 **Шаги:**
 
-- [ ] Создать `backend/Dockerfile`:
+- [x] Создать `backend/Dockerfile`:
   - Base image: `python:3.11-slim`
   - Установка зависимостей из `requirements.txt`
   - COPY исходников
   - CMD: `uvicorn app.main:app --host 0.0.0.0 --port 8000`
 
-- [ ] Создать `frontend/Dockerfile`:
+- [x] Создать `frontend/Dockerfile`:
   - Base image: `node:20-alpine`
   - Установка зависимостей: `pnpm install`
   - Build: `pnpm build`
   - Nginx для раздачи статики
   - COPY build в nginx
 
-- [ ] Создать `docker-compose.yml`:
+- [x] Создать `docker-compose.yml`:
   - Сервисы: `db` (PostgreSQL), `backend`, `frontend`
   - Volumes для персистентности БД
   - Networks для связи сервисов
   - Environment variables
 
-- [ ] Создать `.dockerignore` для исключения `venv`, `node_modules`, `.git`
+- [x] Создать `.dockerignore` для исключения `venv`, `node_modules`, `.git`
 
 **Проверка:**
-- [ ] `docker-compose up --build` — все сервисы запускаются
-- [ ] `curl http://localhost:8000/api/health` — backend работает
-- [ ] Открыть http://localhost — frontend работает
-- [ ] Frontend взаимодействует с backend через docker network
+- [x] `docker-compose up --build` — все сервисы запускаются
+- [x] `curl http://localhost:8000/api/health` — backend работает
+- [x] Открыть http://localhost — frontend работает
+- [x] Frontend взаимодействует с backend через docker network
 
 ---
 

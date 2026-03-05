@@ -19,8 +19,8 @@ class ICooperativeRepository(IRepository[Cooperative], ABC):
     """
 
     @abstractmethod
-    async def get_by_id(self, id: UUID, cooperative_id: UUID) -> Cooperative | None:
-        """Get cooperative by ID."""
+    async def get_by_id(self, id: UUID, cooperative_id: UUID | None) -> Cooperative | None:
+        """Get cooperative by ID. cooperative_id None means admin — return by id only."""
         pass
 
     @abstractmethod

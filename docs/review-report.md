@@ -113,10 +113,10 @@
 
 ### Фикс 5: Единый путь к seed в документации
 
-**Проблема:** В плане реализации указан путь `backend/scripts/seed_db.py`, фактически скрипт расположен в `backend/app/scripts/seed_db.py`. Запуск: `python -m app.scripts.seed_db` из каталога backend (указано в самом скрипте и в docker-compose). В части документов (например, `tasks/e2e-setup.md`) встречается `python scripts/seed_db.py`. Рекомендация: зафиксировать в AGENTS.md и при необходимости в плане один канонический способ — `python -m app.scripts.seed_db` из backend.
+**Проблема:** В плане реализации указан путь `backend/scripts/seed_db.py`, фактически скрипт расположен в `backend/app/scripts/seed_db.py`. Запуск: `python -m app.scripts.seed_db` из каталога backend (указано в самом скрипте и в docker-compose). В части документов (например, `docs/tasks/e2e-setup.md`) встречается `python scripts/seed_db.py`. Рекомендация: зафиксировать в AGENTS.md и при необходимости в плане один канонический способ — `python -m app.scripts.seed_db` из backend.
 
 **Файлы:**
-- Изменить: `AGENTS.md`, при необходимости `docs/project-implementation.md`, `tasks/e2e-setup.md`
+- Изменить: `AGENTS.md`, при необходимости `docs/project-implementation.md`, `docs/tasks/e2e-setup.md`
 
 **Шаги:**
 - [x] В AGENTS.md явно указать: seed — запуск из backend: `python -m app.scripts.seed_db`.

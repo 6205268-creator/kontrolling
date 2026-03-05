@@ -6,7 +6,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.deps import get_current_user
-from app.modules.administration.infrastructure.models import AppUserModel as AppUser
+from app.modules.administration.domain.entities import AppUser
 
 from .schemas import BalanceInfo, FinancialSubjectInfo
 from app.modules.deps import (
