@@ -63,11 +63,12 @@ export function promise<T>(
     success: string;
     error: string;
   },
-  description?: string
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _description?: string
 ) {
   return toast.promise(promise, {
     loading: messages.loading,
-    success: (data: T) => {
+    success: () => {
       return messages.success;
     },
     error: (error: unknown) => {

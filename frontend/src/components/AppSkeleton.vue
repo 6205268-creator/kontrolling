@@ -1,5 +1,5 @@
 <template>
-  <div class="skeleton" :class="[`skeleton--${variant}`, { 'skeleton--animated': animated }]"></div>
+  <div class="skeleton-loader" :class="[`skeleton--${variant}`, { 'skeleton--animated': animated }]"></div>
 </template>
 
 <script setup lang="ts">

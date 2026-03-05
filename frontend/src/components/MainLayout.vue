@@ -20,15 +20,20 @@
           <button
             class="theme-toggle"
             type="button"
-            @click="toggleTheme"
             :aria-label="isDark ? 'Включить светлую тему' : 'Включить темную тему'"
             :title="isDark ? 'Включить светлую тему' : 'Включить темную тему'"
+            @click="toggleTheme"
           >
             <Sun v-if="isDark" class="theme-icon" aria-hidden />
             <Moon v-else class="theme-icon" aria-hidden />
           </button>
           
-          <button class="logout-button" type="button" @click="handleLogout" aria-label="Выйти">
+          <button
+            class="logout-button"
+            type="button"
+            aria-label="Выйти"
+            @click="handleLogout"
+          >
             <LogOut class="logout-icon" aria-hidden />
             Выйти
           </button>

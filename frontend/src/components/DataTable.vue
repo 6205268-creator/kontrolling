@@ -51,8 +51,8 @@
           <tr
             v-for="(item, rowIndex) in paginatedData"
             :key="rowIndex"
-            @click="$emit('rowClick', item)"
             :class="{ 'clickable': $attrs.onRowClick }"
+            @click="$emit('rowClick', item)"
           >
             <td v-for="(column, colIndex) in columns" :key="colIndex">
               <slot :name="`cell-${column.key}`" :item="item" :value="item[column.key]">
@@ -73,16 +73,16 @@
         <button
           class="pagination-btn"
           :disabled="currentPage === 1"
-          @click="currentPage = 1"
           aria-label="Первая страница"
+          @click="currentPage = 1"
         >
           <ChevronsLeft class="pagination-icon" />
         </button>
         <button
           class="pagination-btn"
           :disabled="currentPage === 1"
-          @click="currentPage--"
           aria-label="Предыдущая страница"
+          @click="currentPage--"
         >
           <ChevronLeft class="pagination-icon" />
         </button>
@@ -102,16 +102,16 @@
         <button
           class="pagination-btn"
           :disabled="currentPage === totalPages"
-          @click="currentPage++"
           aria-label="Следующая страница"
+          @click="currentPage++"
         >
           <ChevronRight class="pagination-icon" />
         </button>
         <button
           class="pagination-btn"
           :disabled="currentPage === totalPages"
-          @click="currentPage = totalPages"
           aria-label="Последняя страница"
+          @click="currentPage = totalPages"
         >
           <ChevronsRight class="pagination-icon" />
         </button>
@@ -161,6 +161,9 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   rowClick: [item: unknown];
 }>();
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _emit = emit;
 
 // Search
 const searchQuery = ref('');
