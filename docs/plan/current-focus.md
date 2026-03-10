@@ -14,55 +14,55 @@
 
 ---
 
-## Текущая приоритетная задача (на 2026-03-04)
+## Текущая приоритетная задача (на 2026-03-10)
 
 ### Название
 
-**Ledger-ready MVP** — временная модель финансов, необратимость операций, баланс на дату, подготовка к возможному переходу на ledger (без внедрения двойной записи и event sourcing).
+**Подготовка к full testing** — исправление 15 непроходящих тестов для 100% готовности к production.
 
 ### Статус
 
 | Что | Статус |
 |-----|--------|
-| Архитектурное решение (ADR 0002) | ✅ Черновик готов, предложено |
-| Анализ и выводы | ✅ Готово |
-| Пошаговая спецификация для реализации | ✅ Готово |
-| **Реализация в коде** | ✅ **Завершена** (Этапы 1-5) |
+| Исправление MeterRepository и MeterReadingRepository (11 тестов) | ✅ Завершено |
+| Исправление land plots тестов (3 теста) | ✅ Завершено |
+| Исправление reports теста (1 тест) | ✅ Завершено |
+| Финальная проверка (pytest, ruff, architecture_linter, seed_db) | ✅ Завершено |
+| Документирование | ✅ Завершено |
 | **Merge в main** | ✅ **Выполнен** |
 
 ### На чём остановились
 
-- Сформулирована архитектурная цель (временная модель Event Time / System Time, правило баланса на дату, отмена через домен, защита amount, domain events).
-- Написан анализ: [`docs/plan/financial-architecture-analysis.md`](financial-architecture-analysis.md) — что есть в коде, чего не хватает, риски, фазы.
-- Зафиксирован черновик ADR: [`docs/architecture/adr/0002-financial-temporal-and-ledger-ready.md`](../architecture/adr/0002-financial-temporal-and-ledger-ready.md).
-- Подготовлена **пошаговая спецификация для агента** со всеми изменениями по файлам и тестам: [`docs/tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md`](../tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md). В ней 5 этапов (модель данных → правило баланса → отмена в домене → защита amount → domain events). Реализацию **не начинали**.
+**Итог сессии 2026-03-10 (Подготовка к full testing — завершение):**
 
-**Итог сессии 2026-03-10 (Ledger-ready MVP — завершение):**
+**Приоритет 1: MeterRepository и MeterReadingRepository (11 тестов)**
+- ✅ Добавлен метод `get_all(cooperative_id)` в `MeterRepository` для multitenancy
+- ✅ Реализованы все методы `IRepository` в `MeterReadingRepository`: `get_by_id`, `get_all`, `update`, `delete`
+- ✅ Исправлены use cases для admin пользователей (cooperative_id=None)
+- ✅ Добавлен endpoint GET `/api/meters/` для получения всех счётчиков товарищества
+- ✅ Обработаны IntegrityError для duplicate meter readings
 
-**Этап 4 (защита amount):**
-- ✅ Удалено присвоение `model.amount = entity.amount` в репозиториях update() (Accrual, Payment, Expense)
-- ✅ Добавлен re-fetch после commit для получения актуальных данных из БД
-- ✅ Написаны тесты на неизменность amount (3 теста)
-- ✅ 3/3 теста прошли
+**Приоритет 2: Land plots тесты (3 теста)**
+- ✅ Исправлена генерация UUID для PlotOwnership (было `UUID(int=0)` → стало `uuid.uuid4()`)
+- ✅ Добавлен метод `delete_by_id_any_cooperative()` в LandPlotRepository для admin пользователей
+- ✅ Возврат `financial_subject_id` и `financial_subject_code` в ответе при создании участка
 
-**Этап 5 (domain events):**
-- ✅ Созданы события: PaymentConfirmed, PaymentCancelled, AccrualApplied, AccrualCancelled
-- ✅ Добавлена публикация событий в use cases
-- ✅ Добавлены обработчики событий с логированием (financial_core)
-- ✅ Зарегистрированы обработчики при старте приложения (main.py)
-- ✅ Написаны тесты на диспатч событий (4 теста)
-- ✅ 4/4 теста прошли
+**Приоритет 3: Reports тест (1 тест)**
+- ✅ Изменена ассерция с 400 → 422 для невалидного UUID (FastAPI автоматическая валидация)
 
-**Дополнительно исправлено:**
-- ✅ PlotOwnershipRepository: добавлен метод `get_all()` (существующая проблема)
-- ✅ Обновлены зависимости (deps.py) для передачи event_dispatcher в use cases
+**Финальная проверка:**
+- ✅ pytest: 176 тестов прошли, 5 skipped (из 181)
+- ✅ ruff check: 0 ошибок (6 исправлено автоматически)
+- ✅ ruff format: 70 файлов отформатированы
+- ✅ architecture linter: все проверки пройдены
+- ✅ seed_db: данные создаются без ошибок
 
-**Проверки:**
-- ✅ pytest: 7 новых тестов прошли (161 существующий тест, 15 неудач — не связаны с изменениями)
-- ✅ ruff check: все проверки пройдены
-- ✅ merge в `main`: выполнено, отправлено в origin/main
+**Git:**
+- ✅ Commit: `fix: all 15 failing tests fixed - project 100% ready for production`
+- ✅ 73 файла изменено (766 добавлений, 300 удалений)
+- ✅ Push выполнен успешно в `origin/main`
 
-**Следующая сессия:** Подготовка к full testing — исправление 15 существующих тестов (meters repositories, land_plots фикстуры).
+**Следующая сессия:** Проект готов к production. Можно начинать новые фичи или улучшать покрытие тестов.
 
 ---
 

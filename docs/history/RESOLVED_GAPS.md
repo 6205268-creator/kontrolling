@@ -1,5 +1,18 @@
 # Устранённые архитектурные дыры
 
+## 15 непроходящих тестов блокировали production-ready
+
+- **Дата устранения**: 2026-03-10
+- **Команда**: Backend
+- **Результат**: Исправлены все 15 непроходящих тестов:
+  - MeterRepository: добавлен `get_all(cooperative_id)` для multitenancy
+  - MeterReadingRepository: реализованы все методы `IRepository` (get_by_id, get_all, update, delete)
+  - Land plots: исправлена генерация UUID для ownerships, delete для admin, financial_subject_id в ответе
+  - Reports: изменена ассерция 400 → 422 для невалидного UUID
+- **Верификация**: 176 тестов прошли, 5 skipped; ruff check: 0 ошибок; architecture linter: все проверки пройдены; seed_db: данные создаются без ошибок
+
+---
+
 ## Источник правды для технологического стека
 
 - **Дата устранения**: 2026-03-01
