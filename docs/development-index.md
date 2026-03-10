@@ -3,7 +3,7 @@
 **PRIMARY WORK PLAN — Single entry point. Everything starts here. Read this first.**
 
 **Статус:** Актуальный  
-**Последнее обновление:** 2026-03-05  
+**Последнее обновление:** 2026-03-10  
 **Владелец:** Lead Architect  
 **Аудитория:** Агенты Cursor, разработчики проекта
 
@@ -43,11 +43,10 @@
 
 | # | Задача | Команда | Статус | Ссылка |
 |---|--------|---------|--------|--------|
-| 1 | **Наполнение глоссариев по доменам** — 7 из 10 доменов не заполнены (cooperative, land, payments, expenses, meters, reporting, administration) | Architecture | 🟡 Low Priority | [`docs/history/PENDING_GAPS.md`](history/PENDING_GAPS.md) |
-| 2 | **Frontend: миграция на модульную Clean Architecture** — пост-MVP задача | Frontend | ⚪ Не начато | [`docs/project-implementation.md`](project-implementation.md) |
-| 3 | **E2E тесты: расширить покрытие** — критические пользовательские сценарии | QA | 🟡 В работе | [`docs/tasks/e2e-setup.md`](tasks/e2e-setup.md) |
-| 4 | **Документация OpenAPI** — пост-MVP | Backend | ⚪ Не начато | пост-MVP |
-| 5 | **Docker: верификация e2e прохождения в Docker** — F33 шаги отмечены, требуется e2e тестирование | DevOps | 🟡 В работе | [`DEPLOY.md`](../DEPLOY.md) |
+| 1 | **Frontend: миграция на модульную Clean Architecture** — пост-MVP задача | Frontend | ⚪ Не начато | [`docs/project-implementation.md`](project-implementation.md) |
+| 2 | **E2E тесты: расширить покрытие** — критические пользовательские сценарии | QA | 🟡 В работе | [`docs/tasks/e2e-setup.md`](tasks/e2e-setup.md) |
+| 3 | **Документация OpenAPI** — пост-MVP | Backend | ⚪ Не начато | пост-MVP |
+| 4 | **Docker: верификация e2e прохождения в Docker** — F33 шаги отмечены, требуется e2e тестирование | DevOps | 🟡 В работе | [`DEPLOY.md`](../DEPLOY.md) |
 
 **Легенда:** 🟢 Готово | 🟡 В работе | 🔴 Blocked | ⚪ Не начато
 
@@ -114,12 +113,11 @@
 | ADR: индекс и процесс ведения | 2026-03-01 | Architecture |
 | Канонический seed и скрипты наполнения | 2026-03-01 | Backend |
 | CI и переменные для тестов | 2026-03-01 | DevOps |
+| Глоссарии по доменам | 2026-03-10 | Architecture |
 
 ### Открытые дыры
 
-| Дыра | Приоритет | Статус | Команда |
-|------|-----------|--------|---------|
-| Глоссарии по доменам (7 из 10) | Low | 🟡 PARTIALLY RESOLVED | Architecture |
+*Нет открытых дыр. Устранённые — см. [RESOLVED_GAPS.md](history/RESOLVED_GAPS.md).*
 
 ---
 
@@ -213,13 +211,13 @@
 | Accruals | ✅ Заполнен | [`accruals.md`](architecture/glossary/accruals.md) |
 | Contributions | ✅ Заполнен | [`contributions.md`](architecture/glossary/contributions.md) |
 | Financial | ✅ Заполнен | [`financial.md`](architecture/glossary/financial.md) |
-| Cooperative | ⚪ Ожидает | — |
-| Land | ⚪ Ожидает | — |
-| Payments | ⚪ Ожидает | — |
-| Expenses | ⚪ Ожидает | — |
-| Meters | ⚪ Ожидает | — |
-| Reporting | ⚪ Ожидает | — |
-| Administration | ⚪ Ожидает | — |
+| Cooperative | ✅ Заполнен | [cooperative.md](architecture/glossary/cooperative.md) |
+| Land | ✅ Заполнен | [land.md](architecture/glossary/land.md) |
+| Payments | ✅ Заполнен | [payments.md](architecture/glossary/payments.md) |
+| Expenses | ✅ Заполнен | [expenses.md](architecture/glossary/expenses.md) |
+| Meters | ✅ Заполнен | [meters.md](architecture/glossary/meters.md) |
+| Reporting | ✅ Заполнен | [reporting.md](architecture/glossary/reporting.md) |
+| Administration | ✅ Заполнен | [administration.md](architecture/glossary/administration.md) |
 
 **Политика:** [`README.md`](architecture/glossary/README.md)
 
@@ -466,6 +464,7 @@ graph TD
 | **Глоссарии** | [`docs/architecture/glossary/README.md`](architecture/glossary/README.md) |
 | **BPMN процессы** | [`docs/processes/bpmn-viewer.html`](processes/bpmn-viewer.html) |
 | **Текущий фокус (где остановились, что делать завтра)** | [`docs/plan/current-focus.md`](plan/current-focus.md) |
+| **Промпт для начала/конца сессии (дать агенту)** | [`docs/plan/session-start-end-prompt.md`](plan/session-start-end-prompt.md) |
 | **Спецификация Ledger-ready (backend)** | [`docs/tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md`](tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md) |
 | **Анализ финансовой архитектуры** | [`docs/plan/financial-architecture-analysis.md`](plan/financial-architecture-analysis.md) |
 | **Вывод: единая точка входа и workflow веток** | [`docs/plan/CONCLUSION-SINGLE-ENTRY-AND-BRANCH-WORKFLOW.md`](plan/CONCLUSION-SINGLE-ENTRY-AND-BRANCH-WORKFLOW.md) |
@@ -487,7 +486,8 @@ graph TD
 | [`OWNERSHIP.md`](architecture/OWNERSHIP.md) | Кто что может менять (ограниченные пути) |
 | [`ADR README.md`](architecture/adr/README.md) | Архитектурные решения |
 | [`system-patterns.md`](architecture/system-patterns.md) | Границы архитектуры, Clean Architecture |
-| [`development-plan-and-integrity.md`](plan/development-plan-and-integrity.md) | Как не «метаться», процесс разработки |
+| [`development-plan-and-integrity.md`](plan/development-plan-and-integrity.md) | Как не «метаться», процесс разработки (кратко) |
+| [`INTEGRITY_AND_DEVELOPMENT.md`](architecture/INTEGRITY_AND_DEVELOPMENT.md) | Подробный справочник: целостность, риски, чек-листы, guardian |
 
 **Правило:** Задачи, затрагивающие ADR, глоссарии, границы модулей или общие контракты API, перед закрытием проходят ревью `project-orchestrator`.
 

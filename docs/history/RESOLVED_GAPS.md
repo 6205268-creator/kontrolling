@@ -71,3 +71,10 @@
 - **Файл-задание**: [TASK_DevOps_20260301.md](../tasks/TASK_DevOps_20260301.md)
 - **Результат**: Задокументировано в AGENTS.md: backend tests используют in-memory SQLite через conftest.py, DATABASE_URL не требуется в CI
 - **Верификация**: GitHub Actions workflow backend-tests.yml проходит без DATABASE_URL, 197 тестов
+
+## Глоссарии по доменам
+
+- **Дата устранения**: 2026-03-10
+- **Команда**: Architecture
+- **Результат**: Заполнены глоссарии для всех 10 доменов: cooperative, land, payments, expenses, meters, reporting, administration (ранее были заполнены accruals, contributions, financial). Формат и стиль — по образцу существующих; термины взяты из domain/entities, use_cases и project-design.
+- **Верификация**: Файлы в `docs/architecture/glossary/` (cooperative.md, land.md, payments.md, expenses.md, meters.md, reporting.md, administration.md) содержат таблицы терминов и примеры использования в СТ.
