@@ -24,6 +24,7 @@ router = APIRouter()
 
 class CancelBody(BaseModel):
     """Request body for cancel endpoint."""
+
     reason: str | None = Field(None, description="Причина отмены", max_length=512)
 
 
@@ -106,7 +107,7 @@ async def create_payment(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="cooperative_id is required for admin users",
         )
-    
+
     try:
         payment = await use_case.execute(data=payment_data, cooperative_id=cooperative_id)
     except ValidationError as e:

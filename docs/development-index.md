@@ -284,7 +284,7 @@ pytest                          # Все тесты
 pytest tests/test_health.py     # Health check
 ```
 
-**Статус:** ✅ 197 тестов проходят (in-memory SQLite)
+**Статус:** ✅ 176 тестов проходят, 5 skipped (in-memory SQLite)
 
 ### Линтинг
 

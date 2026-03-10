@@ -1,4 +1,4 @@
-﻿"""Land Management domain entities.
+"""Land Management domain entities.
 
 Pure Python - no framework dependencies (FastAPI, SQLAlchemy, Pydantic).
 """

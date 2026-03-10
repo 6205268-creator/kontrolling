@@ -33,7 +33,7 @@ class BalanceUpdated(DomainEvent):
 @dataclass
 class LandPlotCreated(DomainEvent):
     """Event from land_management module - redefined here to avoid circular imports.
-    
+
     In production, this would be imported from a shared events package.
     """
 
@@ -46,7 +46,7 @@ class LandPlotCreated(DomainEvent):
 @dataclass
 class MeterCreated(DomainEvent):
     """Event from meters module - redefined here to avoid circular imports.
-    
+
     In production, this would be imported from a shared events package.
     """
 

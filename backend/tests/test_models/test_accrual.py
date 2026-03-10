@@ -208,4 +208,6 @@ async def test_accrual_amount_immutable_on_update(test_db: AsyncSession) -> None
     updated = await repo.update(entity)
 
     # amount должен остаться оригинальным (не обновляться в БД)
-    assert updated.amount == original_amount, "Amount should be immutable - not updated in repository"
+    assert updated.amount == original_amount, (
+        "Amount should be immutable - not updated in repository"
+    )

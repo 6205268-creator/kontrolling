@@ -1,4 +1,4 @@
-﻿"""Land Management domain repository interfaces.
+"""Land Management domain repository interfaces.
 
 Pure Python - no framework dependencies (FastAPI, SQLAlchemy, Pydantic).
 """
@@ -93,7 +93,9 @@ class IPlotOwnershipRepository(IRepository[PlotOwnership], ABC):
         pass
 
     @abstractmethod
-    async def get_by_land_plot(self, land_plot_id: UUID, cooperative_id: UUID) -> list[PlotOwnership]:
+    async def get_by_land_plot(
+        self, land_plot_id: UUID, cooperative_id: UUID
+    ) -> list[PlotOwnership]:
         """Get all ownerships for a land plot."""
         pass
 

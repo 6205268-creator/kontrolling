@@ -1,4 +1,4 @@
-﻿"""Pydantic schemas for accruals API."""
+"""Pydantic schemas for accruals API."""
 
 from app.modules.accruals.application.dtos import (
     AccrualBase,

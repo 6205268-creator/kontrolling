@@ -1,4 +1,4 @@
-﻿"""Pydantic schemas for expenses API."""
+"""Pydantic schemas for expenses API."""
 
 from app.modules.expenses.application.dtos import (
     ExpenseBase,

@@ -16,15 +16,22 @@ class MeterModel(Base):
     """SQLAlchemy model for Meter."""
 
     __tablename__ = "meters"
-    __table_args__ = {"comment": "Приборы учёта (счётчики воды и электроэнергии)", "extend_existing": True}
+    __table_args__ = {
+        "comment": "Приборы учёта (счётчики воды и электроэнергии)",
+        "extend_existing": True,
+    }
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
     owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("owners.id"), nullable=False, index=True)
     meter_type: Mapped[str] = mapped_column(String(20), nullable=False)
     serial_number: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    installation_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    installation_date: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
@@ -34,6 +41,7 @@ class MeterModel(Base):
     def to_domain(self) -> "Meter":
         """Convert to domain entity."""
         from app.modules.meters.domain.entities import Meter
+
         return Meter(
             id=self.id,
             owner_id=self.owner_id,
@@ -73,11 +81,14 @@ class MeterReadingModel(Base):
     meter_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("meters.id"), nullable=False, index=True)
     reading_value: Mapped[Decimal] = mapped_column(nullable=False)
     reading_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
 
     def to_domain(self) -> "MeterReading":
         """Convert to domain entity."""
         from app.modules.meters.domain.entities import MeterReading
+
         return MeterReading(
             id=self.id,
             meter_id=self.meter_id,

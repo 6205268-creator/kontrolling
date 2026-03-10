@@ -13,7 +13,7 @@ from .entities import Cooperative
 
 class ICooperativeRepository(IRepository[Cooperative], ABC):
     """Repository interface for Cooperative operations.
-    
+
     All methods must filter by cooperative_id for multitenancy.
     """
 
@@ -25,7 +25,7 @@ class ICooperativeRepository(IRepository[Cooperative], ABC):
     @abstractmethod
     async def get_all(self, cooperative_id: UUID) -> list[Cooperative]:
         """Get all cooperatives for given cooperative_id.
-        
+
         For admin, cooperative_id can be None to get all.
         """
         pass

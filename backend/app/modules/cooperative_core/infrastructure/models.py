@@ -22,9 +22,10 @@ class CooperativeModel(Base):
     """
 
     __tablename__ = "cooperatives"
-    __table_args__ = (
-        {"comment": "Садоводческие товарищества (СТ) — основные организации в системе", "extend_existing": True}
-    )
+    __table_args__ = {
+        "comment": "Садоводческие товарищества (СТ) — основные организации в системе",
+        "extend_existing": True,
+    }
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)

@@ -1,4 +1,4 @@
-﻿"""Pydantic schemas for payments API."""
+"""Pydantic schemas for payments API."""
 
 from app.modules.payments.application.dtos import (
     PaymentBase,

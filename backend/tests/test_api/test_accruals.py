@@ -182,8 +182,8 @@ async def test_cancel_accrual(
         accrual_date=date.today(),
         period_start=date.today().replace(month=1, day=1),
         status="applied",
-            operation_number="ACC-API-APPLIED",
-        )
+        operation_number="ACC-API-APPLIED",
+    )
     test_db.add(accrual)
     await test_db.commit()
 

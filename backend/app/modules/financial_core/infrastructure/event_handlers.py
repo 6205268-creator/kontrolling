@@ -24,11 +24,13 @@ logger = logging.getLogger(__name__)
 # Import here to avoid circular imports at module level
 def _get_payment_events():
     from app.modules.payments.domain.events import PaymentCancelled, PaymentConfirmed
+
     return PaymentConfirmed, PaymentCancelled
 
 
 def _get_accrual_events():
     from app.modules.accruals.domain.events import AccrualApplied, AccrualCancelled
+
     return AccrualApplied, AccrualCancelled
 
 
@@ -216,7 +218,7 @@ def setup_event_handlers(
     # Register payment and accrual event handlers (logging)
     PaymentConfirmed, PaymentCancelled = _get_payment_events()
     AccrualApplied, AccrualCancelled = _get_accrual_events()
-    
+
     event_dispatcher.register(PaymentConfirmed, PaymentConfirmedHandler())
     event_dispatcher.register(PaymentCancelled, PaymentCancelledHandler())
     event_dispatcher.register(AccrualApplied, AccrualAppliedHandler())

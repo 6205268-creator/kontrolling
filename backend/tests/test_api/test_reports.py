@@ -499,14 +499,14 @@ async def test_get_debtors_report_invalid_cooperative_id(
     async_client: AsyncClient,
     admin_token: str,
 ) -> None:
-    """Тест 400 при неверном формате cooperative_id."""
+    """Тест 422 при неверном формате cooperative_id."""
     response = await async_client.get(
         "/api/reports/debtors",
         params={"cooperative_id": "invalid-uuid", "min_debt": "0.00"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
-    assert response.status_code == 400
+    assert response.status_code == 422
 
 
 @pytest.mark.asyncio

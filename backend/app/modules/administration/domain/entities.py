@@ -1,4 +1,4 @@
-﻿"""Administration domain entities."""
+"""Administration domain entities."""
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -10,6 +10,7 @@ from app.modules.shared.kernel.entities import BaseEntity
 @dataclass
 class AppUser(BaseEntity):
     """Пользователь системы."""
+
     username: str
     email: str
     hashed_password: str

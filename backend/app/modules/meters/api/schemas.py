@@ -1,4 +1,4 @@
-﻿"""Pydantic schemas for meters API."""
+"""Pydantic schemas for meters API."""
 
 from app.modules.meters.application.dtos import (
     MeterBase,

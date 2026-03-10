@@ -1,4 +1,4 @@
-﻿"""Payments domain repository interfaces.
+"""Payments domain repository interfaces.
 
 Pure Python - no framework dependencies.
 """

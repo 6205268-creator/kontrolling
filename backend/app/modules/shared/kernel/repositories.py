@@ -14,7 +14,7 @@ T = TypeVar("T", bound=BaseEntity)
 
 class IRepository(ABC, Generic[T]):
     """Generic repository interface for CRUD operations.
-    
+
     All repository methods should filter by cooperative_id for multitenancy.
     """
 

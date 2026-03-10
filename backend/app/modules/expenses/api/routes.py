@@ -24,6 +24,7 @@ router = APIRouter()
 
 class CancelBody(BaseModel):
     """Request body for cancel endpoint."""
+
     reason: str | None = Field(None, description="Причина отмены", max_length=512)
 
 
@@ -115,7 +116,9 @@ async def create_expense(
         )
 
     try:
-        expense = await use_case.execute(data=expense_data, cooperative_id=current_user.cooperative_id)
+        expense = await use_case.execute(
+            data=expense_data, cooperative_id=current_user.cooperative_id
+        )
     except ValidationError as e:
         if "category" in str(e).lower() or "not found" in str(e).lower():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
@@ -152,7 +155,9 @@ async def confirm_expense(
 ) -> ExpenseInDB:
     """Confirm expense."""
     try:
-        expense = await use_case.execute(expense_id=expense_id, cooperative_id=current_user.cooperative_id)
+        expense = await use_case.execute(
+            expense_id=expense_id, cooperative_id=current_user.cooperative_id
+        )
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except ValidationError as e:

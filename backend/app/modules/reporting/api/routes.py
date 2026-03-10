@@ -42,7 +42,7 @@ async def get_debtors_report(
         )
 
     debtors = await use_case.execute(cooperative_id=cooperative_id, min_debt=min_debt)
-    
+
     return [
         DebtorInfo(
             financial_subject_id=UUID(d.financial_subject_id),

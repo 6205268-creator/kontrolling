@@ -1,4 +1,4 @@
-﻿"""Read models and query service for reporting."""
+"""Read models and query service for reporting."""
 
 from datetime import date
 from decimal import Decimal
@@ -35,7 +35,9 @@ class ReportingReadService:
 
         # Get all financial subjects for cooperative
         result = await self.session.execute(
-            select(FinancialSubjectModel).where(FinancialSubjectModel.cooperative_id == cooperative_id)
+            select(FinancialSubjectModel).where(
+                FinancialSubjectModel.cooperative_id == cooperative_id
+            )
         )
         subjects = list(result.scalars().all())
 
@@ -150,7 +152,9 @@ class ReportingReadService:
 
         # Get all financial subjects for cooperative
         fs_result = await self.session.execute(
-            select(FinancialSubjectModel.id).where(FinancialSubjectModel.cooperative_id == cooperative_id)
+            select(FinancialSubjectModel.id).where(
+                FinancialSubjectModel.cooperative_id == cooperative_id
+            )
         )
         subject_ids = [row[0] for row in fs_result.all()]
 

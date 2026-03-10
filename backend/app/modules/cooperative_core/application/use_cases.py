@@ -17,23 +17,23 @@ class CreateCooperativeUseCase:
 
     async def execute(self, data: CooperativeCreate) -> Cooperative:
         """Create a new cooperative.
-        
+
         Args:
             data: DTO with cooperative data.
-            
+
         Returns:
             Created Cooperative entity.
-            
+
         Raises:
             ValidationError: If validation fails.
         """
         # Domain validation
         if not data.name or len(data.name) > 255:
             raise ValidationError("Name must be between 1 and 255 characters")
-        
+
         if data.unp and len(data.unp) > 20:
             raise ValidationError("UNP must not exceed 20 characters")
-            
+
         if data.address and len(data.address) > 512:
             raise ValidationError("Address must not exceed 512 characters")
 
@@ -43,7 +43,7 @@ class CreateCooperativeUseCase:
             unp=data.unp,
             address=data.address,
         )
-        
+
         return await self.repo.add(entity)
 
 
@@ -53,13 +53,15 @@ class GetCooperativeUseCase:
     def __init__(self, repo: ICooperativeRepository):
         self.repo = repo
 
-    async def execute(self, cooperative_id: UUID, current_cooperative_id: UUID | None) -> Cooperative | None:
+    async def execute(
+        self, cooperative_id: UUID, current_cooperative_id: UUID | None
+    ) -> Cooperative | None:
         """Get cooperative by ID.
-        
+
         Args:
             cooperative_id: ID of cooperative to get.
             current_cooperative_id: ID of current user's cooperative (None for admin).
-            
+
         Returns:
             Cooperative entity or None.
         """
@@ -74,10 +76,10 @@ class GetCooperativesUseCase:
 
     async def execute(self, cooperative_id: UUID | None) -> list[Cooperative]:
         """Get list of cooperatives.
-        
+
         Args:
             cooperative_id: Filter by cooperative ID. None for all (admin).
-            
+
         Returns:
             List of Cooperative entities.
         """
@@ -101,12 +103,12 @@ class UpdateCooperativeUseCase:
         current_cooperative_id: UUID,
     ) -> Cooperative | None:
         """Update cooperative.
-        
+
         Args:
             cooperative_id: ID of cooperative to update.
             data: DTO with update data.
             current_cooperative_id: ID of current user's cooperative.
-            
+
         Returns:
             Updated Cooperative entity or None.
         """
@@ -130,17 +132,17 @@ class DeleteCooperativeUseCase:
 
     async def execute(self, cooperative_id: UUID, current_cooperative_id: UUID) -> bool:
         """Delete cooperative by ID.
-        
+
         Args:
             cooperative_id: ID of cooperative to delete.
             current_cooperative_id: ID of current user's cooperative.
-            
+
         Returns:
             True if deleted, False if not found.
         """
         entity = await self.repo.get_by_id(cooperative_id, current_cooperative_id)
         if entity is None:
             return False
-            
+
         await self.repo.delete(cooperative_id, current_cooperative_id)
         return True

@@ -242,7 +242,9 @@ async def seed(session) -> None:
 
     # 3 пользователя: admin (без СТ), chairman и treasurer (с СТ Ромашка) — только если ещё нет
     for username in ("admin", "chairman", "treasurer"):
-        result = await session.execute(select(AppUserModel).where(AppUserModel.username == username))
+        result = await session.execute(
+            select(AppUserModel).where(AppUserModel.username == username)
+        )
         if result.scalar_one_or_none() is not None:
             continue
         role = "admin" if username == "admin" else username

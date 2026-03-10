@@ -21,7 +21,7 @@ def generate_financial_subject_code() -> str:
 
 class FinancialSubjectModel(Base):
     """SQLAlchemy model for FinancialSubject.
-    
+
     Финансовый субъект — центр финансовой ответственности.
     """
 
@@ -61,7 +61,7 @@ class FinancialSubjectModel(Base):
     def to_domain(self) -> "FinancialSubject":
         """Convert SQLAlchemy model to domain entity."""
         from app.modules.financial_core.domain.entities import FinancialSubject
-        
+
         return FinancialSubject(
             id=self.id,
             subject_type=self.subject_type,

@@ -102,7 +102,7 @@ async def create_accrual(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="cooperative_id is required for admin users",
         )
-    
+
     try:
         accrual = await use_case.execute(data=accrual_data, cooperative_id=cooperative_id)
     except ValidationError as e:
@@ -151,7 +151,7 @@ async def mass_create_accruals(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="cooperative_id is required for admin users",
         )
-    
+
     try:
         accruals = await use_case.execute(
             accruals_data=batch_data.accruals,
@@ -205,7 +205,7 @@ async def apply_accrual(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="cooperative_id is required for admin users",
         )
-    
+
     try:
         accrual = await use_case.execute(
             accrual_id=accrual_id,
@@ -242,6 +242,7 @@ async def apply_accrual(
 
 class CancelBody(BaseModel):
     """Request body for cancel endpoint."""
+
     reason: str | None = Field(None, description="Причина отмены", max_length=512)
 
 

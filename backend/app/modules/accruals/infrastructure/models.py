@@ -17,7 +17,7 @@ from app.db.base import Base, Guid
 
 class AccrualModel(Base):
     """SQLAlchemy model for Accrual.
-    
+
     Начисление по финансовому субъекту.
     """
 
@@ -54,9 +54,7 @@ class AccrualModel(Base):
         onupdate=lambda: datetime.now(UTC),
         comment="Дата и время последнего обновления записи",
     )
-    cancelled_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     cancelled_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
         Guid(), ForeignKey("app_users.id"), nullable=True
     )
@@ -70,7 +68,7 @@ class AccrualModel(Base):
     def to_domain(self) -> "Accrual":
         """Convert SQLAlchemy model to domain entity."""
         from app.modules.accruals.domain.entities import Accrual
-        
+
         return Accrual(
             id=self.id,
             financial_subject_id=self.financial_subject_id,
@@ -111,7 +109,7 @@ class AccrualModel(Base):
 
 class AccrualHistoryModel(Base):
     """SQLAlchemy model for Accrual history.
-    
+
     История изменений начислений.
     """
 
@@ -140,12 +138,15 @@ class AccrualHistoryModel(Base):
 
 class ContributionTypeModel(Base):
     """SQLAlchemy model for ContributionType.
-    
+
     Вид взноса — справочник типов начислений.
     """
 
     __tablename__ = "contribution_types"
-    __table_args__ = {"comment": "Справочник видов взносов (членский, целевой, за услуги)", "extend_existing": True}
+    __table_args__ = {
+        "comment": "Справочник видов взносов (членский, целевой, за услуги)",
+        "extend_existing": True,
+    }
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -160,7 +161,7 @@ class ContributionTypeModel(Base):
     def to_domain(self) -> "ContributionType":
         """Convert SQLAlchemy model to domain entity."""
         from app.modules.accruals.domain.entities import ContributionType
-        
+
         return ContributionType(
             id=self.id,
             name=self.name,

@@ -15,7 +15,10 @@ class AppUserModel(Base):
     """SQLAlchemy model for AppUser."""
 
     __tablename__ = "app_users"
-    __table_args__ = {"comment": "Пользователи системы (администраторы, председатели, бухгалтеры)", "extend_existing": True}
+    __table_args__ = {
+        "comment": "Пользователи системы (администраторы, председатели, бухгалтеры)",
+        "extend_existing": True,
+    }
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
     username: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
@@ -27,7 +30,9 @@ class AppUserModel(Base):
         ForeignKey("cooperatives.id"), nullable=True, index=True
     )
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
@@ -37,6 +42,7 @@ class AppUserModel(Base):
     def to_domain(self) -> "AppUser":
         """Convert to domain entity."""
         from app.modules.administration.domain.entities import AppUser
+
         return AppUser(
             id=self.id,
             username=self.username,

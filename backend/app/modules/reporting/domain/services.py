@@ -8,6 +8,7 @@ from decimal import Decimal
 @dataclass
 class CashFlowReport:
     """Cash flow report for a period."""
+
     period_start: date
     period_end: date
     total_accruals: Decimal
@@ -19,6 +20,7 @@ class CashFlowReport:
 @dataclass
 class DebtorInfo:
     """Debtor information for report."""
+
     financial_subject_id: str  # UUID as string
     subject_type: str
     subject_info: dict

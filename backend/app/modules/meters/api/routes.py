@@ -22,6 +22,53 @@ from .schemas import MeterCreate, MeterInDB, MeterReadingCreate, MeterReadingInD
 router = APIRouter()
 
 
+@router.get(
+    "/",
+    response_model=list[MeterInDB],
+    summary="Счётчики товарищества",
+    description="Получить список всех счётчиков товарищества.",
+)
+async def get_meters(
+    current_user: Annotated[AppUser, Depends(get_current_user)],
+    owner_id: UUID | None = None,
+    use_case=Depends(get_meters_by_owner_use_case),
+) -> list[MeterInDB]:
+    """Get all meters for cooperative or filtered by owner."""
+    if owner_id is not None:
+        meters = await use_case.execute(
+            owner_id=owner_id, cooperative_id=current_user.cooperative_id
+        )
+    else:
+        # For admin users without cooperative_id, return empty list
+        # Admin should query by owner_id instead
+        if current_user.cooperative_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Admin users must specify owner_id parameter",
+            )
+        # Get all meters for cooperative using repository directly
+        from app.api.deps import get_db
+        from app.modules.meters.infrastructure.repositories import MeterRepository
+
+        db = await anext(get_db())
+        repo = MeterRepository(db)
+        meters = await repo.get_all(current_user.cooperative_id)
+
+    return [
+        MeterInDB(
+            id=m.id,
+            owner_id=m.owner_id,
+            meter_type=m.meter_type,
+            serial_number=m.serial_number,
+            installation_date=m.installation_date,
+            status=m.status,
+            created_at=m.created_at,
+            updated_at=m.updated_at,
+        )
+        for m in meters
+    ]
+
+
 @router.post(
     "/",
     response_model=MeterInDB,
@@ -35,7 +82,10 @@ async def create_meter(
     use_case=Depends(get_create_meter_use_case),
 ) -> MeterInDB:
     """Create a new meter."""
-    meter = await use_case.execute(data=meter_data, cooperative_id=current_user.cooperative_id)
+    try:
+        meter = await use_case.execute(data=meter_data, cooperative_id=current_user.cooperative_id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     return MeterInDB(
         id=meter.id,
@@ -120,7 +170,9 @@ async def update_meter(
     use_case=Depends(get_update_meter_use_case),
 ) -> MeterInDB:
     """Update meter."""
-    meter = await use_case.execute(meter_id=meter_id, data=meter_data, cooperative_id=current_user.cooperative_id)
+    meter = await use_case.execute(
+        meter_id=meter_id, data=meter_data, cooperative_id=current_user.cooperative_id
+    )
 
     if meter is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Счётчик не найден")
@@ -172,7 +224,20 @@ async def add_meter_reading(
     # Override meter_id from path
     reading_data.meter_id = meter_id
 
-    reading = await use_case.execute(data=reading_data)
+    try:
+        reading = await use_case.execute(
+            data=reading_data, cooperative_id=current_user.cooperative_id
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        # Handle duplicate reading date
+        if "UNIQUE constraint" in str(e) or "duplicate" in str(e).lower():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Показание с такой датой уже существует",
+            )
+        raise
 
     return MeterReadingInDB(
         id=reading.id,

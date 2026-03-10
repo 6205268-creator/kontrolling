@@ -13,7 +13,7 @@ from uuid import UUID, uuid4
 @dataclass(kw_only=True)
 class DomainEvent(ABC):
     """Base class for all domain events.
-    
+
     Domain events represent something meaningful that happened in the domain.
     They are used for inter-module communication without direct dependencies.
     """
@@ -24,7 +24,7 @@ class DomainEvent(ABC):
 
 class EventDispatcher:
     """In-process event dispatcher for domain events.
-    
+
     Handlers are called synchronously. For async operations or
     cross-service events, use an event bus with message queue.
     """
@@ -36,7 +36,7 @@ class EventDispatcher:
         cls, event_type: Type[DomainEvent], handler: Callable[[DomainEvent], None]
     ) -> None:
         """Register a handler for an event type.
-        
+
         Args:
             event_type: The domain event class to handle.
             handler: Callable that accepts the event as argument.
@@ -46,7 +46,7 @@ class EventDispatcher:
     @classmethod
     def dispatch(cls, event: DomainEvent) -> None:
         """Dispatch an event to all registered handlers.
-        
+
         Args:
             event: The domain event to dispatch.
         """

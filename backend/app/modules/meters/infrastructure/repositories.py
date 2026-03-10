@@ -1,4 +1,4 @@
-﻿"""Meters repository implementations."""
+"""Meters repository implementations."""
 
 from uuid import UUID
 
@@ -24,7 +24,7 @@ class MeterRepository(IMeterRepository):
             OwnerModel,
             PlotOwnershipModel,
         )
-        
+
         # Join through owner -> plot_ownership -> land_plot to filter by cooperative
         query = (
             select(MeterModel)
@@ -39,6 +39,26 @@ class MeterRepository(IMeterRepository):
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
         return model.to_domain() if model else None
+
+    async def get_all(self, cooperative_id: UUID) -> list[Meter]:
+        """Get all meters for a cooperative."""
+        from app.modules.land_management.infrastructure.models import (
+            LandPlotModel,
+            OwnerModel,
+            PlotOwnershipModel,
+        )
+
+        # Join through owner -> plot_ownership -> land_plot to filter by cooperative
+        query = (
+            select(MeterModel)
+            .join(OwnerModel, MeterModel.owner_id == OwnerModel.id)
+            .join(PlotOwnershipModel, OwnerModel.id == PlotOwnershipModel.owner_id)
+            .join(LandPlotModel, PlotOwnershipModel.land_plot_id == LandPlotModel.id)
+            .where(LandPlotModel.cooperative_id == cooperative_id)
+        )
+        result = await self.session.execute(query)
+        models = result.scalars().all()
+        return [model.to_domain() for model in models]
 
     async def get_by_owner(self, owner_id: UUID, cooperative_id: UUID) -> list[Meter]:
         """Get all meters for an owner."""
@@ -62,12 +82,12 @@ class MeterRepository(IMeterRepository):
         model = result.scalar_one_or_none()
         if model is None:
             raise ValueError(f"Meter with id {entity.id} not found")
-        
+
         model.meter_type = entity.meter_type
         model.serial_number = entity.serial_number
         model.installation_date = entity.installation_date
         model.status = entity.status
-        
+
         await self.session.commit()
         await self.session.refresh(model)
         return model.to_domain()
@@ -88,6 +108,52 @@ class MeterReadingRepository(IMeterReadingRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
+    async def get_by_id(self, id: UUID, cooperative_id: UUID) -> MeterReading | None:
+        """Get meter reading by ID. Note: cooperative_id filtering requires meter->owner lookup."""
+        from app.modules.land_management.infrastructure.models import (
+            LandPlotModel,
+            OwnerModel,
+            PlotOwnershipModel,
+        )
+
+        # Join through meter -> owner -> plot_ownership -> land_plot to filter by cooperative
+        query = (
+            select(MeterReadingModel)
+            .join(MeterModel, MeterReadingModel.meter_id == MeterModel.id)
+            .join(OwnerModel, MeterModel.owner_id == OwnerModel.id)
+            .join(PlotOwnershipModel, OwnerModel.id == PlotOwnershipModel.owner_id)
+            .join(LandPlotModel, PlotOwnershipModel.land_plot_id == LandPlotModel.id)
+            .where(
+                MeterReadingModel.id == id,
+                LandPlotModel.cooperative_id == cooperative_id,
+            )
+        )
+        result = await self.session.execute(query)
+        model = result.scalar_one_or_none()
+        return model.to_domain() if model else None
+
+    async def get_all(self, cooperative_id: UUID) -> list[MeterReading]:
+        """Get all meter readings for a cooperative."""
+        from app.modules.land_management.infrastructure.models import (
+            LandPlotModel,
+            OwnerModel,
+            PlotOwnershipModel,
+        )
+
+        # Join through meter -> owner -> plot_ownership -> land_plot to filter by cooperative
+        query = (
+            select(MeterReadingModel)
+            .join(MeterModel, MeterReadingModel.meter_id == MeterModel.id)
+            .join(OwnerModel, MeterModel.owner_id == OwnerModel.id)
+            .join(PlotOwnershipModel, OwnerModel.id == PlotOwnershipModel.owner_id)
+            .join(LandPlotModel, PlotOwnershipModel.land_plot_id == LandPlotModel.id)
+            .where(LandPlotModel.cooperative_id == cooperative_id)
+            .order_by(MeterReadingModel.reading_date.desc())
+        )
+        result = await self.session.execute(query)
+        models = result.scalars().all()
+        return [model.to_domain() for model in models]
+
     async def get_by_meter(self, meter_id: UUID) -> list[MeterReading]:
         """Get all readings for a meter."""
         query = (
@@ -106,3 +172,45 @@ class MeterReadingRepository(IMeterReadingRepository):
         await self.session.commit()
         await self.session.refresh(model)
         return model.to_domain()
+
+    async def update(self, entity: MeterReading) -> MeterReading:
+        """Update existing meter reading."""
+        query = select(MeterReadingModel).where(MeterReadingModel.id == entity.id)
+        result = await self.session.execute(query)
+        model = result.scalar_one_or_none()
+        if model is None:
+            raise ValueError(f"MeterReading with id {entity.id} not found")
+
+        model.meter_id = entity.meter_id
+        model.reading_value = entity.reading_value
+        model.reading_date = entity.reading_date
+
+        await self.session.commit()
+        await self.session.refresh(model)
+        return model.to_domain()
+
+    async def delete(self, id: UUID, cooperative_id: UUID) -> None:
+        """Delete meter reading by ID."""
+        from app.modules.land_management.infrastructure.models import (
+            LandPlotModel,
+            OwnerModel,
+            PlotOwnershipModel,
+        )
+
+        # Join through meter -> owner -> plot_ownership -> land_plot to filter by cooperative
+        query = (
+            select(MeterReadingModel)
+            .join(MeterModel, MeterReadingModel.meter_id == MeterModel.id)
+            .join(OwnerModel, MeterModel.owner_id == OwnerModel.id)
+            .join(PlotOwnershipModel, OwnerModel.id == PlotOwnershipModel.owner_id)
+            .join(LandPlotModel, PlotOwnershipModel.land_plot_id == LandPlotModel.id)
+            .where(
+                MeterReadingModel.id == id,
+                LandPlotModel.cooperative_id == cooperative_id,
+            )
+        )
+        result = await self.session.execute(query)
+        model = result.scalar_one_or_none()
+        if model:
+            await self.session.delete(model)
+            await self.session.commit()

@@ -1,4 +1,4 @@
-﻿"""Use cases for financial_core module."""
+"""Use cases for financial_core module."""
 
 from datetime import date
 from uuid import UUID
@@ -11,7 +11,7 @@ from .dtos import FinancialSubjectCreate
 
 class CreateFinancialSubjectUseCase:
     """Use case for creating a FinancialSubject.
-    
+
     Typically called by event handler when LandPlot or Meter is created.
     """
 
@@ -28,7 +28,7 @@ class CreateFinancialSubjectUseCase:
             code=data.code,
             status=data.status,
         )
-        
+
         return await self.repo.add(entity)
 
 
@@ -66,7 +66,7 @@ class GetBalanceUseCase:
         as_of_date: date | None = None,
     ) -> dict | None:
         """Get balance for financial subject as of a specific date.
-        
+
         Args:
             financial_subject_id: ID of financial subject.
             as_of_date: Date to calculate balance for. If None, uses today's date.
@@ -86,7 +86,7 @@ class GetBalancesByCooperativeUseCase:
         as_of_date: date | None = None,
     ) -> list[dict]:
         """Get balances for all financial subjects in cooperative as of a specific date.
-        
+
         Args:
             cooperative_id: ID of cooperative.
             as_of_date: Date to calculate balances for. If None, uses today's date.
@@ -96,9 +96,10 @@ class GetBalancesByCooperativeUseCase:
 
 # Event Handlers
 
+
 class LandPlotCreatedHandler:
     """Handler for LandPlotCreated event.
-    
+
     Creates FinancialSubject automatically when a new LandPlot is created.
     """
 
@@ -107,7 +108,7 @@ class LandPlotCreatedHandler:
 
     def __call__(self, event: LandPlotCreated) -> None:
         """Handle LandPlotCreated event.
-        
+
         Note: This is a synchronous handler. For async operations,
         use async event bus or background tasks.
         """
@@ -118,7 +119,7 @@ class LandPlotCreatedHandler:
 
 class MeterCreatedHandler:
     """Handler for MeterCreated event.
-    
+
     Creates FinancialSubject automatically when a new Meter is created.
     """
 

@@ -12,7 +12,7 @@ from app.modules.shared.kernel.events import DomainEvent
 @dataclass
 class LandPlotCreated(DomainEvent):
     """Event published when a new LandPlot is created.
-    
+
     Used by financial_core to create FinancialSubject automatically.
     """
 

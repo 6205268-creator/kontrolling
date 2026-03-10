@@ -36,7 +36,9 @@ class CreateAccrualUseCase:
         if self.fs_repo:
             fs = await self.fs_repo.get_by_id(data.financial_subject_id, cooperative_id)
             if fs is None:
-                raise ValidationError("Financial subject does not belong to the specified cooperative")
+                raise ValidationError(
+                    "Financial subject does not belong to the specified cooperative"
+                )
 
         # Domain validation
         if data.amount < 0:
@@ -222,7 +224,7 @@ class MassCreateAccrualsUseCase:
 
         Returns:
             List of created Accrual entities.
-            
+
         Raises:
             ValidationError: If any financial subject doesn't belong to cooperative.
         """
@@ -233,7 +235,9 @@ class MassCreateAccrualsUseCase:
             if self.fs_repo:
                 fs = await self.fs_repo.get_by_id(data.financial_subject_id, cooperative_id)
                 if fs is None:
-                    raise ValidationError("Financial subject does not belong to the specified cooperative")
+                    raise ValidationError(
+                        "Financial subject does not belong to the specified cooperative"
+                    )
 
             operation_number = f"ACC-{cooperative_id.hex[:8]}-{uuid4().hex[:8]}"
             entity = Accrual(
@@ -260,4 +264,6 @@ class GetContributionTypesUseCase:
 
     async def execute(self) -> list:
         """Get all contribution types."""
-        return await self.repo.get_all(UUID(int=0))  # cooperative_id not used for contribution types
+        return await self.repo.get_all(
+            UUID(int=0)
+        )  # cooperative_id not used for contribution types

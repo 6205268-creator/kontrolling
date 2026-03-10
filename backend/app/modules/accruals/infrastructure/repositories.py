@@ -23,10 +23,12 @@ class AccrualRepository(IAccrualRepository):
     async def get_by_id(self, id: UUID, cooperative_id: UUID) -> Accrual | None:
         """Get accrual by ID, filtered by cooperative via financial_subject."""
         from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-        
+
         query = (
             select(AccrualModel)
-            .join(FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id)
+            .join(
+                FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id
+            )
             .where(
                 AccrualModel.id == id,
                 FinancialSubjectModel.cooperative_id == cooperative_id,
@@ -43,10 +45,12 @@ class AccrualRepository(IAccrualRepository):
     ) -> list[Accrual]:
         """Get all accruals for a financial subject."""
         from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-        
+
         query = (
             select(AccrualModel)
-            .join(FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id)
+            .join(
+                FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id
+            )
             .where(
                 AccrualModel.financial_subject_id == financial_subject_id,
                 FinancialSubjectModel.cooperative_id == cooperative_id,
@@ -63,7 +67,9 @@ class AccrualRepository(IAccrualRepository):
 
         query = (
             select(AccrualModel)
-            .join(FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id)
+            .join(
+                FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id
+            )
             .where(FinancialSubjectModel.cooperative_id == cooperative_id)
             .order_by(AccrualModel.accrual_date.desc())
         )
@@ -117,10 +123,12 @@ class AccrualRepository(IAccrualRepository):
     async def delete(self, id: UUID, cooperative_id: UUID) -> None:
         """Delete accrual by ID."""
         from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-        
+
         query = (
             select(AccrualModel)
-            .join(FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id)
+            .join(
+                FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id
+            )
             .where(
                 AccrualModel.id == id,
                 FinancialSubjectModel.cooperative_id == cooperative_id,
@@ -128,7 +136,7 @@ class AccrualRepository(IAccrualRepository):
         )
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model:
             await self.session.delete(model)
             await self.session.commit()
@@ -174,14 +182,14 @@ class ContributionTypeRepository(IContributionTypeRepository):
         query = select(ContributionTypeModel).where(ContributionTypeModel.id == entity.id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             raise ValueError(f"ContributionType with id {entity.id} not found")
 
         model.name = entity.name
         model.code = entity.code
         model.description = entity.description
-        
+
         await self.session.commit()
         await self.session.refresh(model)
         return model.to_domain()
@@ -191,7 +199,7 @@ class ContributionTypeRepository(IContributionTypeRepository):
         query = select(ContributionTypeModel).where(ContributionTypeModel.id == id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model:
             await self.session.delete(model)
             await self.session.commit()

@@ -37,7 +37,7 @@ def _get_history_config():
     from app.modules.payments.infrastructure.models import (
         PaymentModel as Payment,
     )
-    
+
     return [
         (
             PlotOwnership,

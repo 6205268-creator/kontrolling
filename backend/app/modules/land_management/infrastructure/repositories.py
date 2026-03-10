@@ -1,4 +1,4 @@
-﻿"""Land Management repository implementations.
+"""Land Management repository implementations.
 
 SQLAlchemy implementation of land management repositories.
 """
@@ -64,7 +64,7 @@ class LandPlotRepository(ILandPlotRepository):
         query = select(LandPlotModel).where(LandPlotModel.id == entity.id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             raise ValueError(f"LandPlot with id {entity.id} not found")
 
@@ -72,7 +72,7 @@ class LandPlotRepository(ILandPlotRepository):
         model.area_sqm = entity.area_sqm
         model.cadastral_number = entity.cadastral_number
         model.status = entity.status
-        
+
         await self.session.commit()
         await self.session.refresh(model)
         return model.to_domain()
@@ -85,10 +85,22 @@ class LandPlotRepository(ILandPlotRepository):
         )
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model:
             await self.session.delete(model)
             await self.session.commit()
+
+    async def delete_by_id_any_cooperative(self, id: UUID) -> bool:
+        """Delete land plot by ID without cooperative filter (for admin)."""
+        query = select(LandPlotModel).where(LandPlotModel.id == id)
+        result = await self.session.execute(query)
+        model = result.scalar_one_or_none()
+
+        if model:
+            await self.session.delete(model)
+            await self.session.commit()
+            return True
+        return False
 
 
 class OwnerRepository(IOwnerRepository):
@@ -114,7 +126,7 @@ class OwnerRepository(IOwnerRepository):
     async def search_by_name_or_tax_id(self, query: str, limit: int = 100) -> list[Owner]:
         """Search owners by name or tax_id."""
         from sqlalchemy import or_
-        
+
         search_pattern = f"%{query}%"
         stmt = (
             select(OwnerModel)
@@ -143,7 +155,7 @@ class OwnerRepository(IOwnerRepository):
         query = select(OwnerModel).where(OwnerModel.id == entity.id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             raise ValueError(f"Owner with id {entity.id} not found")
 
@@ -152,7 +164,7 @@ class OwnerRepository(IOwnerRepository):
         model.tax_id = entity.tax_id
         model.contact_phone = entity.contact_phone
         model.contact_email = entity.contact_email
-        
+
         await self.session.commit()
         await self.session.refresh(model)
         return model.to_domain()
@@ -162,7 +174,7 @@ class OwnerRepository(IOwnerRepository):
         query = select(OwnerModel).where(OwnerModel.id == id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model:
             await self.session.delete(model)
             await self.session.commit()
@@ -199,11 +211,11 @@ class PlotOwnershipRepository(IPlotOwnershipRepository):
         models = result.scalars().all()
         return [model.to_domain() for model in models]
 
-    async def get_by_land_plot(self, land_plot_id: UUID, cooperative_id: UUID) -> list[PlotOwnership]:
+    async def get_by_land_plot(
+        self, land_plot_id: UUID, cooperative_id: UUID
+    ) -> list[PlotOwnership]:
         """Get all ownerships for a land plot."""
-        query = select(PlotOwnershipModel).where(
-            PlotOwnershipModel.land_plot_id == land_plot_id
-        )
+        query = select(PlotOwnershipModel).where(PlotOwnershipModel.land_plot_id == land_plot_id)
         result = await self.session.execute(query)
         models = result.scalars().all()
         return [model.to_domain() for model in models]
@@ -245,7 +257,7 @@ class PlotOwnershipRepository(IPlotOwnershipRepository):
         query = select(PlotOwnershipModel).where(PlotOwnershipModel.id == entity.id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             raise ValueError(f"PlotOwnership with id {entity.id} not found")
 
@@ -254,7 +266,7 @@ class PlotOwnershipRepository(IPlotOwnershipRepository):
         model.is_primary = entity.is_primary
         model.valid_from = entity.valid_from
         model.valid_to = entity.valid_to
-        
+
         await self.session.commit()
         await self.session.refresh(model)
         return model.to_domain()
@@ -271,7 +283,7 @@ class PlotOwnershipRepository(IPlotOwnershipRepository):
         )
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model:
             await self.session.delete(model)
             await self.session.commit()

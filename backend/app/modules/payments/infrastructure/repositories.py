@@ -20,10 +20,12 @@ class PaymentRepository(IPaymentRepository):
     async def get_by_id(self, id: UUID, cooperative_id: UUID) -> Payment | None:
         """Get payment by ID, filtered by cooperative via financial_subject."""
         from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-        
+
         query = (
             select(PaymentModel)
-            .join(FinancialSubjectModel, PaymentModel.financial_subject_id == FinancialSubjectModel.id)
+            .join(
+                FinancialSubjectModel, PaymentModel.financial_subject_id == FinancialSubjectModel.id
+            )
             .where(
                 PaymentModel.id == id,
                 FinancialSubjectModel.cooperative_id == cooperative_id,
@@ -40,10 +42,12 @@ class PaymentRepository(IPaymentRepository):
     ) -> list[Payment]:
         """Get all payments for a financial subject."""
         from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-        
+
         query = (
             select(PaymentModel)
-            .join(FinancialSubjectModel, PaymentModel.financial_subject_id == FinancialSubjectModel.id)
+            .join(
+                FinancialSubjectModel, PaymentModel.financial_subject_id == FinancialSubjectModel.id
+            )
             .where(
                 PaymentModel.financial_subject_id == financial_subject_id,
                 FinancialSubjectModel.cooperative_id == cooperative_id,
@@ -57,10 +61,12 @@ class PaymentRepository(IPaymentRepository):
     async def get_by_owner(self, owner_id: UUID, cooperative_id: UUID) -> list[Payment]:
         """Get all payments for an owner."""
         from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-        
+
         query = (
             select(PaymentModel)
-            .join(FinancialSubjectModel, PaymentModel.financial_subject_id == FinancialSubjectModel.id)
+            .join(
+                FinancialSubjectModel, PaymentModel.financial_subject_id == FinancialSubjectModel.id
+            )
             .where(
                 PaymentModel.payer_owner_id == owner_id,
                 FinancialSubjectModel.cooperative_id == cooperative_id,
@@ -77,7 +83,9 @@ class PaymentRepository(IPaymentRepository):
 
         query = (
             select(PaymentModel)
-            .join(FinancialSubjectModel, PaymentModel.financial_subject_id == FinancialSubjectModel.id)
+            .join(
+                FinancialSubjectModel, PaymentModel.financial_subject_id == FinancialSubjectModel.id
+            )
             .where(FinancialSubjectModel.cooperative_id == cooperative_id)
             .order_by(PaymentModel.payment_date.desc())
         )
@@ -131,10 +139,12 @@ class PaymentRepository(IPaymentRepository):
     async def delete(self, id: UUID, cooperative_id: UUID) -> None:
         """Delete payment by ID."""
         from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-        
+
         query = (
             select(PaymentModel)
-            .join(FinancialSubjectModel, PaymentModel.financial_subject_id == FinancialSubjectModel.id)
+            .join(
+                FinancialSubjectModel, PaymentModel.financial_subject_id == FinancialSubjectModel.id
+            )
             .where(
                 PaymentModel.id == id,
                 FinancialSubjectModel.cooperative_id == cooperative_id,
@@ -142,7 +152,7 @@ class PaymentRepository(IPaymentRepository):
         )
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model:
             await self.session.delete(model)
             await self.session.commit()

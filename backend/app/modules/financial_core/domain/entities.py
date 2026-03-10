@@ -1,4 +1,4 @@
-﻿"""Financial Core domain entities.
+"""Financial Core domain entities.
 
 Pure Python - no framework dependencies (FastAPI, SQLAlchemy, Pydantic).
 """
@@ -35,7 +35,7 @@ class FinancialSubject(BaseEntity):
 @dataclass
 class Balance:
     """Value object representing balance of a FinancialSubject.
-    
+
     balance = total_accruals - total_payments
     Positive balance means debt (more accrued than paid).
     """

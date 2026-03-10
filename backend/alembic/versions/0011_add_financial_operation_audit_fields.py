@@ -52,9 +52,7 @@ def upgrade() -> None:
         existing_type=sa.String(50),
         nullable=False,
     )
-    op.create_unique_constraint(
-        "uq_accruals_operation_number", "accruals", ["operation_number"]
-    )
+    op.create_unique_constraint("uq_accruals_operation_number", "accruals", ["operation_number"])
 
     # ----- payments -----
     op.add_column(
@@ -87,9 +85,7 @@ def upgrade() -> None:
         existing_type=sa.String(50),
         nullable=False,
     )
-    op.create_unique_constraint(
-        "uq_payments_operation_number", "payments", ["operation_number"]
-    )
+    op.create_unique_constraint("uq_payments_operation_number", "payments", ["operation_number"])
 
     # ----- expenses -----
     op.add_column(
@@ -122,9 +118,7 @@ def upgrade() -> None:
         existing_type=sa.String(50),
         nullable=False,
     )
-    op.create_unique_constraint(
-        "uq_expenses_operation_number", "expenses", ["operation_number"]
-    )
+    op.create_unique_constraint("uq_expenses_operation_number", "expenses", ["operation_number"])
 
     # ----- history tables (nullable, no backfill) -----
     for table in ("accruals_history", "payments_history", "expenses_history"):

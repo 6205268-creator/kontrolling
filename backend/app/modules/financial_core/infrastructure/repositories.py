@@ -1,4 +1,4 @@
-﻿"""Financial Core repository implementations.
+"""Financial Core repository implementations.
 
 SQLAlchemy implementation of financial core repositories.
 """
@@ -103,9 +103,9 @@ class FinancialSubjectRepository(IFinancialSubjectRepository):
 
 class BalanceRepository(IBalanceRepository):
     """SQLAlchemy implementation of Balance repository.
-    
+
     Implements balance calculation as of a specific date (as_of_date).
-    
+
     Rule: Operation participates in balance on date X if and only if:
     1. event_date <= X (accrual_date for Accrual, payment_date for Payment)
     2. date(created_at) <= X
@@ -122,13 +122,13 @@ class BalanceRepository(IBalanceRepository):
         as_of_date: date | None = None,
     ) -> Balance | None:
         """Calculate balance for a financial subject as of a specific date.
-        
+
         balance = total_accruals (applied) - total_payments (confirmed)
-        
+
         Args:
             financial_subject_id: ID of financial subject.
             as_of_date: Date to calculate balance for. If None, uses today's date.
-            
+
         Returns:
             Balance object or None if subject not found.
         """
@@ -142,9 +142,7 @@ class BalanceRepository(IBalanceRepository):
 
         # Get financial subject
         result = await self.session.execute(
-            select(FinancialSubjectModel).where(
-                FinancialSubjectModel.id == financial_subject_id
-            )
+            select(FinancialSubjectModel).where(FinancialSubjectModel.id == financial_subject_id)
         )
         subject = result.scalar_one_or_none()
         if subject is None:
@@ -161,9 +159,8 @@ class BalanceRepository(IBalanceRepository):
         ]
         # Not cancelled OR cancelled after as_of_date
         # Use func.date() to convert cancelled_at (datetime) to date for comparison
-        accrual_not_cancelled_condition = (
-            (Accrual.status != "cancelled") |
-            ((Accrual.cancelled_at.isnot(None)) & (func.date(Accrual.cancelled_at) > as_of_date))
+        accrual_not_cancelled_condition = (Accrual.status != "cancelled") | (
+            (Accrual.cancelled_at.isnot(None)) & (func.date(Accrual.cancelled_at) > as_of_date)
         )
         accrual_conditions.append(accrual_not_cancelled_condition)
 
@@ -183,9 +180,8 @@ class BalanceRepository(IBalanceRepository):
             Payment.status == "confirmed",
         ]
         # Not cancelled OR cancelled after as_of_date
-        payment_not_cancelled_condition = (
-            (Payment.status != "cancelled") |
-            ((Payment.cancelled_at.isnot(None)) & (func.date(Payment.cancelled_at) > as_of_date))
+        payment_not_cancelled_condition = (Payment.status != "cancelled") | (
+            (Payment.cancelled_at.isnot(None)) & (func.date(Payment.cancelled_at) > as_of_date)
         )
         payment_conditions.append(payment_not_cancelled_condition)
 
@@ -211,11 +207,11 @@ class BalanceRepository(IBalanceRepository):
         as_of_date: date | None = None,
     ) -> list[Balance]:
         """Get balances for all financial subjects in cooperative as of a specific date.
-        
+
         Args:
             cooperative_id: ID of cooperative.
             as_of_date: Date to calculate balances for. If None, uses today's date.
-            
+
         Returns:
             List of Balance objects.
         """
@@ -245,8 +241,8 @@ class BalanceRepository(IBalanceRepository):
             Accrual.financial_subject_id.in_(subject_ids),
             Accrual.accrual_date <= as_of_date,
             Accrual.status == "applied",
-            (Accrual.status != "cancelled") |
-            ((Accrual.cancelled_at.isnot(None)) & (func.date(Accrual.cancelled_at) > as_of_date)),
+            (Accrual.status != "cancelled")
+            | ((Accrual.cancelled_at.isnot(None)) & (func.date(Accrual.cancelled_at) > as_of_date)),
         ]
 
         # Sum of accruals by subject (applied)
@@ -265,8 +261,8 @@ class BalanceRepository(IBalanceRepository):
             Payment.financial_subject_id.in_(subject_ids),
             Payment.payment_date <= as_of_date,
             Payment.status == "confirmed",
-            (Payment.status != "cancelled") |
-            ((Payment.cancelled_at.isnot(None)) & (func.date(Payment.cancelled_at) > as_of_date)),
+            (Payment.status != "cancelled")
+            | ((Payment.cancelled_at.isnot(None)) & (func.date(Payment.cancelled_at) > as_of_date)),
         ]
 
         # Sum of payments by subject (confirmed)

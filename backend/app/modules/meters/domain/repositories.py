@@ -1,4 +1,4 @@
-﻿"""Meters domain repository interfaces."""
+"""Meters domain repository interfaces."""
 
 from abc import ABC, abstractmethod
 from uuid import UUID

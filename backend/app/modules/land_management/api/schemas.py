@@ -1,4 +1,4 @@
-﻿"""Pydantic schemas for land_management API."""
+"""Pydantic schemas for land_management API."""
 
 from app.modules.land_management.application.dtos import (
     LandPlotBase,

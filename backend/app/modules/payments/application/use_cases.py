@@ -15,7 +15,12 @@ from .dtos import PaymentCreate
 class RegisterPaymentUseCase:
     """Use case for registering a Payment."""
 
-    def __init__(self, repo: IPaymentRepository, event_dispatcher: EventDispatcher | None = None, fs_repo=None):
+    def __init__(
+        self,
+        repo: IPaymentRepository,
+        event_dispatcher: EventDispatcher | None = None,
+        fs_repo=None,
+    ):
         self.repo = repo
         self.event_dispatcher = event_dispatcher
         self.fs_repo = fs_repo
@@ -30,7 +35,9 @@ class RegisterPaymentUseCase:
         if self.fs_repo:
             fs = await self.fs_repo.get_by_id(data.financial_subject_id, cooperative_id)
             if fs is None:
-                raise ValidationError("Financial subject does not belong to the specified cooperative")
+                raise ValidationError(
+                    "Financial subject does not belong to the specified cooperative"
+                )
 
         # Domain validation
         if data.amount <= 0:

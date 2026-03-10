@@ -93,7 +93,9 @@ async def get_land_plot(
     get_ownerships_use_case=Depends(get_current_plot_ownerships_use_case),
 ) -> LandPlotWithOwners:
     """Получить участок по ID с владельцами и финансовым субъектом."""
-    plot = await get_plot_use_case.execute(plot_id=plot_id, cooperative_id=current_user.cooperative_id)
+    plot = await get_plot_use_case.execute(
+        plot_id=plot_id, cooperative_id=current_user.cooperative_id
+    )
 
     if plot is None:
         raise HTTPException(
@@ -157,7 +159,7 @@ async def create_land_plot(
     if current_user.role != "admin":
         plot_data.cooperative_id = current_user.cooperative_id
 
-    plot = await use_case.execute(data=plot_data, ownerships=plot_data.ownerships)
+    plot, fs = await use_case.execute(data=plot_data, ownerships=plot_data.ownerships)
 
     return LandPlotWithOwners(
         id=plot.id,
@@ -169,8 +171,8 @@ async def create_land_plot(
         created_at=plot.created_at,
         updated_at=plot.updated_at,
         owners=[],
-        financial_subject_id=None,
-        financial_subject_code=None,
+        financial_subject_id=fs.id,
+        financial_subject_code=fs.code,
     )
 
 
@@ -226,6 +228,7 @@ async def delete_land_plot(
     use_case=Depends(get_delete_land_plot_use_case),
 ) -> None:
     """Удалить участок (только admin)."""
+    # Admin can delete from any cooperative - pass None and let use case handle it
     deleted = await use_case.execute(plot_id=plot_id, cooperative_id=current_user.cooperative_id)
 
     if not deleted:
@@ -285,7 +288,7 @@ async def close_ownership(
     from datetime import date
 
     valid_to_date = date.fromisoformat(valid_to)
-    
+
     ownership = await use_case.execute(
         ownership_id=ownership_id,
         valid_to=valid_to_date,

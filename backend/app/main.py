@@ -116,9 +116,13 @@ setup_event_handlers(_event_dispatcher, async_session_maker, FinancialSubjectRep
 app.include_router(cooperative_core_router, prefix="/api/cooperatives", tags=["cooperatives"])
 app.include_router(owners_router, prefix="/api/owners", tags=["owners"])
 app.include_router(land_management_router, prefix="/api/land-plots", tags=["land-plots"])
-app.include_router(financial_core_router, prefix="/api/financial-subjects", tags=["financial-subjects"])
+app.include_router(
+    financial_core_router, prefix="/api/financial-subjects", tags=["financial-subjects"]
+)
 app.include_router(accruals_router, prefix="/api/accruals", tags=["accruals"])
-app.include_router(contribution_types_router, prefix="/api/contribution-types", tags=["contribution-types"])
+app.include_router(
+    contribution_types_router, prefix="/api/contribution-types", tags=["contribution-types"]
+)
 app.include_router(payments_router, prefix="/api/payments", tags=["payments"])
 app.include_router(meters_router, prefix="/api/meters", tags=["meters"])
 app.include_router(expenses_router, prefix="/api/expenses", tags=["expenses"])
@@ -129,7 +133,13 @@ app.include_router(administration_router, prefix="/api/auth", tags=["auth"])
 def _get_error_detail(exc: Exception) -> str:
     """Формирует сообщение об ошибке для ответа 500 (без утечки внутренних деталей в prod)."""
     msg = str(exc).lower()
-    if "connection" in msg or "refused" in msg or "timeout" in msg or "5432" in msg or "asyncpg" in msg:
+    if (
+        "connection" in msg
+        or "refused" in msg
+        or "timeout" in msg
+        or "5432" in msg
+        or "asyncpg" in msg
+    ):
         return "Нет связи с базой данных. Проверьте, что PostgreSQL запущен и в backend/.env задан верный DATABASE_URL."
     return "Внутренняя ошибка сервера. Проверьте консоль бэкенда."
 

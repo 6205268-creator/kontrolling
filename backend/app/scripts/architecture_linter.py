@@ -7,6 +7,7 @@ Exit code:
     0 — все проверки пройдены
     1 — обнаружены нарушения
 """
+
 import sys
 from pathlib import Path
 
@@ -40,9 +41,7 @@ def check_api_no_infrastructure_imports():
 
             # Проверяем импорты из infrastructure
             if "from .infrastructure" in content or "from ..infrastructure" in content:
-                violations.append(
-                    f"{api_file.relative_to(BASE_DIR)}: imports from infrastructure"
-                )
+                violations.append(f"{api_file.relative_to(BASE_DIR)}: imports from infrastructure")
 
             # Проверяем прямые импорты моделей infrastructure
             if "infrastructure.models" in content:
@@ -157,9 +156,7 @@ def check_domain_no_framework_imports():
 
             for lib in forbidden:
                 if f"import {lib}" in content or f"from {lib}" in content:
-                    violations.append(
-                        f"{py_file.relative_to(BASE_DIR)}: imports {lib}"
-                    )
+                    violations.append(f"{py_file.relative_to(BASE_DIR)}: imports {lib}")
 
     return violations
 
@@ -182,9 +179,7 @@ def check_no_direct_owner_fk():
             import re
 
             # Find owner_id in LandPlot context
-            landplot_match = re.search(
-                r"class LandPlot.*?(?=class |\Z)", content, re.DOTALL
-            )
+            landplot_match = re.search(r"class LandPlot.*?(?=class |\Z)", content, re.DOTALL)
             if landplot_match:
                 landplot_content = landplot_match.group(0)
                 if "owner_id = Column" in landplot_content:

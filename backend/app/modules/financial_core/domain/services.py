@@ -8,7 +8,7 @@ from decimal import Decimal
 
 class BalanceCalculator:
     """Domain service for balance calculation.
-    
+
     Contains pure domain logic for calculating balances.
     """
 
@@ -18,11 +18,11 @@ class BalanceCalculator:
         total_payments: Decimal,
     ) -> Decimal:
         """Calculate balance from accruals and payments.
-        
+
         Args:
             total_accruals: Sum of all applied accruals.
             total_payments: Sum of all confirmed payments.
-            
+
         Returns:
             Balance amount (positive = debt, negative = credit).
         """

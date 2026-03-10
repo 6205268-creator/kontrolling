@@ -155,6 +155,7 @@ async def test_financial_subject_subject_types(test_db: AsyncSession) -> None:
 def test_generate_financial_subject_code() -> None:
     """Генератор code возвращает строку формата FS-XXXXXXXX."""
     from app.modules.financial_core.infrastructure.models import generate_financial_subject_code
+
     code = generate_financial_subject_code()
     assert code.startswith("FS-")
     assert len(code) == 11  # "FS-" + 8 hex chars

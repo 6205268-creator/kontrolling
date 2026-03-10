@@ -26,7 +26,7 @@ from app.db.base import Base, Guid
 
 class LandPlotModel(Base):
     """SQLAlchemy model for LandPlot.
-    
+
     Земельный участок в садоводческом товариществе.
     """
 
@@ -59,13 +59,15 @@ class LandPlotModel(Base):
     # Relationships - using string references to avoid circular imports
     # cooperative: Mapped["CooperativeModel"] = relationship("CooperativeModel", back_populates="land_plots")
     plot_ownerships: Mapped[list["PlotOwnershipModel"]] = relationship(
-        "PlotOwnershipModel", back_populates="land_plot", foreign_keys="PlotOwnershipModel.land_plot_id"
+        "PlotOwnershipModel",
+        back_populates="land_plot",
+        foreign_keys="PlotOwnershipModel.land_plot_id",
     )
 
     def to_domain(self) -> "LandPlot":
         """Convert SQLAlchemy model to domain entity."""
         from app.modules.land_management.domain.entities import LandPlot
-        
+
         return LandPlot(
             id=self.id,
             cooperative_id=self.cooperative_id,
@@ -94,7 +96,7 @@ class LandPlotModel(Base):
 
 class OwnerModel(Base):
     """SQLAlchemy model for Owner.
-    
+
     Владелец (физическое или юридическое лицо).
     """
 
@@ -129,7 +131,7 @@ class OwnerModel(Base):
     def to_domain(self) -> "Owner":
         """Convert SQLAlchemy model to domain entity."""
         from app.modules.land_management.domain.entities import Owner
-        
+
         return Owner(
             id=self.id,
             owner_type=self.owner_type,
@@ -158,14 +160,17 @@ class OwnerModel(Base):
 
 class PlotOwnershipModel(Base):
     """SQLAlchemy model for PlotOwnership.
-    
+
     Право собственности на земельный участок.
     """
 
     __tablename__ = "plot_ownerships"
     __table_args__ = (
         CheckConstraint("share_numerator <= share_denominator", name="ck_plot_ownership_share"),
-        {"comment": "Права собственности на земельные участки (периоды и доли)", "extend_existing": True},
+        {
+            "comment": "Права собственности на земельные участки (периоды и доли)",
+            "extend_existing": True,
+        },
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
@@ -188,13 +193,15 @@ class PlotOwnershipModel(Base):
         comment="Дата и время последнего обновления записи",
     )
 
-    land_plot: Mapped["LandPlotModel"] = relationship("LandPlotModel", back_populates="plot_ownerships")
+    land_plot: Mapped["LandPlotModel"] = relationship(
+        "LandPlotModel", back_populates="plot_ownerships"
+    )
     owner: Mapped["OwnerModel"] = relationship("OwnerModel", back_populates="plot_ownerships")
 
     def to_domain(self) -> "PlotOwnership":
         """Convert SQLAlchemy model to domain entity."""
         from app.modules.land_management.domain.entities import PlotOwnership
-        
+
         return PlotOwnership(
             id=self.id,
             land_plot_id=self.land_plot_id,
@@ -227,12 +234,15 @@ class PlotOwnershipModel(Base):
 
 class PlotOwnershipHistoryModel(Base):
     """SQLAlchemy model for PlotOwnership history.
-    
+
     История изменений прав собственности.
     """
 
     __tablename__ = "plot_ownerships_history"
-    __table_args__ = {"comment": "Аудит изменений прав собственности на участки", "extend_existing": True}
+    __table_args__ = {
+        "comment": "Аудит изменений прав собственности на участки",
+        "extend_existing": True,
+    }
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
     entity_id: Mapped[uuid.UUID] = mapped_column(Guid(), nullable=False, index=True)

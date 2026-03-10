@@ -18,7 +18,10 @@ class ExpenseModel(Base):
     __tablename__ = "expenses"
     __table_args__ = (
         CheckConstraint("amount > 0", name="ck_expenses_amount_positive"),
-        {"comment": "Расходы садоводческих товариществ (ремонт, зарплата, материалы)", "extend_existing": True},
+        {
+            "comment": "Расходы садоводческих товариществ (ремонт, зарплата, материалы)",
+            "extend_existing": True,
+        },
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
@@ -37,15 +40,15 @@ class ExpenseModel(Base):
     document_number: Mapped[str | None] = mapped_column(String(50), nullable=True)
     description: Mapped[str | None] = mapped_column(String(512), nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="created")
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
         onupdate=lambda: datetime.now(UTC),
     )
-    cancelled_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     cancelled_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
         Guid(), ForeignKey("app_users.id"), nullable=True
     )
@@ -55,6 +58,7 @@ class ExpenseModel(Base):
     def to_domain(self) -> "Expense":
         """Convert to domain entity."""
         from app.modules.expenses.domain.entities import Expense
+
         return Expense(
             id=self.id,
             cooperative_id=self.cooperative_id,
@@ -123,17 +127,23 @@ class ExpenseCategoryModel(Base):
     """SQLAlchemy model for ExpenseCategory."""
 
     __tablename__ = "expense_categories"
-    __table_args__ = {"comment": "Справочник категорий расходов СТ (дороги, зарплата, материалы)", "extend_existing": True}
+    __table_args__ = {
+        "comment": "Справочник категорий расходов СТ (дороги, зарплата, материалы)",
+        "extend_existing": True,
+    }
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     code: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
     description: Mapped[str | None] = mapped_column(String(512), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
 
     def to_domain(self) -> "ExpenseCategory":
         """Convert to domain entity."""
         from app.modules.expenses.domain.entities import ExpenseCategory
+
         return ExpenseCategory(
             id=self.id,
             name=self.name,

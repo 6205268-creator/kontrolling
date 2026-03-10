@@ -1,4 +1,4 @@
-﻿"""Accruals domain repository interfaces.
+"""Accruals domain repository interfaces.
 
 Pure Python - no framework dependencies (FastAPI, SQLAlchemy, Pydantic).
 """

@@ -18,7 +18,10 @@ class PaymentModel(Base):
     __tablename__ = "payments"
     __table_args__ = (
         CheckConstraint("amount > 0", name="ck_payments_amount_positive"),
-        {"comment": "Платежи по финансовым субъектам (поступления от владельцев)", "extend_existing": True},
+        {
+            "comment": "Платежи по финансовым субъектам (поступления от владельцев)",
+            "extend_existing": True,
+        },
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Guid(), primary_key=True, default=uuid.uuid4)
@@ -44,9 +47,7 @@ class PaymentModel(Base):
         default=lambda: datetime.now(UTC),
         onupdate=lambda: datetime.now(UTC),
     )
-    cancelled_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     cancelled_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
         Guid(), ForeignKey("app_users.id"), nullable=True
     )
@@ -56,7 +57,7 @@ class PaymentModel(Base):
     def to_domain(self) -> "Payment":
         """Convert to domain entity."""
         from app.modules.payments.domain.entities import Payment
-        
+
         return Payment(
             id=self.id,
             financial_subject_id=self.financial_subject_id,

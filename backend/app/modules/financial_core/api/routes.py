@@ -79,8 +79,10 @@ async def get_financial_subject_balance(
     """Получить баланс конкретного финансового субъекта."""
     # Check access
     # Для admin используем cooperative_id из query, для остальных — из пользователя
-    user_cooperative_id = current_user.cooperative_id if current_user.role != "admin" else cooperative_id
-    
+    user_cooperative_id = (
+        current_user.cooperative_id if current_user.role != "admin" else cooperative_id
+    )
+
     subject = await get_subject_use_case.execute(
         subject_id=subject_id,
         cooperative_id=user_cooperative_id,
@@ -99,7 +101,9 @@ async def get_financial_subject_balance(
             detail="Нет доступа к данному финансовому субъекту",
         )
 
-    balance = await get_balance_use_case.execute(financial_subject_id=subject_id, as_of_date=as_of_date)
+    balance = await get_balance_use_case.execute(
+        financial_subject_id=subject_id, as_of_date=as_of_date
+    )
 
     if balance is None:
         raise HTTPException(

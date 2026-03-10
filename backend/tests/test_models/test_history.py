@@ -22,7 +22,9 @@ from app.modules.land_management.infrastructure.models import (
 )
 
 # Skip all tests in this module - history functionality is legacy
-pytestmark = pytest.mark.skip(reason="History functionality is legacy and not implemented in Clean Architecture modules")
+pytestmark = pytest.mark.skip(
+    reason="History functionality is legacy and not implemented in Clean Architecture modules"
+)
 
 
 async def _make_coop_plot_owner(test_db: AsyncSession):

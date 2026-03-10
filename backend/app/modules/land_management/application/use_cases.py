@@ -1,5 +1,6 @@
 """Use cases for land_management module."""
 
+import uuid
 from datetime import date
 from uuid import UUID
 
@@ -89,7 +90,7 @@ class CreateLandPlotUseCase:
         if ownerships:
             for ownership_data in ownerships:
                 ownership = PlotOwnership(
-                    id=UUID(int=0),
+                    id=uuid.uuid4(),
                     land_plot_id=created_plot.id,
                     owner_id=ownership_data.owner_id,
                     share_numerator=ownership_data.share_numerator,
@@ -110,7 +111,8 @@ class CreateLandPlotUseCase:
             )
         )
 
-        return created_plot
+        # Return plot with financial subject info
+        return created_plot, fs
 
 
 class GetLandPlotUseCase:
@@ -130,7 +132,9 @@ class GetLandPlotsUseCase:
     def __init__(self, repo: ILandPlotRepository):
         self.repo = repo
 
-    async def execute(self, cooperative_id: UUID, skip: int = 0, limit: int = 100) -> list[LandPlot]:
+    async def execute(
+        self, cooperative_id: UUID, skip: int = 0, limit: int = 100
+    ) -> list[LandPlot]:
         """Get list of land plots for cooperative."""
         plots = await self.repo.get_all(cooperative_id)
         return plots[skip : skip + limit]
@@ -167,8 +171,13 @@ class DeleteLandPlotUseCase:
     def __init__(self, repo: ILandPlotRepository):
         self.repo = repo
 
-    async def execute(self, plot_id: UUID, cooperative_id: UUID) -> bool:
+    async def execute(self, plot_id: UUID, cooperative_id: UUID | None) -> bool:
         """Delete land plot by ID."""
+        # For admin (cooperative_id=None), delete without cooperative filter
+        if cooperative_id is None:
+            # Admin can delete any plot - use repository method that doesn't filter by cooperative
+            return await self.repo.delete_by_id_any_cooperative(plot_id)
+
         entity = await self.repo.get_by_id(plot_id, cooperative_id)
         if entity is None:
             return False
@@ -224,7 +233,9 @@ class GetOwnerUseCase:
 
     async def execute(self, owner_id: UUID) -> Owner | None:
         """Get owner by ID."""
-        return await self.repo.get_by_id(owner_id, UUID(int=0))  # cooperative_id not used for owners
+        return await self.repo.get_by_id(
+            owner_id, UUID(int=0)
+        )  # cooperative_id not used for owners
 
 
 class GetOwnersUseCase:

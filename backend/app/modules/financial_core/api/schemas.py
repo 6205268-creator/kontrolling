@@ -1,4 +1,4 @@
-﻿"""Pydantic schemas for financial_core API."""
+"""Pydantic schemas for financial_core API."""
 
 from app.modules.financial_core.application.dtos import (
     BalanceInfo,
