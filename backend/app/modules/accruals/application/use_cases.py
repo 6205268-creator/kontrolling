@@ -1,12 +1,15 @@
-﻿"""Use cases for accruals module."""
+"""Use cases for accruals module."""
 
-from uuid import UUID
+from datetime import datetime
+from uuid import UUID, uuid4
 
+from app.modules.shared.kernel.events import EventDispatcher
 from app.modules.shared.kernel.exceptions import ValidationError
 
-from .dtos import AccrualCreate, AccrualUpdate
 from ..domain.entities import Accrual
+from ..domain.events import AccrualApplied, AccrualCancelled
 from ..domain.repositories import IAccrualRepository, IContributionTypeRepository
+from .dtos import AccrualCreate
 
 
 class CreateAccrualUseCase:
@@ -39,6 +42,7 @@ class CreateAccrualUseCase:
         if data.amount < 0:
             raise ValidationError("Amount must be non-negative")
 
+        operation_number = f"ACC-{cooperative_id.hex[:8]}-{uuid4().hex[:8]}"
         entity = Accrual(
             financial_subject_id=data.financial_subject_id,
             contribution_type_id=data.contribution_type_id,
@@ -47,6 +51,7 @@ class CreateAccrualUseCase:
             period_start=data.period_start,
             period_end=data.period_end,
             status="created",
+            operation_number=operation_number,
         )
 
         return await self.accrual_repo.add(entity)
@@ -92,65 +97,109 @@ class GetAccrualsByCooperativeUseCase:
 class ApplyAccrualUseCase:
     """Use case for applying an accrual (status: created → applied)."""
 
-    def __init__(self, repo: IAccrualRepository):
+    def __init__(self, repo: IAccrualRepository, event_dispatcher: EventDispatcher | None = None):
         self.repo = repo
+        self.event_dispatcher = event_dispatcher
 
     async def execute(self, accrual_id: UUID, cooperative_id: UUID) -> Accrual:
         """Apply accrual (change status to 'applied').
-        
+
         Args:
             accrual_id: ID of accrual to apply.
             cooperative_id: ID of cooperative for access control.
-            
+
         Returns:
             Updated Accrual entity.
-            
+
         Raises:
             ValidationError: If accrual not found or invalid status.
         """
         accrual = await self.repo.get_by_id(accrual_id, cooperative_id)
-        
+
         if accrual is None:
             raise ValidationError("Accrual not found")
-        
+
         if accrual.status != "created":
             raise ValidationError(
                 f"Cannot apply accrual with status '{accrual.status}'. Only 'created' status allowed."
             )
 
         accrual.status = "applied"
-        return await self.repo.update(accrual)
+        result = await self.repo.update(accrual)
+
+        # Dispatch domain event
+        if self.event_dispatcher:
+            self.event_dispatcher.dispatch(
+                AccrualApplied(
+                    accrual_id=result.id,
+                    financial_subject_id=result.financial_subject_id,
+                    contribution_type_id=result.contribution_type_id,
+                    amount=result.amount,
+                    accrual_date=result.accrual_date,
+                    operation_number=result.operation_number,
+                )
+            )
+
+        return result
 
 
 class CancelAccrualUseCase:
     """Use case for cancelling an accrual (status → cancelled)."""
 
-    def __init__(self, repo: IAccrualRepository):
+    def __init__(self, repo: IAccrualRepository, event_dispatcher: EventDispatcher | None = None):
         self.repo = repo
+        self.event_dispatcher = event_dispatcher
 
-    async def execute(self, accrual_id: UUID, cooperative_id: UUID) -> Accrual:
+    async def execute(
+        self,
+        accrual_id: UUID,
+        cooperative_id: UUID,
+        cancelled_by_user_id: UUID,
+        cancellation_reason: str | None = None,
+        cancelled_at: datetime | None = None,
+    ) -> Accrual:
         """Cancel accrual (change status to 'cancelled').
-        
+
         Args:
             accrual_id: ID of accrual to cancel.
             cooperative_id: ID of cooperative for access control.
-            
+            cancelled_by_user_id: ID of user cancelling the accrual.
+            cancellation_reason: Reason for cancellation (optional).
+            cancelled_at: Cancellation datetime (defaults to now).
+
         Returns:
             Updated Accrual entity.
-            
+
         Raises:
             ValidationError: If accrual not found or already cancelled.
         """
+        from datetime import UTC, datetime
+
         accrual = await self.repo.get_by_id(accrual_id, cooperative_id)
-        
+
         if accrual is None:
             raise ValidationError("Accrual not found")
-        
-        if accrual.status == "cancelled":
-            raise ValidationError("Accrual is already cancelled")
 
-        accrual.status = "cancelled"
-        return await self.repo.update(accrual)
+        # Use entity method for cancellation (Rich Domain pattern)
+        accrual.cancel(
+            cancelled_by=cancelled_by_user_id,
+            reason=cancellation_reason,
+            now=cancelled_at or datetime.now(UTC),
+        )
+        result = await self.repo.update(accrual)
+
+        # Dispatch domain event
+        if self.event_dispatcher:
+            self.event_dispatcher.dispatch(
+                AccrualCancelled(
+                    accrual_id=result.id,
+                    cancelled_at=result.cancelled_at,
+                    cancelled_by=result.cancelled_by_user_id,
+                    reason=result.cancellation_reason,
+                )
+            )
+
+        return result
 
 
 class MassCreateAccrualsUseCase:
@@ -185,7 +234,8 @@ class MassCreateAccrualsUseCase:
                 fs = await self.fs_repo.get_by_id(data.financial_subject_id, cooperative_id)
                 if fs is None:
                     raise ValidationError("Financial subject does not belong to the specified cooperative")
-            
+
+            operation_number = f"ACC-{cooperative_id.hex[:8]}-{uuid4().hex[:8]}"
             entity = Accrual(
                 financial_subject_id=data.financial_subject_id,
                 contribution_type_id=data.contribution_type_id,
@@ -194,6 +244,7 @@ class MassCreateAccrualsUseCase:
                 period_start=data.period_start,
                 period_end=data.period_end,
                 status="created",
+                operation_number=operation_number,
             )
             created = await self.accrual_repo.add(entity)
             created_accruals.append(created)

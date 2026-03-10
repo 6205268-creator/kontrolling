@@ -6,7 +6,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
-from app.modules.financial_core.infrastructure.models import FinancialSubjectModel as FinancialSubject
+from app.modules.financial_core.infrastructure.models import (
+    FinancialSubjectModel as FinancialSubject,
+)
 
 
 @pytest.mark.asyncio

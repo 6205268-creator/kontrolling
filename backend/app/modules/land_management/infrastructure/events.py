@@ -3,12 +3,8 @@
 Publishes domain events after database commit.
 """
 
-from sqlalchemy import event
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.shared.kernel.events import EventDispatcher
 
-from ..domain.events import LandPlotCreated
 
 
 def setup_event_listeners() -> None:

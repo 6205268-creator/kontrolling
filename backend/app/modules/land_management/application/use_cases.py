@@ -1,21 +1,22 @@
-﻿"""Use cases for land_management module."""
+"""Use cases for land_management module."""
 
 from datetime import date
 from uuid import UUID
 
+from app.modules.financial_core.domain.entities import FinancialSubject
+from app.modules.financial_core.domain.repositories import IFinancialSubjectRepository
 from app.modules.shared.kernel.events import EventDispatcher
 from app.modules.shared.kernel.exceptions import ValidationError
 
-from .dtos import LandPlotCreate, LandPlotUpdate, OwnerCreate, OwnerUpdate, PlotOwnershipCreate
 from ..domain.entities import LandPlot, Owner, PlotOwnership
 from ..domain.events import (
     LandPlotCreated,
     OwnerCreated,
     PlotOwnershipCreated,
+    PlotOwnershipTransferred,
 )
 from ..domain.repositories import ILandPlotRepository, IOwnerRepository, IPlotOwnershipRepository
-from app.modules.financial_core.domain.repositories import IFinancialSubjectRepository
-from app.modules.financial_core.domain.entities import FinancialSubject
+from .dtos import LandPlotCreate, LandPlotUpdate, OwnerCreate, OwnerUpdate, PlotOwnershipCreate
 
 
 class CreateLandPlotUseCase:

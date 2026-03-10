@@ -7,14 +7,22 @@ from httpx import AsyncClient
 from app.core.security import create_access_token, get_password_hash
 
 # Import models from Clean Architecture modules
-from app.modules.accruals.infrastructure.models import AccrualModel as Accrual, ContributionTypeModel as ContributionType
+from app.modules.accruals.infrastructure.models import AccrualModel as Accrual
+from app.modules.accruals.infrastructure.models import ContributionTypeModel as ContributionType
 from app.modules.administration.infrastructure.models import AppUserModel as AppUser
 from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
-from app.modules.expenses.infrastructure.models import ExpenseModel as Expense, ExpenseCategoryModel as ExpenseCategory
-from app.modules.financial_core.infrastructure.models import FinancialSubjectModel as FinancialSubject
+from app.modules.expenses.infrastructure.models import ExpenseCategoryModel as ExpenseCategory
+from app.modules.expenses.infrastructure.models import ExpenseModel as Expense
+from app.modules.financial_core.infrastructure.models import (
+    FinancialSubjectModel as FinancialSubject,
+)
 from app.modules.land_management.infrastructure.models import (
     LandPlotModel as LandPlot,
+)
+from app.modules.land_management.infrastructure.models import (
     OwnerModel as Owner,
+)
+from app.modules.land_management.infrastructure.models import (
     PlotOwnershipModel as PlotOwnership,
 )
 from app.modules.payments.infrastructure.models import PaymentModel as Payment
@@ -148,6 +156,7 @@ async def report_data_fixture(test_db) -> dict:
         accrual_date=date.today(),
         period_start=date.today().replace(month=1, day=1),
         status="applied",
+        operation_number="ACC-R-1",
     )
     payment1 = Payment(
         financial_subject_id=subject1.id,
@@ -155,6 +164,7 @@ async def report_data_fixture(test_db) -> dict:
         amount=Decimal("500.00"),
         payment_date=date.today(),
         status="confirmed",
+        operation_number="PAY-R-1",
     )
 
     # Участок 2: задолженность 0 (1000 начислено - 1000 оплачено)
@@ -165,6 +175,7 @@ async def report_data_fixture(test_db) -> dict:
         accrual_date=date.today(),
         period_start=date.today().replace(month=1, day=1),
         status="applied",
+        operation_number="ACC-R-2",
     )
     payment2 = Payment(
         financial_subject_id=subject2.id,
@@ -172,6 +183,7 @@ async def report_data_fixture(test_db) -> dict:
         amount=Decimal("1000.00"),
         payment_date=date.today(),
         status="confirmed",
+        operation_number="PAY-R-2",
     )
 
     # Участок 3: задолженность 1500 (2000 начислено - 500 оплачено)
@@ -182,6 +194,7 @@ async def report_data_fixture(test_db) -> dict:
         accrual_date=date.today(),
         period_start=date.today().replace(month=1, day=1),
         status="applied",
+        operation_number="ACC-R-3",
     )
     payment3 = Payment(
         financial_subject_id=subject3.id,
@@ -189,6 +202,7 @@ async def report_data_fixture(test_db) -> dict:
         amount=Decimal("500.00"),
         payment_date=date.today(),
         status="confirmed",
+        operation_number="PAY-R-3",
     )
 
     test_db.add_all([accrual1, payment1, accrual2, payment2, accrual3, payment3])
@@ -201,6 +215,7 @@ async def report_data_fixture(test_db) -> dict:
         expense_date=date.today(),
         status="confirmed",
         description="Ремонт дороги",
+        operation_number="EXP-R-1",
     )
     expense2 = Expense(
         cooperative_id=coop.id,
@@ -209,6 +224,7 @@ async def report_data_fixture(test_db) -> dict:
         expense_date=date.today(),
         status="confirmed",
         description="Закупка материалов",
+        operation_number="EXP-R-2",
     )
     test_db.add_all([expense1, expense2])
 
@@ -355,6 +371,7 @@ async def test_get_cash_flow_report_partial_period(
         accrual_date=yesterday,
         period_start=yesterday,
         status="applied",
+        operation_number="ACC-R-CF",
     )
     test_db.add(accrual)
 
@@ -365,6 +382,7 @@ async def test_get_cash_flow_report_partial_period(
         amount=Decimal("200.00"),
         payment_date=yesterday,
         status="confirmed",
+        operation_number="PAY-R-CF",
     )
     test_db.add(payment)
 
@@ -375,6 +393,7 @@ async def test_get_cash_flow_report_partial_period(
         amount=Decimal("1000.00"),
         expense_date=yesterday,
         status="confirmed",
+        operation_number="EXP-R-CF",
     )
     test_db.add(expense)
 

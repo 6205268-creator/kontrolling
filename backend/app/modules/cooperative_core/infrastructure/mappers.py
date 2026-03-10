@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from app.modules.cooperative_core.infrastructure.models import CooperativeModel as CooperativeORM
-
 from app.modules.cooperative_core.domain.entities import Cooperative
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as CooperativeORM
 
 
 def orm_to_domain(orm: CooperativeORM) -> Cooperative:

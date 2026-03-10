@@ -6,7 +6,7 @@ import uuid
 from datetime import UTC, date, datetime
 from decimal import Decimal
 
-from sqlalchemy import CheckConstraint, Date, DateTime, ForeignKey, Numeric, String
+from sqlalchemy import CheckConstraint, Date, DateTime, ForeignKey, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, Guid
@@ -43,6 +43,14 @@ class ExpenseModel(Base):
         default=lambda: datetime.now(UTC),
         onupdate=lambda: datetime.now(UTC),
     )
+    cancelled_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    cancelled_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
+        Guid(), ForeignKey("app_users.id"), nullable=True
+    )
+    cancellation_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    operation_number: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
 
     def to_domain(self) -> "Expense":
         """Convert to domain entity."""
@@ -58,6 +66,10 @@ class ExpenseModel(Base):
             status=self.status,
             created_at=self.created_at,
             updated_at=self.updated_at,
+            cancelled_at=self.cancelled_at,
+            cancelled_by_user_id=self.cancelled_by_user_id,
+            cancellation_reason=self.cancellation_reason,
+            operation_number=self.operation_number,
         )
 
     @classmethod
@@ -74,6 +86,10 @@ class ExpenseModel(Base):
             status=entity.status,
             created_at=entity.created_at,
             updated_at=entity.updated_at,
+            cancelled_at=entity.cancelled_at,
+            cancelled_by_user_id=entity.cancelled_by_user_id,
+            cancellation_reason=entity.cancellation_reason,
+            operation_number=entity.operation_number,
         )
 
 
@@ -97,6 +113,10 @@ class ExpenseHistoryModel(Base):
     status: Mapped[str] = mapped_column(String(20), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    cancelled_by_user_id: Mapped[uuid.UUID | None] = mapped_column(Guid(), nullable=True)
+    cancellation_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    operation_number: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
 
 class ExpenseCategoryModel(Base):

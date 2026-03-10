@@ -8,11 +8,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.api.deps import get_current_user, require_role
 from app.modules.administration.domain.entities import AppUser
 from app.modules.deps import (
-    get_get_cooperatives_use_case,
-    get_get_cooperative_use_case,
     get_create_cooperative_use_case,
-    get_update_cooperative_use_case,
     get_delete_cooperative_use_case,
+    get_get_cooperative_use_case,
+    get_get_cooperatives_use_case,
+    get_update_cooperative_use_case,
 )
 
 from .schemas import CooperativeCreate, CooperativeInDB, CooperativeUpdate

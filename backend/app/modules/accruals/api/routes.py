@@ -4,21 +4,21 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import BaseModel, Field
 
 from app.api.deps import get_current_user, require_role
 from app.modules.administration.domain.entities import AppUser
-from app.modules.shared.kernel.exceptions import ValidationError
-
-from .schemas import AccrualBatchCreate, AccrualCreate, AccrualInDB
 from app.modules.deps import (
-    get_create_accrual_use_case,
-    get_get_accrual_use_case,
-    get_accruals_by_financial_subject_use_case,
     get_accruals_by_cooperative_use_case,
+    get_accruals_by_financial_subject_use_case,
     get_apply_accrual_use_case,
     get_cancel_accrual_use_case,
+    get_create_accrual_use_case,
     get_mass_create_accruals_use_case,
 )
+from app.modules.shared.kernel.exceptions import DomainError, ValidationError
+
+from .schemas import AccrualBatchCreate, AccrualCreate, AccrualInDB
 
 router = APIRouter()
 
@@ -71,6 +71,10 @@ async def get_accruals(
             status=a.status,
             created_at=a.created_at,
             updated_at=a.updated_at,
+            cancelled_at=a.cancelled_at,
+            cancelled_by_user_id=a.cancelled_by_user_id,
+            cancellation_reason=a.cancellation_reason,
+            operation_number=a.operation_number,
         )
         for a in accruals
     ]
@@ -118,6 +122,10 @@ async def create_accrual(
         status=accrual.status,
         created_at=accrual.created_at,
         updated_at=accrual.updated_at,
+        cancelled_at=accrual.cancelled_at,
+        cancelled_by_user_id=accrual.cancelled_by_user_id,
+        cancellation_reason=accrual.cancellation_reason,
+        operation_number=accrual.operation_number,
     )
 
 
@@ -167,6 +175,10 @@ async def mass_create_accruals(
             status=a.status,
             created_at=a.created_at,
             updated_at=a.updated_at,
+            cancelled_at=a.cancelled_at,
+            cancelled_by_user_id=a.cancelled_by_user_id,
+            cancellation_reason=a.cancellation_reason,
+            operation_number=a.operation_number,
         )
         for a in accruals
     ]
@@ -221,7 +233,16 @@ async def apply_accrual(
         status=accrual.status,
         created_at=accrual.created_at,
         updated_at=accrual.updated_at,
+        cancelled_at=accrual.cancelled_at,
+        cancelled_by_user_id=accrual.cancelled_by_user_id,
+        cancellation_reason=accrual.cancellation_reason,
+        operation_number=accrual.operation_number,
     )
+
+
+class CancelBody(BaseModel):
+    """Request body for cancel endpoint."""
+    reason: str | None = Field(None, description="Причина отмены", max_length=512)
 
 
 @router.post(
@@ -235,6 +256,7 @@ async def cancel_accrual(
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
     use_case=Depends(get_cancel_accrual_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
+    body: CancelBody | None = None,
 ) -> AccrualInDB:
     """Отменить начисление (смена статуса на "cancelled") (treasurer, admin)."""
     # Для admin используем cooperative_id из query или выбрасываем ошибку
@@ -245,11 +267,18 @@ async def cancel_accrual(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="cooperative_id is required for admin users",
         )
-    
+
     try:
         accrual = await use_case.execute(
             accrual_id=accrual_id,
             cooperative_id=cooperative_id,
+            cancelled_by_user_id=current_user.id,
+            cancellation_reason=body.reason if body else None,
+        )
+    except DomainError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
         )
     except ValidationError as e:
         raise HTTPException(
@@ -273,4 +302,8 @@ async def cancel_accrual(
         status=accrual.status,
         created_at=accrual.created_at,
         updated_at=accrual.updated_at,
+        cancelled_at=accrual.cancelled_at,
+        cancelled_by_user_id=accrual.cancelled_by_user_id,
+        cancellation_reason=accrual.cancellation_reason,
+        operation_number=accrual.operation_number,
     )

@@ -23,11 +23,15 @@ class ReportingReadService:
     ) -> list[DebtorInfo]:
         """Generate debtor report for cooperative."""
         # Import models from other modules
-        from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
         from app.modules.accruals.infrastructure.models import AccrualModel
-        from app.modules.payments.infrastructure.models import PaymentModel
-        from app.modules.land_management.infrastructure.models import LandPlotModel, OwnerModel, PlotOwnershipModel
+        from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
+        from app.modules.land_management.infrastructure.models import (
+            LandPlotModel,
+            OwnerModel,
+            PlotOwnershipModel,
+        )
         from app.modules.meters.infrastructure.models import MeterModel
+        from app.modules.payments.infrastructure.models import PaymentModel
 
         # Get all financial subjects for cooperative
         result = await self.session.execute(
@@ -139,10 +143,10 @@ class ReportingReadService:
         period_end: date,
     ) -> CashFlowReport:
         """Generate cash flow report for period."""
-        from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
         from app.modules.accruals.infrastructure.models import AccrualModel
-        from app.modules.payments.infrastructure.models import PaymentModel
         from app.modules.expenses.infrastructure.models import ExpenseModel
+        from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
+        from app.modules.payments.infrastructure.models import PaymentModel
 
         # Get all financial subjects for cooperative
         fs_result = await self.session.execute(

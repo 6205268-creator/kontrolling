@@ -1,4 +1,4 @@
-﻿"""Expenses domain repository interfaces."""
+"""Expenses domain repository interfaces."""
 
 from abc import ABC, abstractmethod
 from uuid import UUID
@@ -12,7 +12,7 @@ class IExpenseRepository(IRepository[Expense], ABC):
     """Repository interface for Expense operations."""
 
     @abstractmethod
-    async def get_by_id(self, id: UUID, cooperative_id: UUID) -> Expense | None:
+    async def get_by_id(self, id: UUID, cooperative_id: UUID | None) -> Expense | None:
         pass
 
     @abstractmethod
@@ -45,4 +45,12 @@ class IExpenseCategoryRepository(IRepository[ExpenseCategory], ABC):
 
     @abstractmethod
     async def add(self, entity: ExpenseCategory) -> ExpenseCategory:
+        pass
+
+    @abstractmethod
+    async def update(self, entity: ExpenseCategory) -> ExpenseCategory:
+        pass
+
+    @abstractmethod
+    async def delete(self, id: UUID, cooperative_id: UUID) -> None:
         pass

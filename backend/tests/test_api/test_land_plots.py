@@ -11,7 +11,11 @@ from app.modules.administration.infrastructure.models import AppUserModel as App
 from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
 from app.modules.land_management.infrastructure.models import (
     LandPlotModel as LandPlot,
+)
+from app.modules.land_management.infrastructure.models import (
     OwnerModel as Owner,
+)
+from app.modules.land_management.infrastructure.models import (
     PlotOwnershipModel as PlotOwnership,
 )
 

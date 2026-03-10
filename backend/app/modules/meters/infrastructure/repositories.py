@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.meters.domain.entities import Meter, MeterReading
-from app.modules.meters.domain.repositories import IMeterRepository, IMeterReadingRepository
+from app.modules.meters.domain.repositories import IMeterReadingRepository, IMeterRepository
 
 from .models import MeterModel, MeterReadingModel
 
@@ -19,9 +19,11 @@ class MeterRepository(IMeterRepository):
 
     async def get_by_id(self, id: UUID, cooperative_id: UUID) -> Meter | None:
         """Get meter by ID. Note: cooperative_id filtering requires owner lookup."""
-        from app.modules.land_management.infrastructure.models import OwnerModel
-        from app.modules.land_management.infrastructure.models import PlotOwnershipModel
-        from app.modules.land_management.infrastructure.models import LandPlotModel
+        from app.modules.land_management.infrastructure.models import (
+            LandPlotModel,
+            OwnerModel,
+            PlotOwnershipModel,
+        )
         
         # Join through owner -> plot_ownership -> land_plot to filter by cooperative
         query = (

@@ -2,11 +2,11 @@
 
 from app.modules.expenses.application.dtos import (
     ExpenseBase,
+    ExpenseCategoryBase,
+    ExpenseCategoryInDB,
     ExpenseCreate,
     ExpenseInDB,
     ExpenseUpdate,
-    ExpenseCategoryBase,
-    ExpenseCategoryInDB,
 )
 
 __all__ = [

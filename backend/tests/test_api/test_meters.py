@@ -11,7 +11,8 @@ from app.core.security import create_access_token, get_password_hash
 from app.modules.administration.infrastructure.models import AppUserModel as AppUser
 from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
 from app.modules.land_management.infrastructure.models import OwnerModel as Owner
-from app.modules.meters.infrastructure.models import MeterModel as Meter, MeterReadingModel as MeterReading
+from app.modules.meters.infrastructure.models import MeterModel as Meter
+from app.modules.meters.infrastructure.models import MeterReadingModel as MeterReading
 
 
 @pytest.fixture
@@ -74,7 +75,9 @@ async def owner_with_plot_fixture(test_db) -> Owner:
     from datetime import date
 
     from app.modules.land_management.infrastructure.models import LandPlotModel as LandPlot
-    from app.modules.land_management.infrastructure.models import PlotOwnershipModel as PlotOwnership
+    from app.modules.land_management.infrastructure.models import (
+        PlotOwnershipModel as PlotOwnership,
+    )
 
     plot = LandPlot(
         cooperative_id=coop.id,
@@ -175,13 +178,17 @@ async def test_create_meter_auto_creates_financial_subject(
     assert response.status_code == 201
 
     # Проверяем что FinancialSubject создан
-    from app.modules.financial_core.infrastructure.models import FinancialSubjectModel as FinancialSubject
+    from app.modules.financial_core.infrastructure.models import (
+        FinancialSubjectModel as FinancialSubject,
+    )
 
     meter_id = response.json()["id"]
 
     # Проверяем что владелец имеет участок
     from app.modules.land_management.infrastructure.models import LandPlotModel as LandPlot
-    from app.modules.land_management.infrastructure.models import PlotOwnershipModel as PlotOwnership
+    from app.modules.land_management.infrastructure.models import (
+        PlotOwnershipModel as PlotOwnership,
+    )
 
     ownership_result = await test_db.execute(
         select(PlotOwnership)

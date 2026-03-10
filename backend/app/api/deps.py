@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import decode_access_token
 from app.db.session import get_db
-from app.modules.administration.domain.entities import AppUser
 from app.modules.administration.api.user_loader import get_user_by_identifier
+from app.modules.administration.domain.entities import AppUser
 
 __all__ = ["get_db", "get_current_user", "require_role", "oauth2_scheme"]
 

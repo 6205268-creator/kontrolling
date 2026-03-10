@@ -1,4 +1,4 @@
-﻿"""Payments repository implementations."""
+"""Payments repository implementations."""
 
 from uuid import UUID
 
@@ -98,24 +98,34 @@ class PaymentRepository(IPaymentRepository):
         return model.to_domain()
 
     async def update(self, entity: Payment) -> Payment:
-        """Update existing payment."""
+        """Update existing payment.
+
+        Note: amount is immutable - not updated to preserve financial integrity.
+        """
         query = select(PaymentModel).where(PaymentModel.id == entity.id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             raise ValueError(f"Payment with id {entity.id} not found")
 
         model.financial_subject_id = entity.financial_subject_id
         model.payer_owner_id = entity.payer_owner_id
-        model.amount = entity.amount
+        # amount is immutable - not updated
         model.payment_date = entity.payment_date
         model.document_number = entity.document_number
         model.description = entity.description
         model.status = entity.status
-        
+        model.cancelled_at = entity.cancelled_at
+        model.cancelled_by_user_id = entity.cancelled_by_user_id
+        model.cancellation_reason = entity.cancellation_reason
+
         await self.session.commit()
-        await self.session.refresh(model)
+
+        # Re-fetch to get fresh data from DB (amount should be unchanged)
+        self.session.expunge(model)
+        result = await self.session.execute(query)
+        model = result.scalar_one_or_none()
         return model.to_domain()
 
     async def delete(self, id: UUID, cooperative_id: UUID) -> None:

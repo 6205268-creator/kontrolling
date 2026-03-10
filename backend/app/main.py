@@ -3,19 +3,23 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import settings
+from app.db.session import async_session_maker
+from app.modules.accruals.api.contribution_types import router as contribution_types_router
+from app.modules.accruals.api.routes import router as accruals_router
+from app.modules.administration.api.routes import router as administration_router
 
 # Modular API routers (Clean Architecture)
 from app.modules.cooperative_core.api.routes import router as cooperative_core_router
-from app.modules.land_management.api.routes import router as land_management_router
-from app.modules.land_management.api.owners_routes import router as owners_router
-from app.modules.financial_core.api.routes import router as financial_core_router
-from app.modules.accruals.api.routes import router as accruals_router
-from app.modules.accruals.api.contribution_types import router as contribution_types_router
-from app.modules.payments.api.routes import router as payments_router
-from app.modules.meters.api.routes import router as meters_router
 from app.modules.expenses.api.routes import router as expenses_router
+from app.modules.financial_core.api.routes import router as financial_core_router
+from app.modules.financial_core.infrastructure.event_handlers import setup_event_handlers
+from app.modules.financial_core.infrastructure.repositories import FinancialSubjectRepository
+from app.modules.land_management.api.owners_routes import router as owners_router
+from app.modules.land_management.api.routes import router as land_management_router
+from app.modules.meters.api.routes import router as meters_router
+from app.modules.payments.api.routes import router as payments_router
 from app.modules.reporting.api.routes import router as reporting_router
-from app.modules.administration.api.routes import router as administration_router
+from app.modules.shared.kernel.events import EventDispatcher
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -103,6 +107,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Setup event handlers for domain events (logging, auto-creation of FinancialSubjects)
+_event_dispatcher = EventDispatcher()
+setup_event_handlers(_event_dispatcher, async_session_maker, FinancialSubjectRepository)
 
 # API routers
 app.include_router(cooperative_core_router, prefix="/api/cooperatives", tags=["cooperatives"])

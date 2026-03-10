@@ -4,6 +4,7 @@ Pure Python - no framework dependencies (FastAPI, SQLAlchemy, Pydantic).
 """
 
 from abc import ABC, abstractmethod
+from datetime import date
 from uuid import UUID
 
 from app.modules.shared.kernel.repositories import IRepository
@@ -51,14 +52,42 @@ class IFinancialSubjectRepository(IRepository[FinancialSubject], ABC):
 
 
 class IBalanceRepository(ABC):
-    """Repository interface for balance calculations."""
+    """Repository interface for balance calculations.
+    
+    Balance is calculated as of a specific date (as_of_date).
+    If as_of_date is None, balance is calculated as of today.
+    """
 
     @abstractmethod
-    async def calculate_balance(self, financial_subject_id: UUID) -> Balance | None:
-        """Calculate balance for a financial subject."""
+    async def calculate_balance(
+        self,
+        financial_subject_id: UUID,
+        as_of_date: date | None = None,
+    ) -> Balance | None:
+        """Calculate balance for a financial subject as of a specific date.
+        
+        Args:
+            financial_subject_id: ID of financial subject.
+            as_of_date: Date to calculate balance for. If None, uses today's date.
+            
+        Returns:
+            Balance object or None if subject not found.
+        """
         pass
 
     @abstractmethod
-    async def get_balances_by_cooperative(self, cooperative_id: UUID) -> list[Balance]:
-        """Get balances for all financial subjects in cooperative."""
+    async def get_balances_by_cooperative(
+        self,
+        cooperative_id: UUID,
+        as_of_date: date | None = None,
+    ) -> list[Balance]:
+        """Get balances for all financial subjects in cooperative as of a specific date.
+        
+        Args:
+            cooperative_id: ID of cooperative.
+            as_of_date: Date to calculate balances for. If None, uses today's date.
+            
+        Returns:
+            List of Balance objects.
+        """
         pass

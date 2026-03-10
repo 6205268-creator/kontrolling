@@ -40,3 +40,7 @@ class PaymentInDB(PaymentBase):
     status: str = Field(..., description="Статус (confirmed, cancelled)")
     created_at: datetime
     updated_at: datetime
+    cancelled_at: datetime | None = None
+    cancelled_by_user_id: UUID | None = None
+    cancellation_reason: str | None = None
+    operation_number: str = Field(..., description="Уникальный номер операции")

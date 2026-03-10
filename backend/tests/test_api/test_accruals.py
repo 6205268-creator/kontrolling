@@ -5,16 +5,20 @@ import pytest
 from httpx import AsyncClient
 
 from app.core.security import create_access_token, get_password_hash
+from app.modules.accruals.infrastructure.models import (
+    AccrualModel as Accrual,
+)
+from app.modules.accruals.infrastructure.models import (
+    ContributionTypeModel as ContributionType,
+)
 
 # Import models from Clean Architecture modules
 from app.modules.administration.infrastructure.models import AppUserModel as AppUser
 from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
-from app.modules.land_management.infrastructure.models import LandPlotModel as LandPlot
-from app.modules.financial_core.infrastructure.models import FinancialSubjectModel as FinancialSubject
-from app.modules.accruals.infrastructure.models import (
-    AccrualModel as Accrual,
-    ContributionTypeModel as ContributionType,
+from app.modules.financial_core.infrastructure.models import (
+    FinancialSubjectModel as FinancialSubject,
 )
+from app.modules.land_management.infrastructure.models import LandPlotModel as LandPlot
 
 
 @pytest.fixture
@@ -142,6 +146,7 @@ async def test_apply_accrual(
         accrual_date=date.today(),
         period_start=date.today().replace(month=1, day=1),
         status="created",
+        operation_number="ACC-API-CREATED",
     )
     test_db.add(accrual)
     await test_db.commit()
@@ -177,7 +182,8 @@ async def test_cancel_accrual(
         accrual_date=date.today(),
         period_start=date.today().replace(month=1, day=1),
         status="applied",
-    )
+            operation_number="ACC-API-APPLIED",
+        )
     test_db.add(accrual)
     await test_db.commit()
 
@@ -212,11 +218,11 @@ async def test_cancel_already_cancelled_accrual(
         accrual_date=date.today(),
         period_start=date.today().replace(month=1, day=1),
         status="cancelled",
+        operation_number="ACC-API-CANCELLED",
     )
     test_db.add(accrual)
     await test_db.commit()
 
-    # Пытаемся отменить
     response = await async_client.post(
         f"/api/accruals/{accrual.id}/cancel?cooperative_id={str(subject.cooperative_id)}",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -245,11 +251,11 @@ async def test_apply_non_created_accrual(
         accrual_date=date.today(),
         period_start=date.today().replace(month=1, day=1),
         status="applied",
+        operation_number="ACC-API-APPLIED2",
     )
     test_db.add(accrual)
     await test_db.commit()
 
-    # Пытаемся применить
     response = await async_client.post(
         f"/api/accruals/{accrual.id}/apply?cooperative_id={str(subject.cooperative_id)}",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -330,7 +336,7 @@ async def test_get_accruals_by_financial_subject(
     ct = contribution_type_fixture
 
     # Создаём несколько начислений
-    for amount in [Decimal("100.00"), Decimal("200.00"), Decimal("300.00")]:
+    for i, amount in enumerate([Decimal("100.00"), Decimal("200.00"), Decimal("300.00")]):
         accrual = Accrual(
             financial_subject_id=subject.id,
             contribution_type_id=ct.id,
@@ -338,6 +344,7 @@ async def test_get_accruals_by_financial_subject(
             accrual_date=date.today(),
             period_start=date.today().replace(month=1, day=1),
             status="applied",
+            operation_number=f"ACC-API-BATCH-{i}",
         )
         test_db.add(accrual)
 
@@ -390,6 +397,7 @@ async def test_get_accruals_by_cooperative(
         accrual_date=date.today(),
         period_start=date.today().replace(month=1, day=1),
         status="applied",
+        operation_number="ACC-API-LIST",
     )
     test_db.add(accrual)
     await test_db.commit()

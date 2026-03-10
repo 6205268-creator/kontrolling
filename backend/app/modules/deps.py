@@ -281,18 +281,20 @@ def get_accruals_by_cooperative_use_case(accrual_repo=Depends(get_accrual_reposi
 
 def get_apply_accrual_use_case(
     accrual_repo=Depends(get_accrual_repository),
+    event_dispatcher=Depends(get_event_dispatcher),
 ):
     """Get ApplyAccrualUseCase instance."""
     from app.modules.accruals.application.use_cases import ApplyAccrualUseCase
-    return ApplyAccrualUseCase(accrual_repo)
+    return ApplyAccrualUseCase(accrual_repo, event_dispatcher)
 
 
 def get_cancel_accrual_use_case(
     accrual_repo=Depends(get_accrual_repository),
+    event_dispatcher=Depends(get_event_dispatcher),
 ):
     """Get CancelAccrualUseCase instance."""
     from app.modules.accruals.application.use_cases import CancelAccrualUseCase
-    return CancelAccrualUseCase(accrual_repo)
+    return CancelAccrualUseCase(accrual_repo, event_dispatcher)
 
 
 def get_mass_create_accruals_use_case(
@@ -323,10 +325,11 @@ def get_payment_repository(db: AsyncSession = Depends(get_db)):
 def get_register_payment_use_case(
     payment_repo=Depends(get_payment_repository),
     fs_repo=Depends(get_financial_subject_repository),
+    event_dispatcher=Depends(get_event_dispatcher),
 ):
     """Get RegisterPaymentUseCase instance."""
     from app.modules.payments.application.use_cases import RegisterPaymentUseCase
-    return RegisterPaymentUseCase(payment_repo, fs_repo)
+    return RegisterPaymentUseCase(payment_repo, event_dispatcher, fs_repo)
 
 
 def get_get_payment_use_case(payment_repo=Depends(get_payment_repository)):
@@ -355,10 +358,11 @@ def get_payments_by_cooperative_use_case(payment_repo=Depends(get_payment_reposi
 
 def get_cancel_payment_use_case(
     payment_repo=Depends(get_payment_repository),
+    event_dispatcher=Depends(get_event_dispatcher),
 ):
     """Get CancelPaymentUseCase instance."""
     from app.modules.payments.application.use_cases import CancelPaymentUseCase
-    return CancelPaymentUseCase(payment_repo)
+    return CancelPaymentUseCase(payment_repo, event_dispatcher)
 
 
 # =============================================================================
@@ -444,11 +448,11 @@ def get_expense_category_repository(db: AsyncSession = Depends(get_db)):
 
 def get_create_expense_use_case(
     expense_repo=Depends(get_expense_repository),
-    fs_repo=Depends(get_financial_subject_repository),
+    category_repo=Depends(get_expense_category_repository),
 ):
     """Get CreateExpenseUseCase instance."""
     from app.modules.expenses.application.use_cases import CreateExpenseUseCase
-    return CreateExpenseUseCase(expense_repo, fs_repo)
+    return CreateExpenseUseCase(expense_repo, category_repo)
 
 
 def get_get_expense_use_case(expense_repo=Depends(get_expense_repository)):
@@ -463,24 +467,16 @@ def get_expenses_by_cooperative_use_case(expense_repo=Depends(get_expense_reposi
     return GetExpensesByCooperativeUseCase(expense_repo)
 
 
-def get_confirm_expense_use_case(
-    expense_repo=Depends(get_expense_repository),
-    fs_repo=Depends(get_financial_subject_repository),
-    balance_repo=Depends(get_balance_repository),
-):
+def get_confirm_expense_use_case(expense_repo=Depends(get_expense_repository)):
     """Get ConfirmExpenseUseCase instance."""
     from app.modules.expenses.application.use_cases import ConfirmExpenseUseCase
-    return ConfirmExpenseUseCase(expense_repo, fs_repo, balance_repo)
+    return ConfirmExpenseUseCase(expense_repo)
 
 
-def get_cancel_expense_use_case(
-    expense_repo=Depends(get_expense_repository),
-    fs_repo=Depends(get_financial_subject_repository),
-    balance_repo=Depends(get_balance_repository),
-):
+def get_cancel_expense_use_case(expense_repo=Depends(get_expense_repository)):
     """Get CancelExpenseUseCase instance."""
     from app.modules.expenses.application.use_cases import CancelExpenseUseCase
-    return CancelExpenseUseCase(expense_repo, fs_repo, balance_repo)
+    return CancelExpenseUseCase(expense_repo)
 
 
 def get_expense_categories_use_case(cat_repo=Depends(get_expense_category_repository)):

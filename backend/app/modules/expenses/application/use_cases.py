@@ -1,25 +1,32 @@
-﻿"""Use cases for expenses module."""
+"""Use cases for expenses module."""
 
-from uuid import UUID
+from datetime import datetime
+from uuid import UUID, uuid4
 
 from app.modules.shared.kernel.exceptions import ValidationError
 
-from .dtos import ExpenseCreate
 from ..domain.entities import Expense
-from ..domain.repositories import IExpenseRepository, IExpenseCategoryRepository
+from ..domain.repositories import IExpenseCategoryRepository, IExpenseRepository
+from .dtos import ExpenseCreate
 
 
 class CreateExpenseUseCase:
     """Use case for creating an Expense."""
 
-    def __init__(self, repo: IExpenseRepository):
+    def __init__(self, repo: IExpenseRepository, category_repo: IExpenseCategoryRepository):
         self.repo = repo
+        self.category_repo = category_repo
 
-    async def execute(self, data: ExpenseCreate, cooperative_id: UUID) -> Expense:
+    async def execute(self, data: ExpenseCreate, cooperative_id: UUID | None) -> Expense:
         """Create a new expense."""
         if data.amount <= 0:
             raise ValidationError("Amount must be positive")
 
+        category = await self.category_repo.get_by_id(data.category_id, UUID(int=0))
+        if category is None:
+            raise ValidationError("Category not found")
+
+        operation_number = f"EXP-{data.cooperative_id.hex[:8]}-{uuid4().hex[:8]}"
         entity = Expense(
             id=UUID(int=0),
             cooperative_id=data.cooperative_id,
@@ -29,6 +36,7 @@ class CreateExpenseUseCase:
             document_number=data.document_number,
             description=data.description,
             status="created",
+            operation_number=operation_number,
         )
         return await self.repo.add(entity)
 
@@ -78,14 +86,41 @@ class CancelExpenseUseCase:
     def __init__(self, repo: IExpenseRepository):
         self.repo = repo
 
-    async def execute(self, expense_id: UUID, cooperative_id: UUID) -> Expense:
-        """Cancel expense (status → cancelled)."""
+    async def execute(
+        self,
+        expense_id: UUID,
+        cooperative_id: UUID,
+        cancelled_by_user_id: UUID,
+        cancellation_reason: str | None = None,
+        cancelled_at: datetime | None = None,
+    ) -> Expense:
+        """Cancel expense (status → cancelled).
+
+        Args:
+            expense_id: ID of expense to cancel.
+            cooperative_id: ID of cooperative for access control.
+            cancelled_by_user_id: ID of user cancelling the expense.
+            cancellation_reason: Reason for cancellation (optional).
+            cancelled_at: Cancellation datetime (defaults to now).
+
+        Returns:
+            Updated Expense entity.
+
+        Raises:
+            ValidationError: If expense not found or already cancelled.
+        """
+        from datetime import UTC
+
         expense = await self.repo.get_by_id(expense_id, cooperative_id)
         if expense is None:
             raise ValidationError("Expense not found")
-        if expense.status == "cancelled":
-            raise ValidationError("Expense is already cancelled")
-        expense.status = "cancelled"
+
+        # Use entity method for cancellation (Rich Domain pattern)
+        expense.cancel(
+            cancelled_by=cancelled_by_user_id,
+            reason=cancellation_reason,
+            now=cancelled_at or datetime.now(UTC),
+        )
         return await self.repo.update(expense)
 
 

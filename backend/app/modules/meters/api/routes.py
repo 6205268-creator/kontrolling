@@ -7,17 +7,17 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.deps import get_current_user, require_role
 from app.modules.administration.domain.entities import AppUser
-
-from .schemas import MeterCreate, MeterInDB, MeterUpdate, MeterReadingCreate, MeterReadingInDB
 from app.modules.deps import (
+    get_add_meter_reading_use_case,
     get_create_meter_use_case,
+    get_delete_meter_use_case,
     get_get_meter_use_case,
+    get_meter_readings_use_case,
     get_meters_by_owner_use_case,
     get_update_meter_use_case,
-    get_delete_meter_use_case,
-    get_add_meter_reading_use_case,
-    get_meter_readings_use_case,
 )
+
+from .schemas import MeterCreate, MeterInDB, MeterReadingCreate, MeterReadingInDB, MeterUpdate
 
 router = APIRouter()
 

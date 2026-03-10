@@ -88,6 +88,11 @@ class IPlotOwnershipRepository(IRepository[PlotOwnership], ABC):
         pass
 
     @abstractmethod
+    async def get_all(self, cooperative_id: UUID) -> list[PlotOwnership]:
+        """Get all plot ownerships (IRepository contract)."""
+        pass
+
+    @abstractmethod
     async def get_by_land_plot(self, land_plot_id: UUID, cooperative_id: UUID) -> list[PlotOwnership]:
         """Get all ownerships for a land plot."""
         pass

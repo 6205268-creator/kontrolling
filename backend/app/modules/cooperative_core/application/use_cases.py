@@ -4,9 +4,9 @@ from uuid import UUID
 
 from app.modules.shared.kernel.exceptions import ValidationError
 
-from .dtos import CooperativeCreate, CooperativeUpdate
 from ..domain.entities import Cooperative
 from ..domain.repositories import ICooperativeRepository
+from .dtos import CooperativeCreate, CooperativeUpdate
 
 
 class CreateCooperativeUseCase:

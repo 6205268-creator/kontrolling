@@ -5,7 +5,6 @@ Pure Python - no framework dependencies (FastAPI, SQLAlchemy, Pydantic).
 
 from dataclasses import dataclass
 from datetime import datetime
-from uuid import UUID
 
 from app.modules.shared.kernel.entities import BaseEntity
 

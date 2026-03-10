@@ -1,14 +1,12 @@
 ﻿"""Use cases for financial_core module."""
 
+from datetime import date
 from uuid import UUID
 
-from app.modules.shared.kernel.events import EventDispatcher
-
-from .dtos import FinancialSubjectCreate
 from ..domain.entities import FinancialSubject
 from ..domain.events import LandPlotCreated, MeterCreated
 from ..domain.repositories import IFinancialSubjectRepository
-from ..domain.services import BalanceCalculator
+from .dtos import FinancialSubjectCreate
 
 
 class CreateFinancialSubjectUseCase:
@@ -57,25 +55,43 @@ class GetFinancialSubjectsUseCase:
 
 
 class GetBalanceUseCase:
-    """Use case for getting balance of a FinancialSubject."""
+    """Use case for getting balance of a FinancialSubject as of a specific date."""
 
     def __init__(self, balance_repo):
         self.balance_repo = balance_repo
 
-    async def execute(self, financial_subject_id: UUID) -> dict | None:
-        """Get balance for financial subject."""
-        return await self.balance_repo.calculate_balance(financial_subject_id)
+    async def execute(
+        self,
+        financial_subject_id: UUID,
+        as_of_date: date | None = None,
+    ) -> dict | None:
+        """Get balance for financial subject as of a specific date.
+        
+        Args:
+            financial_subject_id: ID of financial subject.
+            as_of_date: Date to calculate balance for. If None, uses today's date.
+        """
+        return await self.balance_repo.calculate_balance(financial_subject_id, as_of_date)
 
 
 class GetBalancesByCooperativeUseCase:
-    """Use case for getting balances of all FinancialSubjects in cooperative."""
+    """Use case for getting balances of all FinancialSubjects in cooperative as of a specific date."""
 
     def __init__(self, balance_repo):
         self.balance_repo = balance_repo
 
-    async def execute(self, cooperative_id: UUID) -> list[dict]:
-        """Get balances for all financial subjects in cooperative."""
-        return await self.balance_repo.get_balances_by_cooperative(cooperative_id)
+    async def execute(
+        self,
+        cooperative_id: UUID,
+        as_of_date: date | None = None,
+    ) -> list[dict]:
+        """Get balances for all financial subjects in cooperative as of a specific date.
+        
+        Args:
+            cooperative_id: ID of cooperative.
+            as_of_date: Date to calculate balances for. If None, uses today's date.
+        """
+        return await self.balance_repo.get_balances_by_cooperative(cooperative_id, as_of_date)
 
 
 # Event Handlers

@@ -13,21 +13,29 @@ from sqlalchemy.orm import Mapper
 
 def _get_history_config():
     """Lazy import of models to avoid circular dependencies."""
-    from app.modules.land_management.infrastructure.models import (
-        PlotOwnershipModel as PlotOwnership,
-        PlotOwnershipHistoryModel as PlotOwnershipHistory,
+    from app.modules.accruals.infrastructure.models import (
+        AccrualHistoryModel as AccrualHistory,
     )
     from app.modules.accruals.infrastructure.models import (
         AccrualModel as Accrual,
-        AccrualHistoryModel as AccrualHistory,
     )
-    from app.modules.payments.infrastructure.models import (
-        PaymentModel as Payment,
-        PaymentHistoryModel as PaymentHistory,
+    from app.modules.expenses.infrastructure.models import (
+        ExpenseHistoryModel as ExpenseHistory,
     )
     from app.modules.expenses.infrastructure.models import (
         ExpenseModel as Expense,
-        ExpenseHistoryModel as ExpenseHistory,
+    )
+    from app.modules.land_management.infrastructure.models import (
+        PlotOwnershipHistoryModel as PlotOwnershipHistory,
+    )
+    from app.modules.land_management.infrastructure.models import (
+        PlotOwnershipModel as PlotOwnership,
+    )
+    from app.modules.payments.infrastructure.models import (
+        PaymentHistoryModel as PaymentHistory,
+    )
+    from app.modules.payments.infrastructure.models import (
+        PaymentModel as Payment,
     )
     
     return [
@@ -59,6 +67,10 @@ def _get_history_config():
                 "status",
                 "created_at",
                 "updated_at",
+                "cancelled_at",
+                "cancelled_by_user_id",
+                "cancellation_reason",
+                "operation_number",
             ],
         ),
         (
@@ -74,6 +86,10 @@ def _get_history_config():
                 "status",
                 "created_at",
                 "updated_at",
+                "cancelled_at",
+                "cancelled_by_user_id",
+                "cancellation_reason",
+                "operation_number",
             ],
         ),
         (
@@ -89,6 +105,10 @@ def _get_history_config():
                 "status",
                 "created_at",
                 "updated_at",
+                "cancelled_at",
+                "cancelled_by_user_id",
+                "cancellation_reason",
+                "operation_number",
             ],
         ),
     ]

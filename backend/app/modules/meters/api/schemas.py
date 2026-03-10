@@ -4,10 +4,10 @@ from app.modules.meters.application.dtos import (
     MeterBase,
     MeterCreate,
     MeterInDB,
-    MeterUpdate,
     MeterReadingBase,
     MeterReadingCreate,
     MeterReadingInDB,
+    MeterUpdate,
 )
 
 __all__ = [

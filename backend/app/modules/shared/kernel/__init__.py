@@ -1,9 +1,9 @@
 """Shared kernel - base abstractions for all modules."""
 
 from .entities import BaseEntity
-from .repositories import IRepository
-from .exceptions import DomainError, ValidationError
 from .events import DomainEvent, EventDispatcher
+from .exceptions import DomainError, ValidationError
+from .repositories import IRepository
 
 __all__ = [
     "BaseEntity",
