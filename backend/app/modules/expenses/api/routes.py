@@ -4,21 +4,27 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import BaseModel, Field
 
 from app.api.deps import get_current_user, require_role
 from app.modules.administration.domain.entities import AppUser
-
-from .schemas import ExpenseCreate, ExpenseInDB, ExpenseCategoryInDB
 from app.modules.deps import (
-    get_create_expense_use_case,
-    get_get_expense_use_case,
-    get_expenses_by_cooperative_use_case,
-    get_confirm_expense_use_case,
     get_cancel_expense_use_case,
+    get_confirm_expense_use_case,
+    get_create_expense_use_case,
     get_expense_categories_use_case,
+    get_expenses_by_cooperative_use_case,
 )
+from app.modules.shared.kernel.exceptions import DomainError, ValidationError
+
+from .schemas import ExpenseCategoryInDB, ExpenseCreate, ExpenseInDB
 
 router = APIRouter()
+
+
+class CancelBody(BaseModel):
+    """Request body for cancel endpoint."""
+    reason: str | None = Field(None, description="Причина отмены", max_length=512)
 
 
 @router.get(
@@ -80,6 +86,10 @@ async def get_expenses(
             status=e.status,
             created_at=e.created_at,
             updated_at=e.updated_at,
+            cancelled_at=e.cancelled_at,
+            cancelled_by_user_id=e.cancelled_by_user_id,
+            cancellation_reason=e.cancellation_reason,
+            operation_number=e.operation_number,
         )
         for e in expenses
     ]
@@ -104,7 +114,12 @@ async def create_expense(
             detail="Нет доступа к данному СТ",
         )
 
-    expense = await use_case.execute(data=expense_data, cooperative_id=current_user.cooperative_id)
+    try:
+        expense = await use_case.execute(data=expense_data, cooperative_id=current_user.cooperative_id)
+    except ValidationError as e:
+        if "category" in str(e).lower() or "not found" in str(e).lower():
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     return ExpenseInDB(
         id=expense.id,
@@ -117,6 +132,10 @@ async def create_expense(
         status=expense.status,
         created_at=expense.created_at,
         updated_at=expense.updated_at,
+        cancelled_at=expense.cancelled_at,
+        cancelled_by_user_id=expense.cancelled_by_user_id,
+        cancellation_reason=expense.cancellation_reason,
+        operation_number=expense.operation_number,
     )
 
 
@@ -136,36 +155,7 @@ async def confirm_expense(
         expense = await use_case.execute(expense_id=expense_id, cooperative_id=current_user.cooperative_id)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
-
-    return ExpenseInDB(
-        id=expense.id,
-        cooperative_id=expense.cooperative_id,
-        category_id=expense.category_id,
-        amount=expense.amount,
-        expense_date=expense.expense_date,
-        document_number=expense.document_number,
-        description=expense.description,
-        status=expense.status,
-        created_at=expense.created_at,
-        updated_at=expense.updated_at,
-    )
-
-
-@router.post(
-    "/{expense_id}/cancel",
-    response_model=ExpenseInDB,
-    summary="Отменить расход",
-    description="Изменить статус расхода на 'cancelled'. Доступно: treasurer, admin.",
-)
-async def cancel_expense(
-    expense_id: UUID,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
-    use_case=Depends(get_cancel_expense_use_case),
-) -> ExpenseInDB:
-    """Cancel expense."""
-    try:
-        expense = await use_case.execute(expense_id=expense_id, cooperative_id=current_user.cooperative_id)
-    except ValueError as e:
+    except ValidationError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     return ExpenseInDB(
@@ -179,4 +169,56 @@ async def cancel_expense(
         status=expense.status,
         created_at=expense.created_at,
         updated_at=expense.updated_at,
+        cancelled_at=expense.cancelled_at,
+        cancelled_by_user_id=expense.cancelled_by_user_id,
+        cancellation_reason=expense.cancellation_reason,
+        operation_number=expense.operation_number,
+    )
+
+
+@router.post(
+    "/{expense_id}/cancel",
+    response_model=ExpenseInDB,
+    summary="Отменить расход",
+    description="Изменить статус расхода на 'cancelled'. Доступно: treasurer, admin.",
+)
+async def cancel_expense(
+    expense_id: UUID,
+    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    use_case=Depends(get_cancel_expense_use_case),
+    body: CancelBody | None = None,
+) -> ExpenseInDB:
+    """Cancel expense."""
+    try:
+        expense = await use_case.execute(
+            expense_id=expense_id,
+            cooperative_id=current_user.cooperative_id,
+            cancelled_by_user_id=current_user.id,
+            cancellation_reason=body.reason if body else None,
+        )
+    except DomainError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except ValidationError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+    return ExpenseInDB(
+        id=expense.id,
+        cooperative_id=expense.cooperative_id,
+        category_id=expense.category_id,
+        amount=expense.amount,
+        expense_date=expense.expense_date,
+        document_number=expense.document_number,
+        description=expense.description,
+        status=expense.status,
+        created_at=expense.created_at,
+        updated_at=expense.updated_at,
+        cancelled_at=expense.cancelled_at,
+        cancelled_by_user_id=expense.cancelled_by_user_id,
+        cancellation_reason=expense.cancellation_reason,
+        operation_number=expense.operation_number,
     )

@@ -7,6 +7,16 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.deps import get_current_user, require_role
 from app.modules.administration.domain.entities import AppUser
+from app.modules.deps import (
+    get_close_plot_ownership_use_case,
+    get_create_land_plot_use_case,
+    get_create_plot_ownership_use_case,
+    get_current_plot_ownerships_use_case,
+    get_delete_land_plot_use_case,
+    get_get_land_plot_use_case,
+    get_get_land_plots_use_case,
+    get_update_land_plot_use_case,
+)
 
 from .schemas import (
     LandPlotCreate,
@@ -14,16 +24,6 @@ from .schemas import (
     LandPlotWithOwners,
     PlotOwnershipCreate,
     PlotOwnershipInDB,
-)
-from app.modules.deps import (
-    get_create_land_plot_use_case,
-    get_get_land_plot_use_case,
-    get_get_land_plots_use_case,
-    get_update_land_plot_use_case,
-    get_delete_land_plot_use_case,
-    get_create_plot_ownership_use_case,
-    get_close_plot_ownership_use_case,
-    get_current_plot_ownerships_use_case,
 )
 
 router = APIRouter()

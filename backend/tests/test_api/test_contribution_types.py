@@ -2,10 +2,10 @@ import pytest
 from httpx import AsyncClient
 
 from app.core.security import create_access_token, get_password_hash
+from app.modules.accruals.infrastructure.models import ContributionTypeModel as ContributionType
 
 # Import models from Clean Architecture modules
 from app.modules.administration.infrastructure.models import AppUserModel as AppUser
-from app.modules.accruals.infrastructure.models import ContributionTypeModel as ContributionType
 from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
 
 

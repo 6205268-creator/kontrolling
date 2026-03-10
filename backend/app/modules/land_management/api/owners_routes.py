@@ -7,16 +7,16 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.deps import get_current_user, require_role
 from app.modules.administration.domain.entities import AppUser
-
-from .schemas import OwnerCreate, OwnerInDB, OwnerUpdate
 from app.modules.deps import (
     get_create_owner_use_case,
+    get_delete_owner_use_case,
     get_get_owner_use_case,
     get_get_owners_use_case,
     get_search_owners_use_case,
     get_update_owner_use_case,
-    get_delete_owner_use_case,
 )
+
+from .schemas import OwnerCreate, OwnerInDB, OwnerUpdate
 
 router = APIRouter()
 

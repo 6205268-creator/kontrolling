@@ -4,22 +4,27 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import BaseModel, Field
 
 from app.api.deps import get_current_user, require_role
 from app.modules.administration.domain.entities import AppUser
-from app.modules.shared.kernel.exceptions import ValidationError
-
-from .schemas import PaymentCreate, PaymentInDB
 from app.modules.deps import (
-    get_register_payment_use_case,
-    get_get_payment_use_case,
+    get_cancel_payment_use_case,
+    get_payments_by_cooperative_use_case,
     get_payments_by_financial_subject_use_case,
     get_payments_by_owner_use_case,
-    get_payments_by_cooperative_use_case,
-    get_cancel_payment_use_case,
+    get_register_payment_use_case,
 )
+from app.modules.shared.kernel.exceptions import DomainError, ValidationError
+
+from .schemas import PaymentCreate, PaymentInDB
 
 router = APIRouter()
+
+
+class CancelBody(BaseModel):
+    """Request body for cancel endpoint."""
+    reason: str | None = Field(None, description="Причина отмены", max_length=512)
 
 
 @router.get(
@@ -70,6 +75,10 @@ async def get_payments(
             status=p.status,
             created_at=p.created_at,
             updated_at=p.updated_at,
+            cancelled_at=p.cancelled_at,
+            cancelled_by_user_id=p.cancelled_by_user_id,
+            cancellation_reason=p.cancellation_reason,
+            operation_number=p.operation_number,
         )
         for p in payments
     ]
@@ -117,6 +126,10 @@ async def create_payment(
         status=payment.status,
         created_at=payment.created_at,
         updated_at=payment.updated_at,
+        cancelled_at=payment.cancelled_at,
+        cancelled_by_user_id=payment.cancelled_by_user_id,
+        cancellation_reason=payment.cancellation_reason,
+        operation_number=payment.operation_number,
     )
 
 
@@ -131,6 +144,7 @@ async def cancel_payment(
     current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
     use_case=Depends(get_cancel_payment_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
+    body: CancelBody | None = None,
 ) -> PaymentInDB:
     """Cancel a payment."""
     # Для admin используем cooperative_id из query или выбрасываем ошибку
@@ -141,9 +155,19 @@ async def cancel_payment(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="cooperative_id is required for admin users",
         )
-    
+
     try:
-        payment = await use_case.execute(payment_id=payment_id, cooperative_id=cooperative_id)
+        payment = await use_case.execute(
+            payment_id=payment_id,
+            cooperative_id=cooperative_id,
+            cancelled_by_user_id=current_user.id,
+            cancellation_reason=body.reason if body else None,
+        )
+    except DomainError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
     except ValidationError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -166,4 +190,8 @@ async def cancel_payment(
         status=payment.status,
         created_at=payment.created_at,
         updated_at=payment.updated_at,
+        cancelled_at=payment.cancelled_at,
+        cancelled_by_user_id=payment.cancelled_by_user_id,
+        cancellation_reason=payment.cancellation_reason,
+        operation_number=payment.operation_number,
     )

@@ -3,6 +3,7 @@ import os
 import re
 from pathlib import Path
 
+
 def check_domain_layer():
     """Check domain layer for forbidden imports."""
     violations = []

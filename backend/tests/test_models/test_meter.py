@@ -5,9 +5,9 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.land_management.infrastructure.models import OwnerModel as Owner
 from app.modules.meters.infrastructure.models import MeterModel as Meter
 from app.modules.meters.infrastructure.models import MeterReadingModel as MeterReading
-from app.modules.land_management.infrastructure.models import OwnerModel as Owner
 
 
 @pytest.mark.asyncio

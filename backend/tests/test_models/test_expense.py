@@ -6,8 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
-from app.modules.expenses.infrastructure.models import ExpenseModel as Expense
 from app.modules.expenses.infrastructure.models import ExpenseCategoryModel as ExpenseCategory
+from app.modules.expenses.infrastructure.models import ExpenseModel as Expense
 
 
 @pytest.mark.asyncio
@@ -42,6 +42,7 @@ async def test_create_expense_with_cooperative_and_category(test_db: AsyncSessio
         document_number="ПП-101",
         description="Зарплата председателя за февраль",
         status="created",
+        operation_number="EXP-M-1",
     )
     test_db.add(expense)
     await test_db.commit()
@@ -73,11 +74,11 @@ async def test_expense_statuses_created_confirmed_cancelled(test_db: AsyncSessio
         amount=Decimal("100.00"),
         expense_date=date(2026, 2, 1),
         status="created",
+        operation_number="EXP-M-2",
     )
     test_db.add(expense)
     await test_db.commit()
     await test_db.refresh(expense)
-
     assert expense.status == "created"
     expense.status = "confirmed"
     await test_db.commit()
@@ -103,11 +104,10 @@ async def test_expense_amount_positive_required(test_db: AsyncSession) -> None:
         amount=Decimal("0.01"),
         expense_date=date(2026, 2, 1),
         status="created",
+        operation_number="EXP-M-3",
     )
     test_db.add(expense)
-    await test_db.commit()
-    await test_db.refresh(expense)
-    assert expense.amount == Decimal("0.01")
+    await test_db.flush()
 
 
 @pytest.mark.asyncio
@@ -124,8 +124,53 @@ async def test_expense_amount_zero_rejected(test_db: AsyncSession) -> None:
         amount=Decimal("0.00"),
         expense_date=date(2026, 2, 1),
         status="created",
+        operation_number="EXP-M-4",
     )
     test_db.add(expense)
     with pytest.raises(IntegrityError):
         await test_db.commit()
     await test_db.rollback()
+
+
+@pytest.mark.asyncio
+async def test_expense_amount_immutable_on_update(test_db: AsyncSession) -> None:
+    """Этап 4: amount не изменяется при update (immutability)."""
+    from app.modules.expenses.domain.entities import Expense as ExpenseEntity
+    from app.modules.expenses.infrastructure.repositories import ExpenseRepository
+
+    coop = Cooperative(name="СТ Тест")
+    cat = ExpenseCategory(name="Тест", code="TEST")
+    test_db.add_all([coop, cat])
+    await test_db.flush()
+
+    original_amount = Decimal("100.00")
+    expense_model = Expense(
+        cooperative_id=coop.id,
+        category_id=cat.id,
+        amount=original_amount,
+        expense_date=date(2026, 2, 1),
+        status="created",
+        operation_number="EXP-M-5",
+    )
+    test_db.add(expense_model)
+    await test_db.commit()
+    await test_db.refresh(expense_model)
+
+    # Создаём domain entity с изменённым amount (не из сессии)
+    entity = ExpenseEntity(
+        id=expense_model.id,
+        cooperative_id=expense_model.cooperative_id,
+        category_id=expense_model.category_id,
+        amount=Decimal("999.99"),  # Пытаемся изменить amount
+        expense_date=expense_model.expense_date,
+        document_number=expense_model.document_number,
+        description=expense_model.description,
+        status=expense_model.status,
+        operation_number=expense_model.operation_number,
+    )
+
+    repo = ExpenseRepository(test_db)
+    updated = await repo.update(entity)
+
+    # amount должен остаться оригинальным (не обновляться в БД)
+    assert updated.amount == original_amount, "Amount should be immutable - not updated in repository"

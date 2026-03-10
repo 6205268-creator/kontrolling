@@ -5,12 +5,13 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-# Импорт моделей из модулей для Alembic (Clean Architecture migration)
-# Модели импортируются через main app чтобы избежать дублирования
-from app.main import app  # noqa: F401
 from alembic import context
 from app.config import settings
 from app.db.base import Base
+
+# Импорт моделей из модулей для Alembic (Clean Architecture migration)
+# Модели импортируются через main app чтобы избежать дублирования
+from app.main import app  # noqa: F401
 
 config = context.config
 target_metadata = Base.metadata

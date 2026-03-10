@@ -1,5 +1,6 @@
 """FastAPI routes for financial_core module."""
 
+from datetime import date
 from typing import Annotated
 from uuid import UUID
 
@@ -7,14 +8,14 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.deps import get_current_user
 from app.modules.administration.domain.entities import AppUser
-
-from .schemas import BalanceInfo, FinancialSubjectInfo
 from app.modules.deps import (
-    get_get_financial_subject_use_case,
-    get_get_financial_subjects_use_case,
     get_get_balance_use_case,
     get_get_balances_by_cooperative_use_case,
+    get_get_financial_subject_use_case,
+    get_get_financial_subjects_use_case,
 )
+
+from .schemas import BalanceInfo, FinancialSubjectInfo
 
 router = APIRouter()
 
@@ -72,12 +73,17 @@ async def get_financial_subject_balance(
     current_user: Annotated[AppUser, Depends(get_current_user)],
     get_subject_use_case=Depends(get_get_financial_subject_use_case),
     get_balance_use_case=Depends(get_get_balance_use_case),
+    as_of_date: date | None = Query(None, description="Баланс на дату (по умолчанию — текущая)"),
+    cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
 ) -> BalanceInfo:
     """Получить баланс конкретного финансового субъекта."""
     # Check access
+    # Для admin используем cooperative_id из query, для остальных — из пользователя
+    user_cooperative_id = current_user.cooperative_id if current_user.role != "admin" else cooperative_id
+    
     subject = await get_subject_use_case.execute(
         subject_id=subject_id,
-        cooperative_id=current_user.cooperative_id,
+        cooperative_id=user_cooperative_id,
     )
 
     if subject is None:
@@ -93,7 +99,7 @@ async def get_financial_subject_balance(
             detail="Нет доступа к данному финансовому субъекту",
         )
 
-    balance = await get_balance_use_case.execute(financial_subject_id=subject_id)
+    balance = await get_balance_use_case.execute(financial_subject_id=subject_id, as_of_date=as_of_date)
 
     if balance is None:
         raise HTTPException(
@@ -101,7 +107,16 @@ async def get_financial_subject_balance(
             detail="Финансовый субъект не найден",
         )
 
-    return balance
+    return BalanceInfo(
+        financial_subject_id=balance.financial_subject_id,
+        subject_type=balance.subject_type,
+        subject_id=balance.subject_id,
+        cooperative_id=balance.cooperative_id,
+        code=balance.code,
+        total_accruals=balance.total_accruals,
+        total_payments=balance.total_payments,
+        balance=balance.balance,
+    )
 
 
 @router.get(
@@ -114,6 +129,7 @@ async def get_balances_by_cooperative(
     current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_get_balances_by_cooperative_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ"),
+    as_of_date: date | None = Query(None, description="Балансы на дату (по умолчанию — текущая)"),
 ) -> list[BalanceInfo]:
     """
     Получить балансы всех финансовых субъектов СТ.
@@ -131,7 +147,7 @@ async def get_balances_by_cooperative(
             detail="Необходимо указать cooperative_id",
         )
 
-    balances = await use_case.execute(cooperative_id=cooperative_id)
+    balances = await use_case.execute(cooperative_id=cooperative_id, as_of_date=as_of_date)
 
     return [
         BalanceInfo(

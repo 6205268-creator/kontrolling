@@ -1,8 +1,8 @@
 """Domain services for reporting."""
 
+from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from dataclasses import dataclass
 
 
 @dataclass

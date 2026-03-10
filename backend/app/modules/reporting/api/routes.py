@@ -10,8 +10,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app.api.deps import get_current_user
 from app.modules.administration.domain.entities import AppUser
 from app.modules.deps import (
-    get_generate_debtor_report_use_case,
     get_generate_cash_flow_use_case,
+    get_generate_debtor_report_use_case,
 )
 
 from .schemas import CashFlowReport, DebtorInfo

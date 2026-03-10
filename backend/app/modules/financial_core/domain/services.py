@@ -5,8 +5,6 @@ Pure Python - no framework dependencies.
 
 from decimal import Decimal
 
-from .entities import Balance
-
 
 class BalanceCalculator:
     """Domain service for balance calculation.

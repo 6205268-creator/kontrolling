@@ -1,17 +1,17 @@
 """FastAPI routes for administration module (auth)."""
 
-from typing import Annotated
 from datetime import timedelta
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, get_db
-from app.modules.administration.domain.entities import AppUser
-from app.modules.administration.api.user_loader import get_user_by_identifier
 from app.config import settings
 from app.core.security import create_access_token, verify_password
+from app.modules.administration.api.user_loader import get_user_by_identifier
+from app.modules.administration.domain.entities import AppUser
 
 from .schemas import Token, UserInDB
 

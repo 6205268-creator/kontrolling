@@ -46,4 +46,5 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/conftest.py" = ["E402"]  # Intentional import order: DATABASE_URL → Base → models → app
-"app/models/*.py" = ["F821"]  # Forward references for SQLAlchemy relationships
+"app/db/base.py" = ["E402"]  # MetaData import after Base definition (single metadata)
+"**/infrastructure/models.py" = ["F821"]  # Forward references in to_domain/from_domain

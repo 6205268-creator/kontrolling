@@ -10,11 +10,15 @@ from app.core.security import create_access_token, get_password_hash
 # Import models from Clean Architecture modules
 from app.modules.administration.infrastructure.models import AppUserModel as AppUser
 from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
+from app.modules.financial_core.infrastructure.models import (
+    FinancialSubjectModel as FinancialSubject,
+)
 from app.modules.land_management.infrastructure.models import (
     LandPlotModel as LandPlot,
+)
+from app.modules.land_management.infrastructure.models import (
     OwnerModel as Owner,
 )
-from app.modules.financial_core.infrastructure.models import FinancialSubjectModel as FinancialSubject
 from app.modules.payments.infrastructure.models import PaymentModel as Payment
 
 
@@ -139,11 +143,11 @@ async def test_cancel_payment(
         amount=Decimal("1000.00"),
         payment_date=date.today(),
         status="confirmed",
+        operation_number="PAY-API-CANCEL",
     )
     test_db.add(payment)
     await test_db.commit()
 
-    # Отменяем
     response = await async_client.post(
         f"/api/payments/{payment.id}/cancel?cooperative_id={str(subject.cooperative_id)}",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -173,11 +177,11 @@ async def test_cancel_already_cancelled_payment(
         amount=Decimal("1000.00"),
         payment_date=date.today(),
         status="cancelled",
+        operation_number="PAY-API-ALREADY-CANCELLED",
     )
     test_db.add(payment)
     await test_db.commit()
 
-    # Пытаемся отменить
     response = await async_client.post(
         f"/api/payments/{payment.id}/cancel?cooperative_id={str(subject.cooperative_id)}",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -199,13 +203,14 @@ async def test_get_payments_by_financial_subject(
     owner = owner_fixture
 
     # Создаём несколько платежей
-    for amount in [Decimal("100.00"), Decimal("200.00"), Decimal("300.00")]:
+    for i, amount in enumerate([Decimal("100.00"), Decimal("200.00"), Decimal("300.00")]):
         payment = Payment(
             financial_subject_id=subject.id,
             payer_owner_id=owner.id,
             amount=amount,
             payment_date=date.today(),
             status="confirmed",
+            operation_number=f"PAY-API-FS-{i}",
         )
         test_db.add(payment)
 
@@ -245,6 +250,7 @@ async def test_get_payments_by_owner(
             amount=Decimal(f"{(i + 1) * 100}.00"),
             payment_date=date.today(),
             status="confirmed",
+            operation_number=f"PAY-API-OWNER-{i}",
         )
         test_db.add(payment)
 
@@ -294,6 +300,7 @@ async def test_get_payments_by_cooperative(
         amount=Decimal("1000.00"),
         payment_date=date.today(),
         status="confirmed",
+        operation_number="PAY-API-PAGINATION",
     )
     test_db.add(payment)
     await test_db.commit()
@@ -421,6 +428,7 @@ async def test_get_payments_treasurer_own_cooperative(
         amount=Decimal("500.00"),
         payment_date=date.today(),
         status="confirmed",
+        operation_number="PAY-API-FILTER",
     )
     test_db.add(payment)
     await test_db.commit()

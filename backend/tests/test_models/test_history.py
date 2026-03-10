@@ -3,18 +3,23 @@
 SKIPPED: History functionality is legacy and not implemented in Clean Architecture modules.
 """
 
+from datetime import date
+
 import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.accruals.infrastructure.models import AccrualHistoryModel as AccrualHistory
+from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
 from app.modules.expenses.infrastructure.models import ExpenseHistoryModel as ExpenseHistory
+from app.modules.land_management.infrastructure.models import LandPlotModel as LandPlot
+from app.modules.land_management.infrastructure.models import OwnerModel as Owner
 from app.modules.land_management.infrastructure.models import (
-    PlotOwnershipModel as PlotOwnership,
     PlotOwnershipHistoryModel as PlotOwnershipHistory,
 )
-from app.modules.cooperative_core.infrastructure.models import CooperativeModel as Cooperative
-from app.modules.land_management.infrastructure.models import LandPlotModel as LandPlot, OwnerModel as Owner
+from app.modules.land_management.infrastructure.models import (
+    PlotOwnershipModel as PlotOwnership,
+)
 
 # Skip all tests in this module - history functionality is legacy
 pytestmark = pytest.mark.skip(reason="History functionality is legacy and not implemented in Clean Architecture modules")

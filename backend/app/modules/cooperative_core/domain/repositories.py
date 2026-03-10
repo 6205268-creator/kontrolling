@@ -6,7 +6,6 @@ Pure Python - no framework dependencies (FastAPI, SQLAlchemy, Pydantic).
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from app.modules.shared.kernel.entities import BaseEntity
 from app.modules.shared.kernel.repositories import IRepository
 
 from .entities import Cooperative

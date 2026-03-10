@@ -188,6 +188,17 @@ class PlotOwnershipRepository(IPlotOwnershipRepository):
         model = result.scalar_one_or_none()
         return model.to_domain() if model else None
 
+    async def get_all(self, cooperative_id: UUID) -> list[PlotOwnership]:
+        """Get all plot ownerships for a cooperative (IRepository contract)."""
+        query = (
+            select(PlotOwnershipModel)
+            .join(LandPlotModel, PlotOwnershipModel.land_plot_id == LandPlotModel.id)
+            .where(LandPlotModel.cooperative_id == cooperative_id)
+        )
+        result = await self.session.execute(query)
+        models = result.scalars().all()
+        return [model.to_domain() for model in models]
+
     async def get_by_land_plot(self, land_plot_id: UUID, cooperative_id: UUID) -> list[PlotOwnership]:
         """Get all ownerships for a land plot."""
         query = select(PlotOwnershipModel).where(

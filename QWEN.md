@@ -1,100 +1,100 @@
-# КОНТРОЛЛИНГ — Project Context
+# КОНТРОЛЛИНГ — Контекст проекта
 
-**Accounting system for garden cooperatives (Садоводческие Товарищества, СТ) in Belarus.**
+**Система учёта хозяйственной деятельности садоводческих товариществ (СТ) Республики Беларусь.**
 
-Handles contributions, payments, debt tracking, land plots, meters, and reporting. All monetary amounts are in **BYN** (Belarusian rubles).
+Предназначена для управления взносами, платежами, задолженностями, учёта земельных участков, приборов учёта и формирования отчётности. Все денежные суммы указаны в **белорусских рублях (BYN)**.
 
 ---
 
-## Tech Stack
+## Технологический стек
 
-| Layer | Technology |
-|-------|------------|
+| Уровень | Технология |
+|---------|------------|
 | **Backend** | Python 3.11+ • FastAPI • SQLAlchemy 2.0 (async) • Alembic • PostgreSQL 15+ (asyncpg) |
 | **Frontend** | Vue 3 + TypeScript • Vite • Pinia • Vue Router |
 | **Auth** | JWT + bcrypt (python-jose, passlib) |
-| **Tests** | pytest + pytest-asyncio (backend) • Vitest (frontend) • Playwright (e2e) |
-| **Linting** | ruff (line-length 100, target py311) |
+| **Тесты** | pytest + pytest-asyncio (backend) • Vitest (frontend) • Playwright (e2e) |
+| **Linting** | ruff (длина строки 100, target py311) |
 
 ---
 
-## Project Structure
+## Структура проекта
 
 ```
 kontrolling/
-├── backend/                    # FastAPI application
+├── backend/                    # FastAPI приложение
 │   ├── app/
-│   │   ├── main.py             # FastAPI app factory
-│   │   ├── config.py           # pydantic-settings config
-│   │   ├── db/                 # DB session, base model
-│   │   ├── api/deps.py         # Shared dependencies
-│   │   └── modules/            # Clean Architecture modules (9 domains)
-│   ├── tests/                  # Backend tests (197 tests)
-│   ├── alembic/                # DB migrations
+│   │   ├── main.py             # Фабрика FastAPI приложения
+│   │   ├── config.py           # Конфигурация на pydantic-settings
+│   │   ├── db/                 # DB сессии, базовая модель
+│   │   ├── api/deps.py         # Общие зависимости
+│   │   └── modules/            # Модули Clean Architecture (9 доменов)
+│   ├── tests/                  # Тесты backend (197 тестов)
+│   ├── alembic/                # Миграции БД
 │   ├── requirements.txt
 │   └── pyproject.toml
-├── frontend/                   # Vue 3 SPA (15 views, 6 Pinia stores)
+├── frontend/                   # Vue 3 SPA (15 представлений, 6 Pinia stores)
 │   ├── src/
-│   ├── e2e/                    # Playwright e2e tests
+│   ├── e2e/                    # Playwright e2e тесты
 │   └── package.json
-├── docs/                       # Comprehensive documentation
-│   ├── development-index.md    # Single entry point (START HERE)
-│   ├── project-design.md       # System architecture
-│   ├── project-implementation.md # Feature roadmap (35/35 complete)
-│   ├── data-model/             # ER diagrams, schema viewer
-│   ├── architecture/           # ADRs, glossaries, environment policy
-│   ├── plan/                   # Current focus, workflow docs
-│   ├── tasks/                  # Task files, specs, checklists
+├── docs/                       # Подробная документация
+│   ├── development-index.md    # Единая точка входа (НАЧАТЬ ОТСЮДА)
+│   ├── project-design.md       # Архитектура системы
+│   ├── project-implementation.md # Дорожная карта (35/35 завершено)
+│   ├── data-model/             # ER-диаграммы, просмотрщик схемы
+│   ├── architecture/           # ADR, глоссарии, политика окружений
+│   ├── plan/                   # Текущий фокус, workflow-документы
+│   ├── tasks/                  # Файлы задач, спецификации, чек-листы
 │   └── history/                # PENDING_GAPS, RESOLVED_GAPS
-├── .cursor/rules/              # Cursor agent rules
-│   ├── agents/                 # Role-specific rules
-│   ├── git-branch-policy.mdc   # Branch workflow rule
-│   └── architecture-guardian.mdc # Architecture review rule
-├── docker-compose.yml          # Full stack deployment
-├── package.json                # Root dev scripts (npm run dev)
-└── QWEN.md                     # This file
+├── .cursor/rules/              # Правила для агентов Cursor
+│   ├── agents/                 # Правила для ролей
+│   ├── git-branch-policy.mdc   # Правило работы с ветками
+│   └── architecture-guardian.mdc # Правило ревью архитектуры
+├── docker-compose.yml          # Развёртывание полного стека
+├── package.json                # Скрипты разработки (npm run dev)
+└── QWEN.md                     # Этот файл
 ```
 
 ---
 
-## Building & Running
+## Сборка и запуск
 
-### Unified Dev Launch (Recommended)
+### Единый запуск (рекомендуется)
 
-From **project root**, starts both backend (port 8000) and frontend (port 5173):
+Из **корня проекта** одновременно запускаются backend (порт 8000) и frontend (порт 5173):
 
 ```powershell
-# One-time setup
+# Однократная настройка
 npm install
 
-# Run both services (Windows)
+# Запуск обоих сервисов (Windows)
 npm run dev
 ```
 
-Access: **http://localhost:5173** (frontend proxies `/api` to backend).
+Доступ: **http://localhost:5173** (frontend проксирует `/api` на backend).
 
-### Backend Only
+### Только Backend
 
-**Always run backend from `backend/` directory** — config reads `.env` relative to CWD.
+**Всегда запускайте backend из каталога `backend/`** — конфиг читает `.env` относительно текущей рабочей директории.
 
 ```powershell
-# Create/activate venv (one-time)
+# Создать/активировать venv (однократно)
 cd backend
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 
-# Install dependencies
+# Установить зависимости
 pip install -e ".[dev]"
 
-# Run dev server
+# Запуск dev-сервера
 uvicorn app.main:app --reload
 
-# Run tests (uses in-memory SQLite — no PostgreSQL needed)
+# Запуск тестов (используется in-memory SQLite — PostgreSQL не требуется)
 pytest
 pytest tests/test_health.py::test_health_returns_ok
 
-# Alembic migrations
-alembic revision --autogenerate -m "description"
+# Миграции Alembic
+alembic revision --autogenerate -m "описание"
 alembic upgrade head
 
 # Lint
@@ -102,7 +102,7 @@ ruff check .
 ruff format --check .
 ```
 
-### Frontend Only
+### Только Frontend
 
 ```powershell
 cd frontend
@@ -110,25 +110,25 @@ npm install
 npm run dev
 ```
 
-### Docker Deployment
+### Развёртывание в Docker
 
 ```bash
 docker compose up --build -d
 ```
 
-Runs **db** and **backend** only. Start frontend separately: from project root `npm run dev`, then open http://localhost:5173.
+Запускаются только **db** и **backend**. Frontend запускается отдельно: из корня `npm run dev`, затем открыть http://localhost:5173.
 
-Access:
-- **Frontend:** http://localhost:5173 (after `npm run dev`)
+Доступ:
+- **Frontend:** http://localhost:5173 (после `npm run dev`)
 - **Backend API:** http://localhost:8000
-- **Swagger docs:** http://localhost:8000/docs
+- **Swagger документация:** http://localhost:8000/docs
 - **Health check:** http://localhost:8000/api/health
 
 ---
 
-## Seed Database (Test Data)
+## Наполнение БД тестовыми данными
 
-**Canonical entry point** — `seed_db.py` creates full test dataset (2 cooperatives, owners, plots, users, accruals, payments, expenses, meters). Idempotent.
+**Каноническая точка входа** — скрипт `seed_db.py` создаёт полный тестовый набор данных (2 товарищества, владельцы, участки, пользователи, начисления, платежи, расходы, счётчики). Идемпотентен.
 
 ```powershell
 cd backend
@@ -137,232 +137,231 @@ python -m app.scripts.seed_db
 
 ---
 
-## Architecture
+## Архитектура
 
-### Clean Architecture Module Pattern
+### Шаблон модуля Clean Architecture
 
-Each module in `backend/app/modules/` follows:
+Каждый модуль в `backend/app/modules/` следует структуре:
 
 ```
 {module_name}/
-├── domain/           # Pure Python (entities, repositories, events)
+├── domain/           # Чистый Python (сущности, репозитории, события)
 │   ├── entities.py
 │   ├── repositories.py
 │   └── events.py
-├── application/      # Use cases and DTOs
+├── application/      # Use cases и DTOs
 │   ├── use_cases.py
 │   └── dtos.py
-├── infrastructure/   # Framework-specific implementations
-│   ├── models.py     # SQLAlchemy ORM models
-│   └── repositories.py
-└── api/              # FastAPI layer
+├── infrastructure/   # Реализации, зависящие от фреймворков
+│   ├── models.py     # SQLAlchemy ORM модели
+│   └── repositories.py # Реализации репозиториев
+└── api/              # FastAPI слой
     ├── routes.py
     └── schemas.py
 ```
 
-### Modules
+### Модули
 
-| Module | Purpose |
-|--------|---------|
-| `cooperative_core` | Cooperative management |
-| `land_management` | Land plots, owners, ownerships |
-| `financial_core` | Financial subjects, balances |
-| `accruals` | Contributions and accruals |
-| `payments` | Payment processing |
-| `expenses` | Expense tracking |
-| `meters` | Meters and readings |
-| `reporting` | Reports and analytics |
-| `administration` | Authentication and user management |
+| Модуль | Назначение |
+|--------|------------|
+| `cooperative_core` | Управление товариществами |
+| `land_management` | Земельные участки, владельцы, владения |
+| `financial_core` | Финансовые субъекты, балансы |
+| `accruals` | Взносы и начисления |
+| `payments` | Обработка платежей |
+| `expenses` | Учёт расходов |
+| `meters` | Приборы учёта и показания |
+| `reporting` | Отчёты и аналитика |
+| `administration` | Аутентификация и пользователи |
 
-### Key Domain Concepts
+### Ключевые доменные концепции
 
-- **Cooperative** — garden cooperative (СТ); tenant boundary
-- **LandPlot** — plot of land within a cooperative
-- **Owner** — person/legal entity; linked to plots via **PlotOwnership** (no direct FK)
-- **PlotOwnership** — temporal ownership with fractional shares (`share_numerator/share_denominator`), `is_primary` = СТ member
-- **FinancialSubject** — central financial abstraction; all `Accrual` and `Payment` go through it (never directly to plot/meter)
-- **Multi-tenancy** — data-level via `cooperative_id` on LandPlot, FinancialSubject, Expense
+- **Cooperative** — садоводческое товарищество (СТ); граница арендатора
+- **LandPlot** — земельный участок в пределах товарищества
+- **Owner** — физическое или юридическое лицо; связано с участками через **PlotOwnership** (нет прямого FK)
+- **PlotOwnership** — запись о владении с долями (`share_numerator/share_denominator`), `is_primary` = член СТ
+- **FinancialSubject** — центральная финансовая абстракция; все `Accrual` и `Payment` проходят через него (никогда напрямую к участку/счётчику)
+- **Multi-tenancy** — на уровне данных через `cooperative_id` на LandPlot, FinancialSubject, Expense
 
 ---
 
-## Development Conventions
+## Соглашения разработки
 
-### Code Style
+### Стиль кода
 
-- **Line length:** 100 characters
+- **Длина строки:** 100 символов
 - **Python target:** 3.11
-- **Diagrams:** Mermaid only (no PlantUML)
-- **C4 naming:** `Person_`, `Service_`, `System_`, `Database_` prefixes
+- **Диаграммы:** Только Mermaid (без PlantUML)
+- **Именование C4:** Префиксы `Person_`, `Service_`, `System_`, `Database_`
 
-### Testing
+### Тестирование
 
-- **Backend:** `pytest` from `backend/` (uses in-memory SQLite)
-- **Fixtures:** `test_db`, `async_client`, role tokens in `tests/conftest.py`
-- **Critical:** Set `DATABASE_URL` and import models **before** importing `app.main` in tests
+- **Backend:** `pytest` из `backend/` (использует in-memory SQLite)
+- **Fixtures:** `test_db`, `async_client`, токены ролей в `tests/conftest.py`
+- **Критично:** Установить `DATABASE_URL` и импортировать модели **до** импорта `app.main` в тестах
 
-### Architecture Rules
+### Архитектурные правила
 
-- **Schema First:** Update diagrams **before** code changes
-- **Soft deletion:** Financial entities use `status = archived|cancelled`; hard delete forbidden
-- **ADR required:** Every significant architectural decision needs an ADR
-- **Glossary ownership:** Only Lead Architect may edit glossary files
-- **Don't invent business requirements:** Ask when unclear
+- **Schema First:** Обновлять диаграммы **до** изменений кода
+- **Мягкое удаление:** Финансовые сущности используют `status = archived|cancelled`; жёсткое удаление запрещено
+- **ADR обязательно:** Каждое значимое архитектурное решение требует ADR
+- **Владение глоссариями:** Только Lead Architect может редактировать файлы глоссариев
+- **Не выдумывать бизнес-требования:** Спрашивать при неясности
 
-### Pre-Commit Checklist
+### Pre-Commit чек-лист
 
-Before committing, verify:
+Перед коммитом проверить:
 
-- [ ] `pytest` — all tests green
-- [ ] `ruff check .` — no errors
-- [ ] `ruff format --check .` — formatting OK
-- [ ] `python -m app.scripts.architecture_linter` — all checks passed (exit code 0)
-- [ ] `python -m app.scripts.seed_db` — seed data created without errors
-- [ ] Diagrams updated (if data model changed)
-- [ ] Restricted paths not touched (or approved by Lead Architect)
+- [ ] `pytest` — все тесты зелёные
+- [ ] `ruff check .` — без ошибок
+- [ ] `ruff format --check .` — форматирование OK
+- [ ] `python -m app.scripts.architecture_linter` — все проверки пройдены (exit code 0)
+- [ ] `python -m app.scripts.seed_db` — тестовые данные созданы без ошибок
+- [ ] Диаграммы обновлены (если менялась модель данных)
+- [ ] Ограниченные пути не затронуты (или одобрено Lead Architect)
 
 ---
 
-## Agent Workflow (Isolated Tasks)
+## Workflow агентов (изолированные задачи)
 
-For any isolated task (features, refactoring, bug fixes):
+Для любой изолированной задачи (фичи, рефакторинг, исправления ошибок):
 
-### 1. Branch Policy
+### 1. Политика веток
 
-- **Never commit to `main` or `master`**
-- Work only in the specified feature branch
-- Merge to main only after explicit user approval
-- If branch doesn't exist → ask user before creating
-- If branch exists → check status, show last 5 commits, ask for confirmation
+- **Никогда не коммитить в `main` или `master`**
+- Работать только в указанной feature-ветке
+- Merge в main только после явного одобрения пользователя
+- Если ветка не существует → спросить пользователя перед созданием
+- Если ветка существует → проверить статус, показать последние 5 коммитов, спросить подтверждение
 
-**Rule file:** `.cursor/rules/git-branch-policy.mdc`
+**Файл правила:** `.cursor/rules/git-branch-policy.mdc`
 
-### 2. Stage Execution
+### 2. Выполнение этапов
 
-For each stage of a multi-stage task:
+Для каждого этапа многоэтапной задачи:
 
-1. Agent outputs stage plan, waits for "yes"/"start"
-2. Makes changes in working branch
-3. Runs checks in order:
-   - `pytest` (all tests green)
-   - `ruff check .` + `ruff format --check .` (no errors)
+1. Агент выводит план этапа, ждёт «yes»/«start»
+2. Вносит изменения в рабочую ветку
+3. Запускает проверки по порядку:
+   - `pytest` (все тесты зелёные)
+   - `ruff check .` + `ruff format --check .` (без ошибок)
    - `python -m app.scripts.architecture_linter` (exit code 0)
-   - `python -m app.scripts.seed_db` (no errors)
-4. Calls `@architecture-guardian` for review
-5. Fixes issues (minor → immediately, major → after user confirmation)
-6. Proceeds to next stage only after all checks pass
+   - `python -m app.scripts.seed_db` (без ошибок)
+4. Вызывает `@architecture-guardian` для ревью
+5. Исправляет ошибки (минорные → сразу, серьёзные → после подтверждения пользователя)
+6. Переходит к следующему этапу только после прохождения всех проверок
 
-**Workflow doc:** `docs/plan/agent-isolated-task-workflow.md`
+**Документ workflow:** `docs/plan/agent-isolated-task-workflow.md`
 
-### 3. Architecture Guardian Review
+### 3. Рвью Architecture Guardian
 
-After each stage, call `@architecture-guardian` to check:
+После каждого этапа вызвать `@architecture-guardian` для проверки:
 
-1. **Layer boundaries** — API doesn't import from infrastructure
-2. **Financial core** — Accrual/Payment use FinancialSubject
-3. **Data model** — models registered in `register_models.py`
-4. **Tests** — all tests pass, new logic covered
-5. **Diagrams** — updated if model changed
+1. **Границы слоёв** — API не импортирует из infrastructure
+2. **Финансовое ядро** — Accrual/Payment используют FinancialSubject
+3. **Модель данных** — модели зарегистрированы в `register_models.py`
+4. **Тесты** — все тесты проходят, новая логика покрыта
+5. **Диаграммы** — обновлены при изменении модели
 
-**Rule file:** `.cursor/rules/agents/architecture-guardian.mdc`
-
----
-
-## Documentation Index
-
-| Document | Description |
-|----------|-------------|
-| [`docs/development-index.md`](docs/development-index.md) | **START HERE** — Single entry point, Top-5 tasks, roadmap |
-| [`docs/project-design.md`](docs/project-design.md) | Full system design |
-| [`docs/project-implementation.md`](docs/project-implementation.md) | Feature roadmap (35/35 complete) |
-| [`docs/data-model/schema-viewer.html`](docs/data-model/schema-viewer.html) | Interactive schema viewer |
-| [`docs/architecture/environment-policy.md`](docs/architecture/environment-policy.md) | Environment variables policy |
-| [`docs/architecture/adr/README.md`](docs/architecture/adr/README.md) | ADR process |
-| [`docs/plan/current-focus.md`](docs/plan/current-focus.md) | Current task focus, what to do next |
-| [`docs/plan/agent-isolated-task-workflow.md`](docs/plan/agent-isolated-task-workflow.md) | Universal workflow for isolated tasks |
-| [`docs/tasks/workflow-orchestration.md`](docs/tasks/workflow-orchestration.md) | Workflow orchestration, pre-commit checklist |
+**Файл правила:** `.cursor/rules/agents/architecture-guardian.mdc`
 
 ---
 
-## For AI Assistants
+## Индекс документации
 
-### Context7 MCP (Use Always)
-
-For **any library/API documentation** (FastAPI, SQLAlchemy, Vue, Pydantic, pytest, Alembic, httpx, etc.) **always** use Context7 MCP — don't rely on model knowledge.
-
-Config: `.cursor/mcp.json` | Rule: `.cursor/rules/context7-docs.mdc`
-
-### Code Citations
-
-Use format: `startLine:endLine:path/to/file` (e.g., `12:15:backend/app/main.py`)
-
-### Language
-
-Respond in **Russian** unless user requests otherwise.
-
-### Rules
-
-Project-specific rules in `.cursor/rules/` — follow when applicable:
-
-| Rule | Purpose |
-|------|---------|
-| `.cursor/rules/git-branch-policy.mdc` | Branch workflow for isolated tasks |
-| `.cursor/rules/architecture-guardian.mdc` | Architecture review checklist |
-| `.cursor/rules/development-index-rule.mdc` | Always read development index first |
-| `.cursor/rules/project-conventions.mdc` | SOLID, KISS, no invented requirements |
-| `.cursor/rules/agents/` | 10 role-specific prompts (backend, frontend, QA, DevOps, etc.) |
+| Документ | Описание |
+|----------|----------|
+| [`docs/development-index.md`](docs/development-index.md) | **НАЧАТЬ ОТСЮДА** — Единая точка входа, Топ-5 задач, дорожная карта |
+| [`docs/project-design.md`](docs/project-design.md) | Полный дизайн системы |
+| [`docs/project-implementation.md`](docs/project-implementation.md) | Дорожная карта фич (35/35 завершено) |
+| [`docs/data-model/schema-viewer.html`](docs/data-model/schema-viewer.html) | Интерактивный просмотрщик схемы |
+| [`docs/architecture/environment-policy.md`](docs/architecture/environment-policy.md) | Политика окружений |
+| [`docs/architecture/adr/README.md`](docs/architecture/adr/README.md) | Процесс ADR |
+| [`docs/plan/current-focus.md`](docs/plan/current-focus.md) | Текущий фокус задач, workflow-документы |
+| [`docs/tasks/workflow-orchestration.md`](docs/tasks/workflow-orchestration.md) | Оркестрация workflow, pre-commit чек-лист |
 
 ---
 
-## Quick Reference
+## Для AI-ассистентов
+
+### Context7 MCP (использовать всегда)
+
+Для **любой документации библиотек/API** (FastAPI, SQLAlchemy, Vue, Pydantic, pytest, Alembic, httpx и т.д.) **всегда** использовать Context7 MCP — не полагаться на знания модели.
+
+Конфиг: `.cursor/mcp.json` | Правило: `.cursor/rules/context7-docs.mdc`
+
+### Цитирование кода
+
+Использовать формат: `startLine:endLine:путь/к/файлу` (например, `12:15:backend/app/main.py`)
+
+### Язык
+
+Отвечать на **русском языке**, если пользователь не запросил иное.
+
+### Правила
+
+Проектные правила в `.cursor/rules/` — следовать при применимости:
+
+| Правило | Назначение |
+|---------|------------|
+| `.cursor/rules/git-branch-policy.mdc` | Workflow веток для изолированных задач |
+| `.cursor/rules/architecture-guardian.mdc` | Чек-лист ревью архитектуры |
+| `.cursor/rules/development-index-rule.mdc` | Всегда читать development index первым |
+| `.cursor/rules/project-conventions.mdc` | SOLID, KISS, никаких выдуманных требований |
+| `.cursor/rules/agents/` | 10 промптов для ролей (backend, frontend, QA, DevOps и др.) |
+
+---
+
+## Быстрый справочник
 
 ```powershell
-# Full dev environment (Windows)
-npm install                          # Root dependencies
+# Полная dev-среда (Windows)
+npm install                          # Корневые зависимости
 cd backend && python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
 cd ..
-npm run dev                          # Start both services
+npm run dev                          # Запуск обоих сервисов
 
-# Database seed
+# Наполнение БД
 cd backend && python -m app.scripts.seed_db
 
-# Run tests
+# Запуск тестов
 cd backend && pytest
 
-# Architecture linter
+# Архитектурный линтер
 cd backend && python -m app.scripts.architecture_linter
 
-# Docker deploy
+# Развёртывание в Docker
 docker compose up --build -d
 ```
 
 ---
 
-## Project Status
+## Статус проекта
 
-- **Backend:** ✅ 35/35 features complete (100%)
-- **Tests:** ✅ 197 tests passing
-- **Frontend:** ✅ 15 views, 6 Pinia stores, Playwright e2e
-- **Docker:** ✅ Full stack deployment ready
-- **Documentation:** ✅ Comprehensive (development index, ADRs, glossaries)
-- **Agent Workflow:** ✅ Branch policy + architecture guardian implemented
+- **Backend:** ✅ 35/35 фич завершено (100%)
+- **Тесты:** ✅ 197 тестов проходят
+- **Frontend:** ✅ 15 представлений, 6 Pinia stores, Playwright e2e
+- **Docker:** ✅ Готово к развёртыванию полного стека
+- **Документация:** ✅ Подробная (development index, ADR, глоссарии)
+- **Workflow агентов:** ✅ Политика веток + architecture guardian реализованы
 
-**Next priorities:**
-1. Glossary completion (7/10 domains pending — Low priority)
-2. Frontend Clean Architecture migration (post-MVP)
-3. E2E test coverage expansion
-4. OpenAPI documentation (post-MVP)
-5. Docker e2e verification
+**Следующие приоритеты:**
+1. Заполнение глоссариев (7 из 10 доменов ожидают — низкий приоритет)
+2. Миграция frontend на Clean Architecture (пост-MVP)
+3. Расширение покрытия e2e тестами
+4. Документация OpenAPI (пост-MVP)
+5. Верификация e2e прохождения в Docker
 
 ---
 
-## Current Task Focus
+## Текущий фокус задачи
 
-**Ledger-ready MVP** — Temporary financial model, operation irreversibility, balance on date, preparation for ledger transition.
+**Ledger-ready MVP** — временная финансовая модель, необратимость операций, баланс на дату, подготовка к переходу на ledger.
 
-- **Branch:** `feature/ledger-ready-mvp`
-- **Status:** Specification ready, implementation not started
-- **Stages:** 5 (model → balance rule → cancellation → amount protection → domain events)
-- **Spec:** `docs/tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md`
-- **Focus:** `docs/plan/current-focus.md`
+- **Ветка:** `feature/ledger-ready-mvp`
+- **Статус:** Спецификация готова, реализация не начата
+- **Этапы:** 5 (модель → правило баланса → отмена → защита amount → domain events)
+- **Спецификация:** `docs/tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md`
+- **Фокус:** `docs/plan/current-focus.md`

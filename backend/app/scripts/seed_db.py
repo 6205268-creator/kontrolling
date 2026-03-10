@@ -20,18 +20,18 @@ from sqlalchemy import select
 
 from app.core.security import get_password_hash
 from app.db.session import async_session_maker
+from app.modules.accruals.infrastructure.models import AccrualModel, ContributionTypeModel
+from app.modules.administration.infrastructure.models import AppUserModel
 from app.modules.cooperative_core.infrastructure.models import CooperativeModel
+from app.modules.expenses.infrastructure.models import ExpenseCategoryModel, ExpenseModel
+from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
 from app.modules.land_management.infrastructure.models import (
     LandPlotModel,
     OwnerModel,
     PlotOwnershipModel,
 )
-from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-from app.modules.accruals.infrastructure.models import AccrualModel, ContributionTypeModel
-from app.modules.expenses.infrastructure.models import ExpenseCategoryModel, ExpenseModel
-from app.modules.payments.infrastructure.models import PaymentModel
 from app.modules.meters.infrastructure.models import MeterModel, MeterReadingModel
-from app.modules.administration.infrastructure.models import AppUserModel
+from app.modules.payments.infrastructure.models import PaymentModel
 
 
 async def seed(session) -> None:
@@ -42,7 +42,7 @@ async def seed(session) -> None:
     )
     existing_coops = result.scalars().all()
     if len(existing_coops) == 2:
-        print("ℹ️ СТ уже существуют, пропускаем создание")
+        print("[INFO] СТ уже существуют, пропускаем создание")
         coop_romashka = existing_coops[0]
         coop_vasilek = existing_coops[1]
     else:
@@ -54,7 +54,7 @@ async def seed(session) -> None:
         )
         session.add_all([coop_romashka, coop_vasilek])
         await session.flush()
-        print("✅ Создано 2 СТ")
+        print("[OK] Создано 2 СТ")
 
     # 5 владельцев: 3 физ., 2 юр.
     owners = [
@@ -165,6 +165,7 @@ async def seed(session) -> None:
                 period_start=period_start,
                 period_end=today,
                 status="applied",
+                operation_number=f"ACC-SEED-{i + 1}",
             )
         )
     await session.flush()
@@ -182,12 +183,13 @@ async def seed(session) -> None:
                 payment_date=today,
                 document_number=f"П-{i + 1}",
                 status="confirmed",
+                operation_number=f"PAY-SEED-{i + 1}",
             )
         )
     await session.flush()
 
     # Несколько расходов
-    for coop in [coop_romashka, coop_vasilek]:
+    for idx, coop in enumerate([coop_romashka, coop_vasilek]):
         session.add(
             ExpenseModel(
                 cooperative_id=coop.id,
@@ -197,6 +199,7 @@ async def seed(session) -> None:
                 document_number="Р-1",
                 description="Ремонт дороги",
                 status="confirmed",
+                operation_number=f"EXP-SEED-{idx * 2 + 1}",
             )
         )
         session.add(
@@ -207,6 +210,7 @@ async def seed(session) -> None:
                 expense_date=today,
                 description="Зарплата председателя",
                 status="confirmed",
+                operation_number=f"EXP-SEED-{idx * 2 + 2}",
             )
         )
     await session.flush()
@@ -260,15 +264,15 @@ async def main() -> int:
         try:
             await seed(session)
             await session.commit()
-            print("✅ Seed выполнен (или пропущен, если данные уже есть).")
-            print("👤 Пользователи: admin/admin, chairman/chairman, treasurer/treasurer")
+            print("[OK] Seed выполнен (или пропущен, если данные уже есть).")
+            print("Пользователи: admin/admin, chairman/chairman, treasurer/treasurer")
             return 0
         except Exception as e:
             await session.rollback()
             if "duplicate key" in str(e).lower() or "unique violation" in str(e).lower():
-                print("ℹ️ Seed пропущен: данные уже существуют в БД")
+                print("[INFO] Seed пропущен: данные уже существуют в БД")
                 return 0
-            print(f"❌ Ошибка при seed: {e}", file=sys.stderr)
+            print(f"[ERROR] Ошибка при seed: {e}", file=sys.stderr)
             raise
 
 

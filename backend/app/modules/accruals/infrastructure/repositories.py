@@ -1,4 +1,4 @@
-﻿"""Accruals repository implementations.
+"""Accruals repository implementations.
 
 SQLAlchemy implementation of accruals repositories.
 """
@@ -84,24 +84,34 @@ class AccrualRepository(IAccrualRepository):
         return model.to_domain()
 
     async def update(self, entity: Accrual) -> Accrual:
-        """Update existing accrual."""
+        """Update existing accrual.
+
+        Note: amount is immutable - not updated to preserve financial integrity.
+        """
         query = select(AccrualModel).where(AccrualModel.id == entity.id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             raise ValueError(f"Accrual with id {entity.id} not found")
 
         model.financial_subject_id = entity.financial_subject_id
         model.contribution_type_id = entity.contribution_type_id
-        model.amount = entity.amount
+        # amount is immutable - not updated
         model.accrual_date = entity.accrual_date
         model.period_start = entity.period_start
         model.period_end = entity.period_end
         model.status = entity.status
-        
+        model.cancelled_at = entity.cancelled_at
+        model.cancelled_by_user_id = entity.cancelled_by_user_id
+        model.cancellation_reason = entity.cancellation_reason
+
         await self.session.commit()
-        await self.session.refresh(model)
+
+        # Re-fetch to get fresh data from DB (amount should be unchanged)
+        self.session.expunge(model)
+        result = await self.session.execute(query)
+        model = result.scalar_one_or_none()
         return model.to_domain()
 
     async def delete(self, id: UUID, cooperative_id: UUID) -> None:
