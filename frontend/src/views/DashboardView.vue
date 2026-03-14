@@ -1,15 +1,5 @@
 <template>
   <div class="dashboard">
-    <!-- Welcome Section -->
-    <div class="welcome-section">
-      <h1 class="dashboard-title">Добро пожаловать в Контроллинг-СТ</h1>
-      <p class="dashboard-subtitle">Система учёта хозяйственной деятельности садоводческих товариществ</p>
-      <p v-if="authStore.cooperativeName" class="current-cooperative">
-        <span class="label">Товарищество:</span>
-        <strong>{{ authStore.cooperativeName }}</strong>
-      </p>
-    </div>
-
     <!-- Metrics Cards -->
     <div class="metrics-grid">
       <div class="metric-card">
@@ -172,7 +162,6 @@ import {
   Legend,
   Filler,
 } from 'chart.js';
-import { useAuthStore } from '@/stores/auth';
 
 // Register Chart.js components
 ChartJS.register(
@@ -186,8 +175,6 @@ ChartJS.register(
   Legend,
   Filler
 );
-
-const authStore = useAuthStore();
 
 // Demo metrics data (will be replaced with real API calls later)
 const metrics = ref({
@@ -293,42 +280,6 @@ const chartOptions = {
 .dashboard {
   max-width: 1400px;
   margin: 0 auto;
-}
-
-/* Welcome Section */
-.welcome-section {
-  margin-bottom: 2rem;
-}
-
-.dashboard-title {
-  margin: 0 0 0.5rem 0;
-  font-size: var(--text-3xl);
-  font-weight: var(--font-extrabold);
-  color: var(--color-text);
-  letter-spacing: -0.025em;
-}
-
-.dashboard-subtitle {
-  margin: 0 0 1rem 0;
-  font-size: var(--text-base);
-  color: var(--color-text-muted);
-  line-height: var(--leading-relaxed);
-}
-
-.current-cooperative {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: var(--color-primary-subtle);
-  border-radius: var(--radius-md);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-}
-
-.current-cooperative strong {
-  color: var(--color-primary);
-  font-weight: var(--font-semibold);
 }
 
 /* Metrics Grid */

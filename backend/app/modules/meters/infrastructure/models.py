@@ -38,6 +38,9 @@ class MeterModel(Base):
         onupdate=lambda: datetime.now(UTC),
     )
 
+    # Relationship for Payment Distribution module
+    # (FinancialSubject будет связан с Meter для начислений по счётчикам)
+
     def to_domain(self) -> "Meter":
         """Convert to domain entity."""
         from app.modules.meters.domain.entities import Meter

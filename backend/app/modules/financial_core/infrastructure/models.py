@@ -58,6 +58,9 @@ class FinancialSubjectModel(Base):
     # accruals: Mapped[list["AccrualModel"]] = relationship("AccrualModel", back_populates="financial_subject")
     # payments: Mapped[list["PaymentModel"]] = relationship("PaymentModel", back_populates="financial_subject")
 
+    # NOTE: Relationship for Payment Distribution module disabled to avoid circular imports
+    # distributions: Mapped[list["PaymentDistributionModel"]] = relationship(...)
+
     def to_domain(self) -> "FinancialSubject":
         """Convert SQLAlchemy model to domain entity."""
         from app.modules.financial_core.domain.entities import FinancialSubject

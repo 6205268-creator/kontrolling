@@ -1,0 +1,56 @@
+repos:
+  # Backend - Ruff lint & format
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.0
+    hooks:
+      - id: ruff
+        name: Ruff Lint (backend)
+        args: [--fix, --exit-non-zero-on-fix]
+        files: ^backend/
+      - id: ruff-format
+        name: Ruff Format (backend)
+        files: ^backend/
+
+  # Backend - Pytest
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Pytest (backend tests)
+        entry: bash -c 'cd backend && python -m pytest'
+        language: system
+        pass_filenames: false
+        always_run: true
+        files: ^backend/
+
+  # Frontend - ESLint
+  - repo: local
+    hooks:
+      - id: eslint
+        name: ESLint (frontend)
+        entry: bash -c 'cd frontend && npm run lint'
+        language: system
+        pass_filenames: false
+        always_run: true
+        files: ^frontend/
+
+  # Frontend - TypeScript check
+  - repo: local
+    hooks:
+      - id: typescript
+        name: TypeScript Check (frontend)
+        entry: bash -c 'cd frontend && npx vue-tsc --noEmit'
+        language: system
+        pass_filenames: false
+        always_run: true
+        files: ^frontend/
+
+  # Architecture linter
+  - repo: local
+    hooks:
+      - id: architecture-linter
+        name: Architecture Linter
+        entry: bash -c 'cd backend && python -m app.scripts.architecture_linter'
+        language: system
+        pass_filenames: false
+        always_run: true
+        files: ^backend/app/

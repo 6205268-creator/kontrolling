@@ -1,0 +1,27 @@
+version: 2
+
+# Игнорировать файлы
+exclude:
+  - files:
+    - '**/*.md'
+    - '**/*.txt'
+    - 'docs/**/*'
+    - 'node_modules/**/*'
+    - 'venv/**/*'
+    - '.venv/**/*'
+
+# Политики обнаружения секретов
+secret:
+  # Игнорировать определенные типы секретов
+  ignored-paths:
+    - '**/test_*.py'
+    - '**/*.test.ts'
+    - '**/conftest.py'
+    - '**/fixtures.py'
+    - '**/.env.example'
+    - '**/seed_*.py'
+
+  # Минимальная строгость (чтобы не было ложных срабатываний на тестовых данных)
+  ignored-detectors:
+    - AWS Keys
+    - GitHub Tokens

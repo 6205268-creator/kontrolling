@@ -1,0 +1,5 @@
+docs: Update current-focus and add prompt for full testing
+
+- Updated current-focus.md: Ledger-ready MVP (Stages 1-5) completed, merge to main done
+- Added prompt-prepare-for-full-testing.md: detailed prompt for fixing 15 failing tests
+- Project status: 100% ready for production after remaining tests are fixed

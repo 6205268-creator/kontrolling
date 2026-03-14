@@ -158,6 +158,12 @@ class ContributionTypeModel(Base):
 
     # accruals: Mapped[list["AccrualModel"]] = relationship("AccrualModel", back_populates="contribution_type")
 
+    # Relationship for Payment Distribution module
+    # NOTE: Disabled to avoid circular import issues during SQLAlchemy initialization
+    # distribution_rules and settings relationships are defined in payment_distribution module
+    # distribution_rules: Mapped[list["PaymentDistributionRuleModel"]] = relationship(...)
+    # settings: Mapped[list["ContributionTypeSettingsModel"]] = relationship(...)
+
     def to_domain(self) -> "ContributionType":
         """Convert SQLAlchemy model to domain entity."""
         from app.modules.accruals.domain.entities import ContributionType

@@ -54,6 +54,10 @@ class PaymentModel(Base):
     cancellation_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     operation_number: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
 
+    # NOTE: Relationships for Payment Distribution module disabled to avoid circular imports
+    # distributions: Mapped[list["PaymentDistributionModel"]] = relationship(...)
+    # transactions: Mapped[list["PersonalAccountTransactionModel"]] = relationship(...)
+
     def to_domain(self) -> "Payment":
         """Convert to domain entity."""
         from app.modules.payments.domain.entities import Payment

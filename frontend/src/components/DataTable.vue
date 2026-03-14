@@ -140,8 +140,11 @@ interface Column {
   format?: 'number' | 'date' | 'currency' | 'percent';
 }
 
+/** Строка таблицы — объект с произвольными полями по ключам колонок */
+type TableRow = Record<string, unknown>;
+
 interface Props {
-  data: unknown[];
+  data: TableRow[];
   columns: Column[];
   searchable?: boolean;
   searchPlaceholder?: string;
@@ -158,12 +161,10 @@ const props = withDefaults(defineProps<Props>(), {
   emptyMessage: 'Нет данных',
 });
 
-const emit = defineEmits<{
-  rowClick: [item: unknown];
-}>();
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _emit = emit;
+const emit = defineEmits<{
+  rowClick: [item: TableRow];
+}>();
 
 // Search
 const searchQuery = ref('');
@@ -181,25 +182,25 @@ watch(searchQuery, () => {
 });
 
 // Filtered data
-const filteredData = computed(() => {
+const filteredData = computed((): TableRow[] => {
   if (!searchQuery.value) return props.data;
-  
   const query = searchQuery.value.toLowerCase();
-  return props.data.filter((item: Record<string, unknown>) => {
-    return Object.values(item).some((value) => {
-      return String(value).toLowerCase().includes(query);
-    });
-  });
+  return props.data.filter((item: TableRow) =>
+    Object.values(item).some((value) =>
+      String(value).toLowerCase().includes(query)
+    )
+  );
 });
 
 // Sorted data
-const sortedData = computed(() => {
+const sortedData = computed((): TableRow[] => {
   if (!sortKey.value) return filteredData.value;
-  
-  return [...filteredData.value].sort((a: Record<string, unknown>, b: Record<string, unknown>) => {
-    const aVal = a[sortKey.value as string];
-    const bVal = b[sortKey.value as string];
-    
+  const key = sortKey.value;
+  return [...filteredData.value].sort((a: TableRow, b: TableRow) => {
+    const aVal = a[key];
+    const bVal = b[key];
+    if (aVal === undefined || aVal === null) return sortAsc.value ? 1 : -1;
+    if (bVal === undefined || bVal === null) return sortAsc.value ? -1 : 1;
     if (aVal < bVal) return sortAsc.value ? -1 : 1;
     if (aVal > bVal) return sortAsc.value ? 1 : -1;
     return 0;

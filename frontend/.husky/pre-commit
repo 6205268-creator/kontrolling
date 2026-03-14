@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Запуск проверок перед коммитом
+npm run lint
+npm run type-coverage
+npm run test

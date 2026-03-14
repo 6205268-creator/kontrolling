@@ -46,3 +46,8 @@ class CooperativeModel(Base):
     # financial_subjects: Mapped[list["FinancialSubjectModel"]] = relationship("FinancialSubjectModel", back_populates="cooperative")
     # expenses: Mapped[list["ExpenseModel"]] = relationship("ExpenseModel", back_populates="cooperative")
     # users: Mapped[list["AppUserModel"]] = relationship("AppUserModel", back_populates="cooperative")
+
+    # NOTE: Relationships for Payment Distribution module disabled to avoid circular imports
+    # members: Mapped[list["MemberModel"]] = relationship("MemberModel", back_populates="cooperative")
+    # personal_accounts: Mapped[list["PersonalAccountModel"]] = relationship(...)
+    # settings_modules: Mapped[list["SettingsModuleModel"]] = relationship(...)

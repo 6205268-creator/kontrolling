@@ -64,6 +64,9 @@ class LandPlotModel(Base):
         foreign_keys="PlotOwnershipModel.land_plot_id",
     )
 
+    # NOTE: Relationship for Payment Distribution module disabled to avoid circular imports
+    # member_plots: Mapped[list["MemberPlotModel"]] = relationship("MemberPlotModel", back_populates="land_plot")
+
     def to_domain(self) -> "LandPlot":
         """Convert SQLAlchemy model to domain entity."""
         from app.modules.land_management.domain.entities import LandPlot
@@ -125,6 +128,8 @@ class OwnerModel(Base):
     plot_ownerships: Mapped[list["PlotOwnershipModel"]] = relationship(
         "PlotOwnershipModel", back_populates="owner", foreign_keys="PlotOwnershipModel.owner_id"
     )
+    # NOTE: Relationship for Payment Distribution module disabled to avoid circular imports
+    # members: Mapped[list["MemberModel"]] = relationship("MemberModel", back_populates="owner")
     # payments: Mapped[list["PaymentModel"]] = relationship("PaymentModel", back_populates="payer")
     # meters: Mapped[list["MeterModel"]] = relationship("MeterModel", back_populates="owner")
 

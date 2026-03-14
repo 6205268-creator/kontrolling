@@ -4,19 +4,6 @@
     <form class="form" @submit.prevent="onSubmit">
       <section class="form-section">
         <h2>Данные участка</h2>
-        <div v-if="isAdmin" class="field">
-          <label for="cooperative">Садовое товарищество (СТ) *</label>
-          <select id="cooperative" v-model="form.cooperative_id" required>
-            <option value="">— Выберите СТ —</option>
-            <option v-for="c in cooperatives" :key="c.id" :value="c.id">
-              {{ c.name }}
-            </option>
-          </select>
-        </div>
-        <div v-else class="field">
-          <label>Садовое товарищество</label>
-          <p class="readonly-value">{{ currentCooperativeName }}</p>
-        </div>
         <div class="field">
           <label for="plot_number">Номер участка *</label>
           <input
@@ -54,7 +41,6 @@
           <label for="status">Статус</label>
           <select id="status" v-model="form.status">
             <option value="active">Активный</option>
-            <option value="vacant">Свободный</option>
             <option value="archived">Архив</option>
           </select>
         </div>
@@ -169,12 +155,6 @@ const submitting = ref(false);
 
 const isAdmin = computed(() => authStore.userRole === 'admin');
 const currentCooperativeId = computed(() => authStore.cooperativeId ?? '');
-const currentCooperativeName = computed(() => {
-  const id = currentCooperativeId.value;
-  if (!id) return '—';
-  const c = cooperatives.value.find((x) => x.id === id);
-  return c?.name ?? id;
-});
 
 const plotId = computed(() => route.params.id as string);
 
