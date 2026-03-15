@@ -597,3 +597,82 @@ def get_app_user_repository(db: AsyncSession = Depends(get_db)):
     from app.modules.administration.infrastructure.repositories import AppUserRepository
 
     return AppUserRepository(db)
+
+
+# =============================================================================
+# Payment Distribution Dependencies
+# =============================================================================
+
+
+def get_payment_distribution_member_repository(db: AsyncSession = Depends(get_db)):
+    """Get MemberRepository instance for payment distribution."""
+    from app.modules.payment_distribution.infrastructure.repositories import MemberRepository
+
+    return MemberRepository(db)
+
+
+def get_payment_distribution_personal_account_repository(db: AsyncSession = Depends(get_db)):
+    """Get PersonalAccountRepository instance for payment distribution."""
+    from app.modules.payment_distribution.infrastructure.repositories import (
+        PersonalAccountRepository,
+    )
+
+    return PersonalAccountRepository(db)
+
+
+def get_payment_distribution_repository(db: AsyncSession = Depends(get_db)):
+    """Get PaymentDistributionRepository instance."""
+    from app.modules.payment_distribution.infrastructure.repositories import (
+        PaymentDistributionRepository,
+    )
+
+    return PaymentDistributionRepository(db)
+
+
+def get_payment_distribution_rule_repository(db: AsyncSession = Depends(get_db)):
+    """Get DistributionRuleRepository instance."""
+    from app.modules.payment_distribution.infrastructure.repositories import (
+        DistributionRuleRepository,
+    )
+
+    return DistributionRuleRepository(db)
+
+
+def get_payment_distribution_settings_module_repository(db: AsyncSession = Depends(get_db)):
+    """Get SettingsModuleRepository instance."""
+    from app.modules.payment_distribution.infrastructure.repositories import (
+        SettingsModuleRepository,
+    )
+
+    return SettingsModuleRepository(db)
+
+
+def get_payment_distribution_event_dispatcher():
+    """Get EventDispatcher instance for payment distribution."""
+    from app.modules.payment_distribution.application.use_cases import EventDispatcher
+
+    return EventDispatcher()
+
+
+def get_create_member_use_case(
+    member_repo=Depends(get_payment_distribution_member_repository),
+    account_repo=Depends(get_payment_distribution_personal_account_repository),
+    event_dispatcher=Depends(get_payment_distribution_event_dispatcher),
+):
+    """Get CreateMemberUseCase instance."""
+    from app.modules.payment_distribution.application.use_cases import CreateMemberUseCase
+
+    return CreateMemberUseCase(member_repo, account_repo, event_dispatcher)
+
+
+def get_create_distribution_rule_use_case(
+    rule_repo=Depends(get_payment_distribution_rule_repository),
+    settings_module_repo=Depends(get_payment_distribution_settings_module_repository),
+    event_dispatcher=Depends(get_payment_distribution_event_dispatcher),
+):
+    """Get CreateDistributionRuleUseCase instance."""
+    from app.modules.payment_distribution.application.use_cases import (
+        CreateDistributionRuleUseCase,
+    )
+
+    return CreateDistributionRuleUseCase(rule_repo, settings_module_repo, event_dispatcher)
