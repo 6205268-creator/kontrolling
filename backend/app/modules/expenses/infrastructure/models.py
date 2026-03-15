@@ -5,11 +5,15 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, date, datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from sqlalchemy import CheckConstraint, Date, DateTime, ForeignKey, Numeric, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, Guid
+
+if TYPE_CHECKING:
+    from app.modules.cooperative_core.infrastructure.models import CooperativeModel
 
 
 class ExpenseModel(Base):
@@ -54,6 +58,11 @@ class ExpenseModel(Base):
     )
     cancellation_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     operation_number: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+
+    # Relationships
+    cooperative: Mapped["CooperativeModel"] = relationship(
+        "CooperativeModel", back_populates="expenses"
+    )
 
     def to_domain(self) -> "Expense":
         """Convert to domain entity."""

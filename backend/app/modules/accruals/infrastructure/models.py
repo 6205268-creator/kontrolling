@@ -8,11 +8,15 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, date, datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from sqlalchemy import CheckConstraint, Date, DateTime, ForeignKey, Numeric, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, Guid
+
+if TYPE_CHECKING:
+    from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
 
 
 class AccrualModel(Base):
@@ -61,9 +65,11 @@ class AccrualModel(Base):
     cancellation_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     operation_number: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
 
-    # Relationships - using string references to avoid circular imports
-    # financial_subject: Mapped["FinancialSubjectModel"] = relationship("FinancialSubjectModel", back_populates="accruals")
-    # contribution_type: Mapped["ContributionTypeModel"] = relationship("ContributionTypeModel", back_populates="accruals")
+    # Relationships
+    financial_subject: Mapped["FinancialSubjectModel"] = relationship("FinancialSubjectModel")
+    contribution_type: Mapped["ContributionTypeModel"] = relationship(
+        "ContributionTypeModel", back_populates="accruals"
+    )
 
     def to_domain(self) -> "Accrual":
         """Convert SQLAlchemy model to domain entity."""
@@ -156,13 +162,14 @@ class ContributionTypeModel(Base):
         DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
 
-    # accruals: Mapped[list["AccrualModel"]] = relationship("AccrualModel", back_populates="contribution_type")
+    # Relationships
+    accruals: Mapped[list["AccrualModel"]] = relationship(
+        "AccrualModel", back_populates="contribution_type"
+    )
 
-    # Relationship for Payment Distribution module
-    # NOTE: Disabled to avoid circular import issues during SQLAlchemy initialization
-    # distribution_rules and settings relationships are defined in payment_distribution module
-    # distribution_rules: Mapped[list["PaymentDistributionRuleModel"]] = relationship(...)
-    # settings: Mapped[list["ContributionTypeSettingsModel"]] = relationship(...)
+    # Payment Distribution module relationships
+    # NOTE: distribution_rules and settings relationships are defined in payment_distribution module
+    # via back_populates on PaymentDistributionRuleModel and ContributionTypeSettingsModel
 
     def to_domain(self) -> "ContributionType":
         """Convert SQLAlchemy model to domain entity."""

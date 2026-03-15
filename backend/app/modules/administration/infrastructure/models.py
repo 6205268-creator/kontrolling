@@ -4,11 +4,15 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, Guid
+
+if TYPE_CHECKING:
+    from app.modules.cooperative_core.infrastructure.models import CooperativeModel
 
 
 class AppUserModel(Base):
@@ -37,6 +41,11 @@ class AppUserModel(Base):
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
         onupdate=lambda: datetime.now(UTC),
+    )
+
+    # Relationships
+    cooperative: Mapped["CooperativeModel"] = relationship(
+        "CooperativeModel", back_populates="users"
     )
 
     def to_domain(self) -> "AppUser":

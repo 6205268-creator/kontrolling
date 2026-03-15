@@ -7,11 +7,15 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, String, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, Guid
+
+if TYPE_CHECKING:
+    from app.modules.cooperative_core.infrastructure.models import CooperativeModel
 
 
 def generate_financial_subject_code() -> str:
@@ -53,13 +57,19 @@ class FinancialSubjectModel(Base):
         DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
 
-    # Relationships - using string references to avoid circular imports
-    # cooperative: Mapped["CooperativeModel"] = relationship("CooperativeModel", back_populates="financial_subjects")
+    # Relationships
+    cooperative: Mapped["CooperativeModel"] = relationship(
+        "CooperativeModel", back_populates="financial_subjects"
+    )
+    # NOTE: accruals and payments relationships are defined in accruals and payments modules
+    # via back_populates on AccrualModel and PaymentModel
     # accruals: Mapped[list["AccrualModel"]] = relationship("AccrualModel", back_populates="financial_subject")
     # payments: Mapped[list["PaymentModel"]] = relationship("PaymentModel", back_populates="financial_subject")
 
-    # NOTE: Relationship for Payment Distribution module disabled to avoid circular imports
-    # distributions: Mapped[list["PaymentDistributionModel"]] = relationship(...)
+    # Payment Distribution module relationship
+    # NOTE: distributions relationship is defined in payment_distribution module
+    # via back_populates on PaymentDistributionModel
+    # distributions: Mapped[list["PaymentDistributionModel"]] = relationship("PaymentDistributionModel", back_populates="financial_subject")
 
     def to_domain(self) -> "FinancialSubject":
         """Convert SQLAlchemy model to domain entity."""

@@ -7,11 +7,18 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, Guid
+
+if TYPE_CHECKING:
+    from app.modules.administration.infrastructure.models import AppUserModel
+    from app.modules.expenses.infrastructure.models import ExpenseModel
+    from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
+    from app.modules.land_management.infrastructure.models import LandPlotModel
 
 
 class CooperativeModel(Base):
@@ -41,13 +48,20 @@ class CooperativeModel(Base):
         comment="Дата и время последнего обновления записи",
     )
 
-    # Relationships - using string references to avoid circular imports
-    # land_plots: Mapped[list["LandPlotModel"]] = relationship("LandPlotModel", back_populates="cooperative")
-    # financial_subjects: Mapped[list["FinancialSubjectModel"]] = relationship("FinancialSubjectModel", back_populates="cooperative")
-    # expenses: Mapped[list["ExpenseModel"]] = relationship("ExpenseModel", back_populates="cooperative")
-    # users: Mapped[list["AppUserModel"]] = relationship("AppUserModel", back_populates="cooperative")
+    # Relationships
+    land_plots: Mapped[list["LandPlotModel"]] = relationship(
+        "LandPlotModel", back_populates="cooperative"
+    )
+    financial_subjects: Mapped[list["FinancialSubjectModel"]] = relationship(
+        "FinancialSubjectModel", back_populates="cooperative"
+    )
+    expenses: Mapped[list["ExpenseModel"]] = relationship(
+        "ExpenseModel", back_populates="cooperative"
+    )
+    users: Mapped[list["AppUserModel"]] = relationship("AppUserModel", back_populates="cooperative")
 
-    # NOTE: Relationships for Payment Distribution module disabled to avoid circular imports
-    # members: Mapped[list["MemberModel"]] = relationship("MemberModel", back_populates="cooperative")
-    # personal_accounts: Mapped[list["PersonalAccountModel"]] = relationship(...)
-    # settings_modules: Mapped[list["SettingsModuleModel"]] = relationship(...)
+    # Payment Distribution module relationships
+    # NOTE: members, personal_accounts, settings_modules relationships are defined in payment_distribution module
+    # via back_populates on MemberModel, PersonalAccountModel, SettingsModuleModel
+    # personal_accounts: Mapped[list["PersonalAccountModel"]] = relationship("PersonalAccountModel", back_populates="cooperative")
+    # settings_modules: Mapped[list["SettingsModuleModel"]] = relationship("SettingsModuleModel", back_populates="cooperative")

@@ -8,6 +8,7 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, date, datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     CheckConstraint,
@@ -22,6 +23,9 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, Guid
+
+if TYPE_CHECKING:
+    from app.modules.cooperative_core.infrastructure.models import CooperativeModel
 
 
 class LandPlotModel(Base):
@@ -56,15 +60,18 @@ class LandPlotModel(Base):
         comment="Дата и время последнего обновления записи",
     )
 
-    # Relationships - using string references to avoid circular imports
-    # cooperative: Mapped["CooperativeModel"] = relationship("CooperativeModel", back_populates="land_plots")
+    # Relationships
+    cooperative: Mapped["CooperativeModel"] = relationship(
+        "CooperativeModel", back_populates="land_plots"
+    )
     plot_ownerships: Mapped[list["PlotOwnershipModel"]] = relationship(
         "PlotOwnershipModel",
         back_populates="land_plot",
         foreign_keys="PlotOwnershipModel.land_plot_id",
     )
 
-    # NOTE: Relationship for Payment Distribution module disabled to avoid circular imports
+    # Payment Distribution module relationship
+    # NOTE: member_plots relationship is defined in payment_distribution module via MemberPlotModel
     # member_plots: Mapped[list["MemberPlotModel"]] = relationship("MemberPlotModel", back_populates="land_plot")
 
     def to_domain(self) -> "LandPlot":
@@ -128,7 +135,8 @@ class OwnerModel(Base):
     plot_ownerships: Mapped[list["PlotOwnershipModel"]] = relationship(
         "PlotOwnershipModel", back_populates="owner", foreign_keys="PlotOwnershipModel.owner_id"
     )
-    # NOTE: Relationship for Payment Distribution module disabled to avoid circular imports
+    # Payment Distribution module relationships
+    # NOTE: members relationship is defined in payment_distribution module via MemberModel
     # members: Mapped[list["MemberModel"]] = relationship("MemberModel", back_populates="owner")
     # payments: Mapped[list["PaymentModel"]] = relationship("PaymentModel", back_populates="payer")
     # meters: Mapped[list["MeterModel"]] = relationship("MeterModel", back_populates="owner")
