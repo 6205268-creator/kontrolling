@@ -5,7 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app.api.deps import get_current_user, require_role
+from app.api.deps import get_current_user
 from app.modules.administration.domain.entities import AppUser
 from app.modules.deps import (
     get_close_plot_ownership_use_case,
@@ -151,7 +151,7 @@ async def get_land_plot(
 )
 async def create_land_plot(
     plot_data: LandPlotCreate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_create_land_plot_use_case),
 ) -> LandPlotWithOwners:
     """Создать участок с владельцами (treasurer, admin)."""
@@ -185,7 +185,7 @@ async def create_land_plot(
 async def update_land_plot(
     plot_id: UUID,
     plot_data: LandPlotUpdate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_update_land_plot_use_case),
 ) -> LandPlotWithOwners:
     """Обновить участок (treasurer, admin)."""
@@ -224,7 +224,7 @@ async def update_land_plot(
 )
 async def delete_land_plot(
     plot_id: UUID,
-    current_user: Annotated[AppUser, Depends(require_role(["admin"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_delete_land_plot_use_case),
 ) -> None:
     """Удалить участок (только admin)."""
@@ -248,7 +248,7 @@ async def delete_land_plot(
 async def add_ownership(
     plot_id: UUID,
     ownership_data: PlotOwnershipCreate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_create_plot_ownership_use_case),
 ) -> PlotOwnershipInDB:
     """Добавить владельца к участку (treasurer, admin)."""
@@ -281,7 +281,7 @@ async def add_ownership(
 async def close_ownership(
     ownership_id: UUID,
     valid_to: Annotated[str, Query(..., description="Дата прекращения владения")],
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_close_plot_ownership_use_case),
 ) -> PlotOwnershipInDB:
     """Закрыть право собственности (установить valid_to) (treasurer, admin)."""

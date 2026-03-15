@@ -5,7 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.api.deps import get_current_user, require_role
+from app.api.deps import get_current_user
 from app.modules.administration.domain.entities import AppUser
 from app.modules.deps import (
     get_add_meter_reading_use_case,
@@ -78,7 +78,7 @@ async def get_meters(
 )
 async def create_meter(
     meter_data: MeterCreate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_create_meter_use_case),
 ) -> MeterInDB:
     """Create a new meter."""
@@ -166,7 +166,7 @@ async def get_meters_by_owner(
 async def update_meter(
     meter_id: UUID,
     meter_data: MeterUpdate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_update_meter_use_case),
 ) -> MeterInDB:
     """Update meter."""
@@ -197,7 +197,7 @@ async def update_meter(
 )
 async def delete_meter(
     meter_id: UUID,
-    current_user: Annotated[AppUser, Depends(require_role(["admin"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_delete_meter_use_case),
 ) -> None:
     """Delete meter."""
@@ -217,7 +217,7 @@ async def delete_meter(
 async def add_meter_reading(
     meter_id: UUID,
     reading_data: MeterReadingCreate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_add_meter_reading_use_case),
 ) -> MeterReadingInDB:
     """Add a meter reading."""

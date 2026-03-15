@@ -126,9 +126,7 @@ const applyingId = ref<string | null>(null);
 const cancellingId = ref<string | null>(null);
 
 const isAdmin = computed(() => authStore.userRole === 'admin');
-const canCreate = computed(
-  () => authStore.userRole === 'admin' || authStore.userRole === 'treasurer'
-);
+const canCreate = computed(() => authStore.isAuthenticated);
 
 const fsCodeMap = computed(() => {
   const m: Record<string, string> = {};

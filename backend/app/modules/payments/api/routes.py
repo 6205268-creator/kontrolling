@@ -6,7 +6,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
-from app.api.deps import get_current_user, require_role
+from app.api.deps import get_current_user
 from app.modules.administration.domain.entities import AppUser
 from app.modules.deps import (
     get_cancel_payment_use_case,
@@ -94,7 +94,7 @@ async def get_payments(
 )
 async def create_payment(
     payment_data: PaymentCreate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_register_payment_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
 ) -> PaymentInDB:
@@ -142,7 +142,7 @@ async def create_payment(
 )
 async def cancel_payment(
     payment_id: UUID,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_cancel_payment_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
     body: CancelBody | None = None,

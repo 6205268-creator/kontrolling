@@ -5,7 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app.api.deps import get_current_user, require_role
+from app.api.deps import get_current_user
 from app.modules.administration.domain.entities import AppUser
 from app.modules.deps import (
     get_create_owner_use_case,
@@ -119,7 +119,7 @@ async def get_owner(
 )
 async def create_owner(
     owner_data: OwnerCreate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_create_owner_use_case),
 ) -> OwnerInDB:
     """Создать нового владельца (treasurer, admin)."""
@@ -146,7 +146,7 @@ async def create_owner(
 async def update_owner(
     owner_id: UUID,
     owner_data: OwnerUpdate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_update_owner_use_case),
 ) -> OwnerInDB:
     """Обновить владельца (treasurer, admin)."""
@@ -177,7 +177,7 @@ async def update_owner(
 )
 async def delete_owner(
     owner_id: UUID,
-    current_user: Annotated[AppUser, Depends(require_role(["admin"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_delete_owner_use_case),
 ) -> None:
     """Удалить владельца (только admin)."""

@@ -6,13 +6,22 @@
         "CONTEXT7_API_KEY": "ctx7sk-8c1146db-6d13-4086-ac38-c78a50caad24"
       }
     },
-    "memory-bank": {
-      "command": "python",
-      "args": ["-m", "mcp_memory_bank"]
-    },
     "shadcn-ui": {
       "command": "npx",
-      "args": ["-y", "@paul/shadcn-ui-mcp-server"]
+      "args": [
+        "-y",
+        "@paul/shadcn-ui-mcp-server"
+      ]
+    },
+    "21st-magic": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@21st-dev/magic@latest"
+      ],
+      "env": {
+        "API_KEY": "1178473a471b54f056419f02bad324605324cbc2157d76489819fc3d79d2674e/magic/console"
+      }
     }
   }
 }

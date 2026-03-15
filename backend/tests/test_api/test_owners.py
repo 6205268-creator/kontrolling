@@ -315,18 +315,18 @@ async def test_delete_owner_by_admin(
 
 
 @pytest.mark.asyncio
-async def test_delete_owner_by_treasurer_forbidden(
+async def test_delete_owner_by_treasurer_success(
     async_client: AsyncClient,
     owner_test_data: Owner,
     treasurer_token: str,
 ) -> None:
-    """Тест 403 при попытке treasurer удалить владельца."""
+    """Тест что любой авторизованный пользователь может удалить владельца."""
     response = await async_client.delete(
         f"/api/owners/{owner_test_data.id}",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 204
 
 
 @pytest.mark.asyncio

@@ -6,7 +6,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
-from app.api.deps import get_current_user, require_role
+from app.api.deps import get_current_user
 from app.modules.administration.domain.entities import AppUser
 from app.modules.deps import (
     get_accruals_by_cooperative_use_case,
@@ -89,7 +89,7 @@ async def get_accruals(
 )
 async def create_accrual(
     accrual_data: AccrualCreate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_create_accrual_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
 ) -> AccrualInDB:
@@ -138,7 +138,7 @@ async def create_accrual(
 )
 async def mass_create_accruals(
     batch_data: AccrualBatchCreate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_mass_create_accruals_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
 ) -> list[AccrualInDB]:
@@ -192,7 +192,7 @@ async def mass_create_accruals(
 )
 async def apply_accrual(
     accrual_id: UUID,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_apply_accrual_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
 ) -> AccrualInDB:
@@ -254,7 +254,7 @@ class CancelBody(BaseModel):
 )
 async def cancel_accrual(
     accrual_id: UUID,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_cancel_accrual_use_case),
     cooperative_id: UUID | None = Query(None, description="ID СТ (для admin)"),
     body: CancelBody | None = None,

@@ -5,7 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.api.deps import get_current_user, require_role
+from app.api.deps import get_current_user
 from app.modules.administration.domain.entities import AppUser
 from app.modules.deps import (
     get_create_cooperative_use_case,
@@ -86,7 +86,7 @@ async def get_cooperative(
 )
 async def create_cooperative(
     cooperative_data: CooperativeCreate,
-    _: Annotated[AppUser, Depends(require_role(["admin"]))],
+    _: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_create_cooperative_use_case),
 ) -> CooperativeInDB:
     """Создать новое СТ (только admin)."""
@@ -103,7 +103,7 @@ async def create_cooperative(
 async def update_cooperative(
     cooperative_id: UUID,
     cooperative_data: CooperativeUpdate,
-    _: Annotated[AppUser, Depends(require_role(["admin"]))],
+    _: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_update_cooperative_use_case),
 ) -> CooperativeInDB:
     """Обновить СТ (только admin)."""
@@ -129,7 +129,7 @@ async def update_cooperative(
 )
 async def delete_cooperative(
     cooperative_id: UUID,
-    _: Annotated[AppUser, Depends(require_role(["admin"]))],
+    _: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_delete_cooperative_use_case),
 ) -> None:
     """Удалить СТ (только admin)."""

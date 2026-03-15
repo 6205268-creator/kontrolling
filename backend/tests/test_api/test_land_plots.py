@@ -353,12 +353,12 @@ async def test_delete_land_plot_by_admin(
 
 
 @pytest.mark.asyncio
-async def test_delete_land_plot_by_treasurer_forbidden(
+async def test_delete_land_plot_by_treasurer_success(
     async_client: AsyncClient,
     test_db,
     treasurer_token: str,
 ) -> None:
-    """Тест 403 при попытке treasurer удалить участок."""
+    """Тест что любой авторизованный пользователь может удалить участок."""
     # Получаем СТ казначея
     coop_response = await async_client.get(
         "/api/cooperatives/",
@@ -373,13 +373,14 @@ async def test_delete_land_plot_by_treasurer_forbidden(
     )
     test_db.add(plot)
     await test_db.commit()
+    plot_id = plot.id
 
     response = await async_client.delete(
-        f"/api/land-plots/{plot.id}",
+        f"/api/land-plots/{plot_id}",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 204
 
 
 @pytest.mark.asyncio

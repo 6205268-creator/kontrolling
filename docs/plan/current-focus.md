@@ -14,26 +14,32 @@
 
 ---
 
-## Текущая приоритетная задача (на 2026-03-10)
+## Текущая приоритетная задача (обновлено 2026-03-15)
 
 ### Название
 
-**Подготовка к full testing** — исправление 15 непроходящих тестов для 100% готовности к production.
+**Модель распределения платежей (payment_distribution) и сопутствующие правки** — заготовка модуля, ADR, документация; правки API и фронтенда в рабочей копии.
 
 ### Статус
 
 | Что | Статус |
 |-----|--------|
-| Исправление MeterRepository и MeterReadingRepository (11 тестов) | ✅ Завершено |
-| Исправление land plots тестов (3 теста) | ✅ Завершено |
-| Исправление reports теста (1 тест) | ✅ Завершено |
-| Финальная проверка (pytest, ruff, architecture_linter, seed_db) | ✅ Завершено |
-| Документирование | ✅ Завершено |
-| **Merge в main** | ✅ **Выполнен** |
+| Модуль payment_distribution (заготовка) | 🟡 В рабочей копии (не в main) |
+| ADR 0003, ERD payment-distribution | 🟡 Добавлены |
+| Правки API (routes) и тестов (cooperatives, land_plots, owners) | 🟡 В рабочей копии |
+| Правки фронтенда (Accruals, LandPlots, Owners) | 🟡 В рабочей копии |
+| Задача Lead Architect (глоссарии, entities-minimal) | ⚪ Ожидает (см. `docs/tasks/lead-architect-glossary-entities-update.md`) |
+| **Merge в main** | ⚪ Не выполнялся (всё в ветке/рабочей копии) |
 
 ### На чём остановились
 
-**Итог сессии 2026-03-10 (Подготовка к full testing — завершение):**
+**Итог сессии 2026-03-15 (завершение дня):**
+
+- В репозитории есть **незакоммиченные изменения на main**: новый модуль `payment_distribution`, ADR 0003, ERD, правки API (accruals, cooperative_core, expenses, land_management, meters, payments), тесты, фронтенд (AccrualsView, LandPlotCreate/Edit, LandPlotsView, OwnersView), документы (mcp-frontend-design-servers, lead-architect-glossary-entities-update), правило frontend-design-system.
+- Для сохранения истории создана ветка `feature/2026-03-15-session`, все изменения закоммичены туда и запушены в GitHub. В main коммитов не было.
+- **Следующая сессия:** решить, продолжать ли интеграцию payment_distribution и правки в main (после проверок: pytest, ruff, seed_db) или сначала выполнить задачу Lead Architect (глоссарии, entities-minimal). Перед merge в main — прогон проверок и при необходимости ревью @architecture-guardian.
+
+**Ранее (итог сессии 2026-03-10 — Подготовка к full testing — завершение):**
 
 **Приоритет 1: MeterRepository и MeterReadingRepository (11 тестов)**
 - ✅ Добавлен метод `get_all(cooperative_id)` в `MeterRepository` для multitenancy
@@ -62,50 +68,43 @@
 - ✅ 73 файла изменено (766 добавлений, 300 удалений)
 - ✅ Push выполнен успешно в `origin/main`
 
-**Следующая сессия:** Проект готов к production. Можно начинать новые фичи или улучшать покрытие тестов.
+**Следующая сессия:** см. блок «Что делать завтра» ниже.
 
 ---
 
 ## Что делать завтра (или в следующей сессии)
 
-### Ветка для задачи
+### Ветка
 
-- **Имя ветки:** `feature/ledger-ready-mvp`
-- **Правило:** агент следует `.cursor/rules/git-branch-policy.mdc`
-  - Не коммитить в main/master
-  - Не выполнять merge без явного одобрения
-  - Если ветка не существует — спросить перед созданием
-  - Если существует — проверить статус (`git status`, `git log -n 5`) и сообщить пользователю
+- **Текущее состояние (2026-03-15):** Все сегодняшние изменения сохранены в ветке **`feature/2026-03-15-session`** и запушены в GitHub. Локально можно переключиться на эту ветку и продолжить работу.
+- **Правило:** `.cursor/rules/git-branch-policy.mdc` — не коммитить в main, не мержить без твоего одобрения.
 
-### Порядок работы
+### Порядок работы на следующий раз
 
-1. **Открыть этот файл:** `docs/plan/current-focus.md` — ты здесь.
-2. **Открыть спецификацию:** [`docs/tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md`](../tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md).
-3. **Сказать агенту (backend-developer):**
-   *«Реализуй по шагам спецификацию из `docs/tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md`. Используй роль backend-developer. Выполняй этапы строго по порядку (1 → 2 → … → 5). После каждого этапа запускай проверки в порядке:*
-   - *`pytest` (все тесты зелёные)*
-   - *`ruff check .` и `ruff format --check .` (без ошибок)*
-   - *`python -m app.scripts.architecture_linter` (exit code 0)*
-   - *`python -m app.scripts.seed_db` (без ошибок)*
-   - *Вызвать @architecture-guardian для ревью по модулям*
-   - *Мелкие ошибки исправлять сразу, серьёзные — после подтверждения пользователя.*
-   *Не смешивать слои.»*
-4. **Начать с Этапа 1** — миграция и новые поля (cancelled_at, cancelled_by_user_id, cancellation_reason, operation_number) в Accrual, Payment, Expense.
-
-После выполнения каждого этапа можно обновлять секцию «Статус по этапам» ниже.
+1. **Открыть** `docs/plan/current-focus.md` (ты здесь) и при необходимости переключиться на ветку `feature/2026-03-15-session`.
+2. **Выбрать направление:**
+   - **Вариант A.** Продолжить работу по payment_distribution и текущим правкам: прогнать проверки (pytest, ruff, architecture_linter, seed_db), при необходимости доработать код, затем по твоей команде — merge в main.
+   - **Вариант B.** Задача для Lead Architect: обновить глоссарии и `entities-minimal.md` по спецификации [`docs/tasks/lead-architect-glossary-entities-update.md`](../tasks/lead-architect-glossary-entities-update.md) (глоссарии может менять только Lead Architect).
+   - **Вариант C.** Взять задачу из Топ-5 в [`docs/development-index.md`](../development-index.md) (например E2E, Docker, OpenAPI).
+3. **Перед merge в main:** убедиться, что pytest, ruff, seed_db и при необходимости architecture_linter проходят; при архитектурных изменениях — ревью @architecture-guardian.
 
 ---
 
 ## Статус по этапам (обновлять по ходу)
 
+**Ledger-ready (завершён, в main):**
+
 | Этап | Описание | Статус |
 |------|----------|--------|
-| 1 | Модель данных — новые поля, миграция, operation_number | ✅ Завершён (сессия 2026-03-10) |
-| 2 | Правило баланса на дату, контракт as_of_date | ✅ Завершён (сессия 2026-03-09) |
-| 3 | Отмена в домене (entity.cancel), API с причиной/пользователем | ✅ Завершён (сессия 2026-03-09) |
-| 4 | Защита amount (не обновлять при update) | ✅ Завершён (сессия 2026-03-10) |
-| 5 | Domain events (заготовка, логирование) | ✅ Завершён (сессия 2026-03-10) |
-| **Merge в main** | **Отправка в origin/main** | ✅ **Завершено** |
+| 1–5 | Ledger-ready спецификация | ✅ Завершено, merge в main |
+
+**Текущая рабочая копия (ветка feature/2026-03-15-session):**
+
+| Что | Статус |
+|-----|--------|
+| Модуль payment_distribution, ADR 0003, ERD | Добавлены |
+| Правки API и фронтенда | В ветке, проверки не прогонялись в этой сессии |
+| Lead Architect: глоссарии, entities-minimal | Ожидает |
 
 ---
 
@@ -132,4 +131,4 @@
 
 *Обновляй этот файл в конце сессии: что сделали, на каком этапе остановились, что первым делом делать в следующий раз.*
 
-*Последнее обновление: 2026-03-10 (Этапы 2, 3, 4, 5 завершены, merge в main)*
+*Последнее обновление: 2026-03-15 (итог сессии: изменения в ветке feature/2026-03-15-session, push в GitHub)*

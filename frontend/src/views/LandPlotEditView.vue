@@ -69,11 +69,12 @@
             <input
               v-model="row.searchQuery"
               type="text"
-              placeholder="Начните вводить имя или УНП..."
+              placeholder="ФИО или УНП — начните вводить для поиска"
               autocomplete="off"
               @focus="onOwnerFocus(index)"
               @input="onOwnerInput(index)"
             />
+            <p class="field-hint">Выберите владельца из списка после ввода фамилии, имени или УНП</p>
             <ul v-if="row.showSuggestions" class="suggestions">
               <li
                 v-for="opt in row.suggestions"
@@ -87,15 +88,43 @@
               </li>
             </ul>
           </div>
-          <div class="share-fields">
-            <div class="share-input">
-              <label>Доля (числитель)</label>
-              <input v-model.number="row.share_numerator" type="number" min="1" />
-            </div>
-            <span class="share-sep">/</span>
-            <div class="share-input">
-              <label>Знаменатель</label>
-              <input v-model.number="row.share_denominator" type="number" min="1" />
+          <div class="share-block">
+            <label>Доля в участке</label>
+            <select
+              v-model="row.sharePresetKey"
+              class="share-select"
+              @change="onSharePresetChange(index, $event)"
+            >
+              <option
+                v-for="p in SHARE_PRESETS"
+                :key="p.value"
+                :value="p.value"
+              >
+                {{ p.label }}
+              </option>
+              <option value="other">Другое…</option>
+            </select>
+            <div v-if="row.sharePresetKey === 'other'" class="share-fields share-fields-custom">
+              <input
+                v-model.number="row.share_numerator"
+                type="number"
+                min="1"
+                class="share-num"
+                aria-label="Числитель доли"
+                placeholder="1"
+                title="Числитель (например 1)"
+              />
+              <span class="share-sep">/</span>
+              <input
+                v-model.number="row.share_denominator"
+                type="number"
+                min="1"
+                class="share-den"
+                aria-label="Знаменатель доли"
+                placeholder="2"
+                title="Знаменатель (например 2)"
+              />
+              <span class="share-hint-inline">Напр. 1/2 — половина участка</span>
             </div>
           </div>
           <div class="primary-check">
@@ -135,6 +164,19 @@ import { useRouter, useRoute } from 'vue-router';
 import api from '@/services/api';
 import { useAuthStore } from '@/stores/auth';
 import type { Cooperative, Owner } from '@/types';
+
+const SHARE_PRESETS: { value: string; label: string; num: number; den: number }[] = [
+  { value: '1/1', label: 'Целиком (1/1)', num: 1, den: 1 },
+  { value: '1/2', label: 'Половина (1/2)', num: 1, den: 2 },
+  { value: '1/3', label: 'Треть (1/3)', num: 1, den: 3 },
+  { value: '1/4', label: 'Четверть (1/4)', num: 1, den: 4 },
+  { value: '2/3', label: 'Две трети (2/3)', num: 2, den: 3 },
+];
+
+function getSharePresetKey(num: number, den: number): string {
+  const p = SHARE_PRESETS.find((x) => x.num === num && x.den === den);
+  return p ? p.value : 'other';
+}
 
 interface OwnershipRow {
   owner_id: string | null;
@@ -194,6 +236,22 @@ function addOwnership(): void {
     is_primary: false,
     valid_from: todayISO(),
   });
+}
+
+
+function onSharePresetChange(index: number, event: Event): void {
+  const row = ownerships.value[index];
+  if (!row) return;
+  const target = event.target as HTMLSelectElement;
+  const value = target?.value ?? 'other';
+  row.sharePresetKey = value;
+  if (value !== 'other') {
+    const preset = SHARE_PRESETS.find((p) => p.value === value);
+    if (preset) {
+      row.share_numerator = preset.num;
+      row.share_denominator = preset.den;
+    }
+  }
 }
 
 function removeOwnership(index: number): void {
@@ -371,10 +429,13 @@ onMounted(async () => {
 <style scoped>
 .form-view {
   padding: 20px;
-  background: white;
+  background: #f8fafc;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
   max-width: 720px;
+  min-width: 0;
+  overflow-x: auto;
 }
 
 .form-view h1 {
@@ -429,27 +490,82 @@ onMounted(async () => {
 
 .ownership-row {
   display: grid;
-  grid-template-columns: 1fr auto auto auto auto 36px;
+  grid-template-columns: minmax(0, 260px) minmax(0, 180px) minmax(0, 160px) minmax(0, 132px) 36px;
+  grid-template-rows: auto auto;
+  gap: 12px 16px;
   gap: 12px;
   align-items: end;
   margin-bottom: 16px;
   padding: 12px;
-  background: #f9fafb;
+  background: #f1f5f9;
   border-radius: 8px;
+  min-width: 0;
+}
+
+.ownership-row .owner-search {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+.ownership-row .share-block {
+  grid-column: 1;
+  grid-row: 2;
+  position: relative;
+  z-index: 11;
+}
+
+.ownership-row .primary-check {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.ownership-row .valid-from {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.ownership-row .btn-remove {
+  grid-column: 5;
+  grid-row: 2;
+}
+
+.field-hint {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.3;
 }
 
 @media (max-width: 900px) {
   .ownership-row {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 36px;
+    grid-template-rows: auto auto auto;
+  }
+  .ownership-row .owner-search {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .ownership-row .share-block {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .ownership-row .primary-check {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .ownership-row .valid-from {
+    grid-column: 2;
+    grid-row: 3;
   }
   .ownership-row .btn-remove {
-    grid-column: span 1;
+    grid-column: 4;
+    grid-row: 3;
   }
 }
 
 .owner-search {
   position: relative;
-  min-width: 180px;
+  min-width: 0;
 }
 
 .owner-search input {
@@ -493,10 +609,46 @@ onMounted(async () => {
   cursor: default;
 }
 
+.share-block {
+  min-width: 0;
+}
+
+.share-select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 .share-fields {
   display: flex;
-  align-items: flex-end;
-  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 8px;
+}
+
+.share-fields-custom .share-num,
+.share-fields-custom .share-den {
+  width: 4rem;
+  min-width: 3.5rem;
+  max-width: 6rem;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9375rem;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.share-hint-inline {
+  margin: 0;
+  flex: none;
+  max-width: 100%;
+  font-size: 0.7rem;
+  line-height: 1.35;
+  color: #64748b;
+  align-self: center;
 }
 
 .share-input {
@@ -520,6 +672,7 @@ onMounted(async () => {
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 0.875rem;
+  box-sizing: border-box;
 }
 
 .share-sep {
@@ -544,7 +697,8 @@ onMounted(async () => {
 }
 
 .valid-from {
-  min-width: 140px;
+  min-width: 0;
+  max-width: 132px;
 }
 
 .btn-remove {

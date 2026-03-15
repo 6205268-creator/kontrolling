@@ -6,7 +6,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
-from app.api.deps import get_current_user, require_role
+from app.api.deps import get_current_user
 from app.modules.administration.domain.entities import AppUser
 from app.modules.deps import (
     get_cancel_expense_use_case,
@@ -105,7 +105,7 @@ async def get_expenses(
 )
 async def create_expense(
     expense_data: ExpenseCreate,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_create_expense_use_case),
 ) -> ExpenseInDB:
     """Create an expense."""
@@ -150,7 +150,7 @@ async def create_expense(
 )
 async def confirm_expense(
     expense_id: UUID,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_confirm_expense_use_case),
 ) -> ExpenseInDB:
     """Confirm expense."""
@@ -189,7 +189,7 @@ async def confirm_expense(
 )
 async def cancel_expense(
     expense_id: UUID,
-    current_user: Annotated[AppUser, Depends(require_role(["admin", "treasurer"]))],
+    current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_cancel_expense_use_case),
     body: CancelBody | None = None,
 ) -> ExpenseInDB:

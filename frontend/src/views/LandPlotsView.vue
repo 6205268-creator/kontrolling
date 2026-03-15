@@ -101,9 +101,7 @@ const cooperatives = ref<Cooperative[]>([]);
 const selectedCooperativeId = ref<string>('');
 
 const isAdmin = computed(() => authStore.userRole === 'admin');
-const canCreate = computed(() =>
-  authStore.userRole === 'admin' || authStore.userRole === 'treasurer'
-);
+const canCreate = computed(() => authStore.isAuthenticated);
 
 // Table columns
 const columns = [

@@ -89,18 +89,18 @@ async def test_create_cooperative_by_admin(
 
 
 @pytest.mark.asyncio
-async def test_create_cooperative_by_treasurer_forbidden(
+async def test_create_cooperative_by_treasurer_success(
     async_client: AsyncClient,
     treasurer_token: str,
 ) -> None:
-    """Тест 403 при попытке treasurer создать СТ."""
+    """Тест что любой авторизованный пользователь может создать СТ."""
     response = await async_client.post(
         "/api/cooperatives/",
         json={"name": "СТ Казначея 2"},
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 201
 
 
 @pytest.mark.asyncio
@@ -230,12 +230,12 @@ async def test_update_cooperative_by_admin(
 
 
 @pytest.mark.asyncio
-async def test_update_cooperative_by_treasurer_forbidden(
+async def test_update_cooperative_by_treasurer_success(
     async_client: AsyncClient,
     treasurer_token: str,
     test_db,
 ) -> None:
-    """Тест 403 при попытке treasurer обновить СТ."""
+    """Тест что любой авторизованный пользователь может обновить СТ."""
     coop = Cooperative(name="СТ Казначея")
     test_db.add(coop)
     await test_db.commit()
@@ -246,7 +246,7 @@ async def test_update_cooperative_by_treasurer_forbidden(
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 200
 
 
 @pytest.mark.asyncio
@@ -277,19 +277,20 @@ async def test_delete_cooperative_by_admin(
 
 
 @pytest.mark.asyncio
-async def test_delete_cooperative_by_treasurer_forbidden(
+async def test_delete_cooperative_by_treasurer_success(
     async_client: AsyncClient,
     treasurer_token: str,
     test_db,
 ) -> None:
-    """Тест 403 при попытке treasurer удалить СТ."""
+    """Тест что любой авторизованный пользователь может удалить СТ."""
     coop = Cooperative(name="СТ Казначея")
     test_db.add(coop)
     await test_db.commit()
+    coop_id = coop.id
 
     response = await async_client.delete(
-        f"/api/cooperatives/{coop.id}",
+        f"/api/cooperatives/{coop_id}",
         headers={"Authorization": f"Bearer {treasurer_token}"},
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 204

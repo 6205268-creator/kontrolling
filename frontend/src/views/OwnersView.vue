@@ -161,9 +161,7 @@ const newOwner = ref<{
   contact_email: '',
 });
 
-const canCreate = computed(() =>
-  authStore.userRole === 'admin' || authStore.userRole === 'treasurer'
-);
+const canCreate = computed(() => authStore.isAuthenticated);
 
 function ownerTypeLabel(type: string): string {
   const labels: Record<string, string> = {
