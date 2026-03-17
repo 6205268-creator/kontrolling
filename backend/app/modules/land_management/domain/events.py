@@ -6,20 +6,8 @@ Pure Python - no framework dependencies.
 from dataclasses import dataclass
 from uuid import UUID
 
+from app.modules.shared.domain.events import LandPlotCreated as LandPlotCreated
 from app.modules.shared.kernel.events import DomainEvent
-
-
-@dataclass
-class LandPlotCreated(DomainEvent):
-    """Event published when a new LandPlot is created.
-
-    Used by financial_core to create FinancialSubject automatically.
-    """
-
-    land_plot_id: UUID
-    cooperative_id: UUID
-    plot_number: str
-    area_sqm: float  # Serialized for event payload
 
 
 @dataclass

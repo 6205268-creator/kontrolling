@@ -1,5 +1,6 @@
 """FastAPI routes for land_management module."""
 
+import logging
 from typing import Annotated
 from uuid import UUID
 
@@ -25,6 +26,8 @@ from .schemas import (
     PlotOwnershipCreate,
     PlotOwnershipInDB,
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -189,6 +192,27 @@ async def update_land_plot(
     use_case=Depends(get_update_land_plot_use_case),
 ) -> LandPlotWithOwners:
     """Обновить участок (treasurer, admin)."""
+    ownerships_in = getattr(plot_data, "ownerships", None)
+    logger.info(
+        "PATCH land-plots/%s: user=%s role=%s cooperative_id=%s, ownerships present=%s count=%s",
+        plot_id,
+        current_user.username,
+        current_user.role,
+        current_user.cooperative_id,
+        ownerships_in is not None,
+        len(ownerships_in) if ownerships_in else 0,
+    )
+    if ownerships_in:
+        for idx, o in enumerate(ownerships_in):
+            o_dict = (
+                o.model_dump() if hasattr(o, "model_dump") else (o if isinstance(o, dict) else {})
+            )
+            logger.info(
+                "PATCH land-plots/%s ownerships[%s]: %s",
+                plot_id,
+                idx,
+                o_dict,
+            )
     plot = await use_case.execute(
         plot_id=plot_id,
         data=plot_data,
@@ -220,14 +244,14 @@ async def update_land_plot(
     "/{plot_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Удалить участок",
-    description="Удалить земельный участок. Доступно только admin.",
+    description="Удалить земельный участок. Казначей и председатель могут удалять участки в рамках своего товарищества, admin — в любом.",
 )
 async def delete_land_plot(
     plot_id: UUID,
     current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_delete_land_plot_use_case),
 ) -> None:
-    """Удалить участок (только admin)."""
+    """Удалить участок."""
     # Admin can delete from any cooperative - pass None and let use case handle it
     deleted = await use_case.execute(plot_id=plot_id, cooperative_id=current_user.cooperative_id)
 

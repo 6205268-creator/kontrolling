@@ -48,7 +48,7 @@ class OwnerInDB(OwnerBase):
 class LandPlotBase(BaseModel):
     """Base schema for LandPlot."""
 
-    cooperative_id: UUID = Field(..., description="ID coopérative")
+    cooperative_id: UUID = Field(..., description="ID товарищества")
     plot_number: str = Field(..., description="Номер участка", min_length=1, max_length=50)
     area_sqm: Decimal = Field(..., description="Площадь в кв.м", gt=0)
     cadastral_number: str | None = Field(None, description="Кадастровый номер", max_length=50)
@@ -70,6 +70,10 @@ class LandPlotUpdate(BaseModel):
     area_sqm: Decimal | None = Field(None, description="Площадь в кв.м", gt=0)
     cadastral_number: str | None = Field(None, description="Кадастровый номер", max_length=50)
     status: str | None = Field(None, description="Статус", pattern="^(active|vacant|archived)$")
+    ownerships: list["PlotOwnershipCreate"] | None = Field(
+        None,
+        description="Полный список владельцев (текущие закрываются с valid_to=сегодня, затем создаются переданные)",
+    )
 
 
 class LandPlotInDB(LandPlotBase):

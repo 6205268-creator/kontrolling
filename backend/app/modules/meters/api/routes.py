@@ -13,6 +13,7 @@ from app.modules.deps import (
     get_delete_meter_use_case,
     get_get_meter_use_case,
     get_meter_readings_use_case,
+    get_meter_repository,
     get_meters_by_owner_use_case,
     get_update_meter_use_case,
 )
@@ -32,6 +33,7 @@ async def get_meters(
     current_user: Annotated[AppUser, Depends(get_current_user)],
     owner_id: UUID | None = None,
     use_case=Depends(get_meters_by_owner_use_case),
+    meter_repo=Depends(get_meter_repository),
 ) -> list[MeterInDB]:
     """Get all meters for cooperative or filtered by owner."""
     if owner_id is not None:
@@ -39,20 +41,12 @@ async def get_meters(
             owner_id=owner_id, cooperative_id=current_user.cooperative_id
         )
     else:
-        # For admin users without cooperative_id, return empty list
-        # Admin should query by owner_id instead
         if current_user.cooperative_id is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Admin users must specify owner_id parameter",
             )
-        # Get all meters for cooperative using repository directly
-        from app.api.deps import get_db
-        from app.modules.meters.infrastructure.repositories import MeterRepository
-
-        db = await anext(get_db())
-        repo = MeterRepository(db)
-        meters = await repo.get_all(current_user.cooperative_id)
+        meters = await meter_repo.get_all(current_user.cooperative_id)
 
     return [
         MeterInDB(

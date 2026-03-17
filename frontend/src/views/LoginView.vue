@@ -32,6 +32,7 @@
               required
               :disabled="isLoading"
               @input="clearError"
+              @keydown.enter.prevent="handleLogin"
             />
             <button
               type="button"
@@ -45,7 +46,25 @@
           </div>
         </div>
 
-        <button type="submit" class="login-button" :disabled="isLoading">
+        <div class="login-error-box" role="alert">
+          {{ inlineError }}
+          <template v-if="inlineError && inlineError.includes('Сервер')">
+            <p class="login-error-hint">
+              Проверка: откройте в браузере
+              <a href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener">http://127.0.0.1:8000/docs</a>
+              — если страница не открывается, бэкенд не запущен на порту 8000.
+            </p>
+            <button type="button" class="btn-check-server" @click="checkServer">
+              {{ checkStatus ?? 'Проверить связь с сервером' }}
+            </button>
+          </template>
+        </div>
+        <button
+          type="button"
+          class="login-button"
+          :disabled="isLoading"
+          @click="handleLogin"
+        >
           <LogIn v-if="!isLoading" class="btn-icon" aria-hidden />
           <span v-if="isLoading">Вход...</span>
           <span v-else>Войти</span>
@@ -62,6 +81,7 @@ import { useRouter } from 'vue-router';
 import { LayoutDashboard, LogIn } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { error as errorToast, success as successToast } from '@/utils/toast';
+import api from '@/services/api';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -72,15 +92,32 @@ const username = ref('');
 const password = ref('');
 const showPassword = ref(false);
 const isLoading = ref(false);
+const inlineError = ref('');
+const checkStatus = ref<string | null>(null);
 
 function clearError() {
-  // Clear error state when user starts typing
-  if (isLoading.value === false) {
-    // User is editing, clear any previous error state
+  inlineError.value = '';
+  checkStatus.value = null;
+}
+
+async function checkServer() {
+  checkStatus.value = 'Проверка…';
+  try {
+    const { data } = await api.get<{ status?: string }>('health');
+    if (data?.status === 'ok') {
+      checkStatus.value = 'Сервер доступен (health ok)';
+    } else {
+      checkStatus.value = `Ответ: ${JSON.stringify(data)}`;
+    }
+  } catch (e: unknown) {
+    const msg = e && typeof e === 'object' && 'message' in e ? (e as Error).message : String(e);
+    const code = e && typeof e === 'object' && 'code' in e ? (e as { code: string }).code : '';
+    checkStatus.value = `Ошибка: ${code || msg}`;
   }
 }
 
 async function handleLogin() {
+  inlineError.value = '';
   isLoading.value = true;
 
   try {
@@ -88,18 +125,22 @@ async function handleLogin() {
       username: username.value,
       password: password.value,
     });
-    
-    successToast('Добро пожаловать!', `Вы вошли как ${username.value}`);
-    router.push('/dashboard');
+
+    try {
+      successToast('Добро пожаловать!', `Вы вошли как ${username.value}`);
+    } catch {
+      // toast может быть недоступен — не мешаем переходу
+    }
+    await router.push('/dashboard');
   } catch (err: unknown) {
     let errorMessage = 'Произошла ошибка при входе';
-    
+
     if (err && typeof err === 'object' && 'response' in err) {
       const axiosError = err as {
         response?: { status?: number; data?: { detail?: unknown; message?: string } };
         message?: string;
       };
-      
+
       if (axiosError.response?.status === 401) {
         errorMessage = 'Неверное имя пользователя или пароль';
       } else if (axiosError.response?.status === 502 || axiosError.response?.status === 503) {
@@ -110,12 +151,25 @@ async function handleLogin() {
         errorMessage = typeof detail === 'string' ? detail : 'Ошибка сервера. Проверьте подключение к БД.';
       } else if (axiosError.response?.data?.message) {
         errorMessage = axiosError.response.data.message;
+      } else if (axiosError.response?.status === 404 || axiosError.response?.status === 0) {
+        errorMessage = 'Не удалось подключиться к серверу. Запустите бэкенд (npm run dev из корня проекта).';
+      } else if (axiosError.message) {
+        errorMessage = axiosError.message;
       }
     } else if (err instanceof Error) {
-      errorMessage = err.message;
+      if ('code' in err && (err as { code: string }).code === 'ECONNABORTED') {
+        errorMessage = 'Сервер не отвечает. Запустите бэкенд (npm run dev из корня проекта).';
+      } else {
+        errorMessage = err.message;
+      }
     }
-    
-    errorToast('Ошибка входа', errorMessage);
+
+    inlineError.value = errorMessage;
+    try {
+      errorToast('Ошибка входа', errorMessage);
+    } catch {
+      // тост может не сработать — текст уже в inlineError
+    }
   } finally {
     isLoading.value = false;
   }
@@ -252,6 +306,52 @@ async function handleLogin() {
 .login-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.login-error-box {
+  min-height: 0;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-size: var(--text-sm);
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-md);
+  visibility: visible;
+}
+
+.login-error-box:empty {
+  display: none;
+}
+
+.login-error-box:not(:empty) {
+  margin-bottom: 0.25rem;
+}
+
+.login-error-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  color: #991b1b;
+}
+
+.login-error-hint a {
+  color: #b91c1c;
+  text-decoration: underline;
+}
+
+.btn-check-server {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  background: #fff;
+  border: 1px solid #f87171;
+  border-radius: var(--radius-md);
+  color: #b91c1c;
+  cursor: pointer;
+}
+
+.btn-check-server:hover {
+  background: #fef2f2;
 }
 
 .btn-icon {

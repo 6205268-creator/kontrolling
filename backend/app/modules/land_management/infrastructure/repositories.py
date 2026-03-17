@@ -34,6 +34,13 @@ class LandPlotRepository(ILandPlotRepository):
         model = result.scalar_one_or_none()
         return model.to_domain() if model else None
 
+    async def get_by_id_any_cooperative(self, id: UUID) -> LandPlot | None:
+        """Get land plot by ID without cooperative filter (for admin)."""
+        query = select(LandPlotModel).where(LandPlotModel.id == id)
+        result = await self.session.execute(query)
+        model = result.scalar_one_or_none()
+        return model.to_domain() if model else None
+
     async def get_all(self, cooperative_id: UUID) -> list[LandPlot]:
         """Get all land plots for cooperative."""
         query = select(LandPlotModel).where(LandPlotModel.cooperative_id == cooperative_id)
@@ -196,6 +203,13 @@ class PlotOwnershipRepository(IPlotOwnershipRepository):
                 LandPlotModel.cooperative_id == cooperative_id,
             )
         )
+        result = await self.session.execute(query)
+        model = result.scalar_one_or_none()
+        return model.to_domain() if model else None
+
+    async def get_by_id_any_cooperative(self, id: UUID) -> PlotOwnership | None:
+        """Get plot ownership by ID without cooperative filter (for admin)."""
+        query = select(PlotOwnershipModel).where(PlotOwnershipModel.id == id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
         return model.to_domain() if model else None

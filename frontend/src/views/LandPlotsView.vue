@@ -32,7 +32,6 @@
       :page-size="10"
       search-placeholder="Поиск участков..."
       empty-message="Нет участков"
-      @row-click="handleRowClick"
     >
       <!-- Filters slot -->
       <template #filters>
@@ -159,11 +158,6 @@ function loadPlots(): void {
   } else {
     landPlotsStore.fetchPlots(authStore.cooperativeId ?? undefined);
   }
-}
-
-function handleRowClick(item: unknown) {
-  // Could navigate to edit page or show details
-  console.log('Row clicked:', item);
 }
 
 onMounted(async () => {

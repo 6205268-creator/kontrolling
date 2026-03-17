@@ -75,6 +75,14 @@
               @input="onOwnerInput(index)"
             />
             <p class="field-hint">Выберите владельца из списка после ввода фамилии, имени или УНП</p>
+            <button
+              type="button"
+              class="btn-pick-owner"
+              title="Открыть список всех владельцев"
+              @click="openOwnerListDialog(index)"
+            >
+              Выбрать из списка
+            </button>
             <ul v-if="row.showSuggestions" class="suggestions">
               <li
                 v-for="opt in row.suggestions"
@@ -145,7 +153,15 @@
       </section>
 
       <div v-if="validationError" class="validation-error">{{ validationError }}</div>
-      <div v-if="submitError" class="validation-error">{{ submitError }}</div>
+      <div v-if="submitError" class="validation-error">
+        {{ submitError }}
+        <div v-if="submitErrorDetails" class="error-details">
+          <pre>{{ submitErrorDetails }}</pre>
+          <button type="button" class="btn-copy-error" @click="copyErrorToClipboard">
+            {{ errorCopied ? 'Скопировано' : 'Скопировать ошибку' }}
+          </button>
+        </div>
+      </div>
       <div v-if="loadError" class="validation-error">{{ loadError }}</div>
 
       <div class="form-actions">
@@ -155,12 +171,38 @@
         </button>
       </div>
     </form>
+
+    <Dialog
+      v-model:visible="showOwnerListDialog"
+      modal
+      header="Выбор владельца"
+      :style="{ width: 'min(480px, 100%)' }"
+      :dismissable-mask="true"
+      @show="loadDialogOwners"
+    >
+      <div v-if="dialogOwnersLoading" class="dialog-loading">Загрузка списка…</div>
+      <ul v-else class="owner-list-dialog">
+        <li
+          v-for="owner in dialogOwners"
+          :key="owner.id"
+          class="owner-list-item"
+          @click="onSelectOwnerFromList(owner)"
+        >
+          <span class="owner-list-name">{{ owner.name }}</span>
+          <span v-if="owner.tax_id" class="owner-list-tax">УНП: {{ owner.tax_id }}</span>
+        </li>
+        <li v-if="!dialogOwnersLoading && dialogOwners.length === 0" class="owner-list-empty">
+          Нет владельцев
+        </li>
+      </ul>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import Dialog from 'primevue/dialog';
 import api from '@/services/api';
 import { useAuthStore } from '@/stores/auth';
 import type { Cooperative, Owner } from '@/types';
@@ -186,6 +228,7 @@ interface OwnershipRow {
   showSuggestions: boolean;
   share_numerator: number;
   share_denominator: number;
+  sharePresetKey?: string;
   is_primary: boolean;
   valid_from: string;
 }
@@ -206,8 +249,15 @@ const form = ref({
 const ownerships = ref<OwnershipRow[]>([]);
 const validationError = ref('');
 const submitError = ref('');
+const submitErrorDetails = ref('');
 const loadError = ref('');
 const submitting = ref(false);
+const errorCopied = ref(false);
+
+const showOwnerListDialog = ref(false);
+const ownerListDialogIndex = ref(0);
+const dialogOwners = ref<Owner[]>([]);
+const dialogOwnersLoading = ref(false);
 
 const isAdmin = computed(() => authStore.userRole === 'admin');
 const currentCooperativeId = computed(() => authStore.cooperativeId ?? '');
@@ -233,6 +283,7 @@ function addOwnership(): void {
     showSuggestions: false,
     share_numerator: 1,
     share_denominator: 1,
+    sharePresetKey: '1/1',
     is_primary: false,
     valid_from: todayISO(),
   });
@@ -258,19 +309,19 @@ function removeOwnership(index: number): void {
   ownerships.value.splice(index, 1);
 }
 
-let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+const searchTimeouts: ReturnType<typeof setTimeout>[] = [];
 async function onOwnerInput(index: number): Promise<void> {
   const row = ownerships.value[index];
   if (!row) return;
   row.owner_id = null;
   row.owner_name = '';
-  if (searchTimeout) clearTimeout(searchTimeout);
+  if (searchTimeouts[index]) clearTimeout(searchTimeouts[index]);
   if (row.searchQuery.trim().length < 2) {
     row.suggestions = [];
     row.showSuggestions = true;
     return;
   }
-  searchTimeout = setTimeout((): Promise<void> => {
+  searchTimeouts[index] = setTimeout((): Promise<void> => {
     return (async () => {
       try {
         const { data } = await api.get<Owner[]>('owners/search', {
@@ -299,6 +350,43 @@ function selectOwner(index: number, owner: Owner): void {
   row.searchQuery = owner.name + (owner.tax_id ? ` (${owner.tax_id})` : '');
   row.suggestions = [];
   row.showSuggestions = false;
+}
+
+function openOwnerListDialog(index: number): void {
+  ownerListDialogIndex.value = index;
+  showOwnerListDialog.value = true;
+}
+
+async function loadDialogOwners(): Promise<void> {
+  dialogOwnersLoading.value = true;
+  dialogOwners.value = [];
+  try {
+    const { data } = await api.get<Owner[]>('owners/', {
+      params: { skip: 0, limit: 500 },
+    });
+    dialogOwners.value = data ?? [];
+  } catch {
+    dialogOwners.value = [];
+  } finally {
+    dialogOwnersLoading.value = false;
+  }
+}
+
+function onSelectOwnerFromList(owner: Owner): void {
+  selectOwner(ownerListDialogIndex.value, owner);
+  showOwnerListDialog.value = false;
+}
+
+async function copyErrorToClipboard(): Promise<void> {
+  if (!submitErrorDetails.value) return;
+  try {
+    await navigator.clipboard.writeText(submitErrorDetails.value);
+    errorCopied.value = true;
+    setTimeout(() => { errorCopied.value = false; }, 2000);
+  } catch {
+    // fallback: show in alert so user can manually copy
+    alert(submitErrorDetails.value);
+  }
 }
 
 function validate(): boolean {
@@ -349,17 +437,36 @@ async function loadPlot(): Promise<void> {
       status: data.status,
     };
     if (data.owners && data.owners.length > 0) {
-      ownerships.value = data.owners.map((o: Record<string, unknown>) => ({
-        owner_id: o.owner_id,
-        owner_name: '',
-        searchQuery: '',
-        suggestions: [],
-        showSuggestions: false,
-        share_numerator: o.share_numerator,
-        share_denominator: o.share_denominator,
-        is_primary: o.is_primary,
-        valid_from: o.valid_from,
-      }));
+      ownerships.value = data.owners.map((o: Record<string, unknown>) => {
+        const num = Number(o.share_numerator) || 1;
+        const den = Number(o.share_denominator) || 1;
+        return {
+          owner_id: o.owner_id,
+          owner_name: '',
+          searchQuery: '',
+          suggestions: [],
+          showSuggestions: false,
+          share_numerator: num,
+          share_denominator: den,
+          sharePresetKey: getSharePresetKey(num, den),
+          is_primary: Boolean(o.is_primary),
+          valid_from: typeof o.valid_from === 'string' ? o.valid_from : String(o.valid_from ?? todayISO()),
+        };
+      });
+
+      const ownerFetches = ownerships.value.map(async (row) => {
+        if (!row.owner_id) return;
+        try {
+          const { data: ownerData } = await api.get<Owner>(`owners/${row.owner_id}`);
+          if (ownerData) {
+            row.owner_name = ownerData.name;
+            row.searchQuery = ownerData.name + (ownerData.tax_id ? ` (${ownerData.tax_id})` : '');
+          }
+        } catch {
+          // Owner data unavailable — leave fields empty
+        }
+      });
+      await Promise.all(ownerFetches);
     } else {
       addOwnership();
     }
@@ -368,35 +475,68 @@ async function loadPlot(): Promise<void> {
   }
 }
 
+function buildOwnershipsPayload(): { owner_id: string; share_numerator: number; share_denominator: number; is_primary: boolean; valid_from: string }[] {
+  return ownerships.value
+    .filter((r) => r.owner_id != null && r.owner_id !== '')
+    .map((r) => ({
+      owner_id: String(r.owner_id),
+      share_numerator: Number(r.share_numerator) || 1,
+      share_denominator: Number(r.share_denominator) || 1,
+      is_primary: Boolean(r.is_primary),
+      valid_from: typeof r.valid_from === 'string' && r.valid_from ? r.valid_from : new Date().toISOString().slice(0, 10),
+    }));
+}
+
 async function onSubmit(): Promise<void> {
   submitError.value = '';
+  submitErrorDetails.value = '';
   if (!validate()) return;
   const coopId = isAdmin.value ? form.value.cooperative_id : currentCooperativeId.value;
+  const ownershipsPayload = buildOwnershipsPayload();
   const payload = {
     cooperative_id: coopId,
     plot_number: form.value.plot_number.trim(),
     area_sqm: Number(form.value.area_sqm),
     cadastral_number: form.value.cadastral_number.trim() || null,
     status: form.value.status,
-    ownerships: ownerships.value
-      .filter((r) => r.owner_id)
-      .map((r) => ({
-        owner_id: r.owner_id,
-        share_numerator: r.share_numerator,
-        share_denominator: r.share_denominator,
-        is_primary: r.is_primary,
-        valid_from: r.valid_from,
-      })),
+    ownerships: ownershipsPayload,
   };
+  if (import.meta.env.DEV) {
+    console.info('[LandPlotEdit] PATCH payload:', {
+      plot_id: plotId.value,
+      cooperative_id: coopId,
+      ownerships_count: ownershipsPayload.length,
+      ownerships: ownershipsPayload,
+    });
+  }
   submitting.value = true;
   try {
     await api.patch(`land-plots/${plotId.value}`, payload);
     await router.push('/land-plots');
   } catch (err: unknown) {
-    const msg = err && typeof err === 'object' && 'response' in err
-      ? (err as { response?: { data?: { detail?: string } } }).response?.data?.detail
+    submitErrorDetails.value = '';
+    if (err && typeof err === 'object' && 'response' in err) {
+      const res = (err as { response?: { status?: number; data?: unknown } }).response;
+      if (res) {
+        const statusCode = res.status ?? '?';
+        const body = res.data != null ? JSON.stringify(res.data, null, 2) : '(пусто)';
+        submitErrorDetails.value = `HTTP ${statusCode}\n\n${body}`;
+      }
+      if (import.meta.env.DEV) {
+        console.error('[LandPlotEdit] PATCH failed:', res?.status, res?.data, err);
+      }
+    }
+    const data = err && typeof err === 'object' && 'response' in err
+      ? (err as { response?: { data?: { detail?: unknown } } }).response?.data
       : null;
-    submitError.value = typeof msg === 'string' ? msg : 'Не удалось сохранить изменения. Попробуйте снова.';
+    const detail = data?.detail;
+    const shortMsg =
+      typeof detail === 'string'
+        ? detail
+        : Array.isArray(detail)
+          ? 'Ошибка валидации данных (см. детали ниже)'
+          : 'Не удалось сохранить изменения. Попробуйте снова.';
+    submitError.value = shortMsg;
   } finally {
     submitting.value = false;
   }
@@ -493,7 +633,6 @@ onMounted(async () => {
   grid-template-columns: minmax(0, 260px) minmax(0, 180px) minmax(0, 160px) minmax(0, 132px) 36px;
   grid-template-rows: auto auto;
   gap: 12px 16px;
-  gap: 12px;
   align-items: end;
   margin-bottom: 16px;
   padding: 12px;
@@ -534,6 +673,62 @@ onMounted(async () => {
   font-size: 0.75rem;
   color: #64748b;
   line-height: 1.3;
+}
+
+.btn-pick-owner {
+  margin-top: 6px;
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+  color: var(--p-primary-color, #2563eb);
+  background: transparent;
+  border: 1px solid var(--p-primary-color, #2563eb);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-pick-owner:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.dialog-loading {
+  padding: 1rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.owner-list-dialog {
+  max-height: 60vh;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.owner-list-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+}
+.owner-list-item:hover {
+  background: #f1f5f9;
+}
+
+.owner-list-name {
+  font-weight: 500;
+}
+
+.owner-list-tax {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.owner-list-empty {
+  padding: 1rem;
+  text-align: center;
+  color: #64748b;
 }
 
 @media (max-width: 900px) {
@@ -651,11 +846,6 @@ onMounted(async () => {
   align-self: center;
 }
 
-.share-input {
-  width: 64px;
-}
-
-.share-input label,
 .valid-from label,
 .primary-check label {
   display: block;
@@ -665,7 +855,6 @@ onMounted(async () => {
   color: #6b7280;
 }
 
-.share-input input,
 .valid-from input {
   width: 100%;
   padding: 8px;
@@ -770,5 +959,37 @@ onMounted(async () => {
   color: #dc2626;
   border-radius: 6px;
   font-size: 0.875rem;
+}
+
+.error-details {
+  margin-top: 10px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #374151;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.error-details pre {
+  margin: 0 0 8px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.btn-copy-error {
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+  border: 1px solid #dc2626;
+  border-radius: 6px;
+  background: #fff;
+  color: #dc2626;
+  cursor: pointer;
+}
+
+.btn-copy-error:hover {
+  background: #fef2f2;
 }
 </style>

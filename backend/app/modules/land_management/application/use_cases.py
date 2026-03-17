@@ -1,5 +1,6 @@
 """Use cases for land_management module."""
 
+import logging
 import uuid
 from datetime import date
 from uuid import UUID
@@ -18,6 +19,8 @@ from ..domain.events import (
 )
 from ..domain.repositories import ILandPlotRepository, IOwnerRepository, IPlotOwnershipRepository
 from .dtos import LandPlotCreate, LandPlotUpdate, OwnerCreate, OwnerUpdate, PlotOwnershipCreate
+
+logger = logging.getLogger(__name__)
 
 
 class CreateLandPlotUseCase:
@@ -121,8 +124,10 @@ class GetLandPlotUseCase:
     def __init__(self, repo: ILandPlotRepository):
         self.repo = repo
 
-    async def execute(self, plot_id: UUID, cooperative_id: UUID) -> LandPlot | None:
-        """Get land plot by ID."""
+    async def execute(self, plot_id: UUID, cooperative_id: UUID | None) -> LandPlot | None:
+        """Get land plot by ID. If cooperative_id is None (admin), no cooperative filter."""
+        if cooperative_id is None:
+            return await self.repo.get_by_id_any_cooperative(plot_id)
         return await self.repo.get_by_id(plot_id, cooperative_id)
 
 
@@ -141,28 +146,116 @@ class GetLandPlotsUseCase:
 
 
 class UpdateLandPlotUseCase:
-    """Use case for updating a LandPlot."""
+    """Use case for updating a LandPlot.
 
-    def __init__(self, repo: ILandPlotRepository):
+    If ownerships is provided, current ownerships are closed (valid_to=today)
+    and the given list is created as new ownerships.
+    """
+
+    def __init__(
+        self,
+        repo: ILandPlotRepository,
+        get_current_ownerships: "GetCurrentPlotOwnershipsUseCase",
+        close_ownership: "ClosePlotOwnershipUseCase",
+        create_ownership: "CreatePlotOwnershipUseCase",
+    ):
         self.repo = repo
+        self.get_current_ownerships = get_current_ownerships
+        self.close_ownership = close_ownership
+        self.create_ownership = create_ownership
 
     async def execute(
         self,
         plot_id: UUID,
         data: LandPlotUpdate,
-        cooperative_id: UUID,
+        cooperative_id: UUID | None,
     ) -> LandPlot | None:
-        """Update land plot."""
-        entity = await self.repo.get_by_id(plot_id, cooperative_id)
+        """Update land plot and optionally replace ownerships."""
+        logger.info(
+            "UpdateLandPlotUseCase.execute: plot_id=%s, cooperative_id=%s, data keys=%s",
+            plot_id,
+            cooperative_id,
+            list(data.model_dump(exclude_unset=True).keys()) if hasattr(data, "model_dump") else [],
+        )
+        ownerships_raw = getattr(data, "ownerships", None)
+        logger.info(
+            "UpdateLandPlotUseCase: ownerships from request: present=%s, count=%s",
+            ownerships_raw is not None,
+            len(ownerships_raw) if ownerships_raw else 0,
+        )
+
+        if cooperative_id is None:
+            entity = await self.repo.get_by_id_any_cooperative(plot_id)
+        else:
+            entity = await self.repo.get_by_id(plot_id, cooperative_id)
         if entity is None:
+            logger.warning("UpdateLandPlotUseCase: plot not found, plot_id=%s", plot_id)
             return None
 
+        # For ownership operations use plot's cooperative (admin has cooperative_id=None)
+        effective_cooperative_id = (
+            cooperative_id if cooperative_id is not None else entity.cooperative_id
+        )
+        logger.info(
+            "UpdateLandPlotUseCase: effective_cooperative_id=%s",
+            effective_cooperative_id,
+        )
+
         update_data = data.model_dump(exclude_unset=True)
+        # ownerships читаем из data: при PATCH могут передать не все поля, в dump может не попасть
+        ownerships_payload = getattr(data, "ownerships", None)
+        if ownerships_payload is not None:
+            ownerships_payload = [
+                u.model_dump() if hasattr(u, "model_dump") else dict(u) for u in ownerships_payload
+            ]
+            logger.info(
+                "UpdateLandPlotUseCase: ownerships_payload (serialized) count=%s, items=%s",
+                len(ownerships_payload),
+                ownerships_payload,
+            )
+        update_data.pop("ownerships", None)
+
         for field, value in update_data.items():
             if hasattr(entity, field):
                 setattr(entity, field, value)
 
-        return await self.repo.update(entity)
+        updated_plot = await self.repo.update(entity)
+        logger.info("UpdateLandPlotUseCase: plot fields updated successfully")
+
+        if ownerships_payload is not None:
+            current = await self.get_current_ownerships.execute(plot_id)
+            logger.info(
+                "UpdateLandPlotUseCase: current ownerships to close: count=%s, ids=%s",
+                len(current),
+                [str(o.id) for o in current],
+            )
+            today = date.today()
+            for o in current:
+                await self.close_ownership.execute(o.id, today, effective_cooperative_id)
+                logger.info("UpdateLandPlotUseCase: closed ownership id=%s", o.id)
+            for i, ownership_data in enumerate(ownerships_payload):
+                try:
+                    dto = PlotOwnershipCreate(**ownership_data)
+                    await self.create_ownership.execute(
+                        land_plot_id=plot_id,
+                        data=dto,
+                        cooperative_id=effective_cooperative_id,
+                    )
+                    logger.info(
+                        "UpdateLandPlotUseCase: created ownership #%s owner_id=%s",
+                        i + 1,
+                        ownership_data.get("owner_id"),
+                    )
+                except Exception as e:
+                    logger.exception(
+                        "UpdateLandPlotUseCase: failed to create ownership #%s, payload=%s: %s",
+                        i + 1,
+                        ownership_data,
+                        e,
+                    )
+                    raise
+
+        return updated_plot
 
 
 class DeleteLandPlotUseCase:
@@ -327,7 +420,7 @@ class CreatePlotOwnershipUseCase:
             raise ValidationError("Land plot not found")
 
         entity = PlotOwnership(
-            id=UUID(int=0),
+            id=uuid.uuid4(),
             land_plot_id=land_plot_id,
             owner_id=data.owner_id,
             share_numerator=data.share_numerator,
@@ -369,10 +462,13 @@ class ClosePlotOwnershipUseCase:
         self,
         ownership_id: UUID,
         valid_to: date,
-        cooperative_id: UUID,
+        cooperative_id: UUID | None,
     ) -> PlotOwnership | None:
         """Close plot ownership by setting valid_to date."""
-        entity = await self.ownership_repo.get_by_id(ownership_id, cooperative_id)
+        if cooperative_id is None:
+            entity = await self.ownership_repo.get_by_id_any_cooperative(ownership_id)
+        else:
+            entity = await self.ownership_repo.get_by_id(ownership_id, cooperative_id)
         if entity is None:
             return None
 

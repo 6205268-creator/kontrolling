@@ -75,6 +75,14 @@
               @input="onOwnerInput(index)"
             />
             <p class="field-hint">Выберите владельца из списка после ввода фамилии, имени или УНП</p>
+            <button
+              type="button"
+              class="btn-pick-owner"
+              title="Открыть список всех владельцев"
+              @click="openOwnerListDialog(index)"
+            >
+              Выбрать из списка
+            </button>
             <ul v-if="row.showSuggestions" class="suggestions">
               <li
                 v-for="opt in row.suggestions"
@@ -154,12 +162,38 @@
         </button>
       </div>
     </form>
+
+    <Dialog
+      v-model:visible="showOwnerListDialog"
+      modal
+      header="Выбор владельца"
+      :style="{ width: 'min(480px, 100%)' }"
+      :dismissable-mask="true"
+      @show="loadDialogOwners"
+    >
+      <div v-if="dialogOwnersLoading" class="dialog-loading">Загрузка списка…</div>
+      <ul v-else class="owner-list-dialog">
+        <li
+          v-for="owner in dialogOwners"
+          :key="owner.id"
+          class="owner-list-item"
+          @click="onSelectOwnerFromList(owner)"
+        >
+          <span class="owner-list-name">{{ owner.name }}</span>
+          <span v-if="owner.tax_id" class="owner-list-tax">УНП: {{ owner.tax_id }}</span>
+        </li>
+        <li v-if="!dialogOwnersLoading && dialogOwners.length === 0" class="owner-list-empty">
+          Нет владельцев
+        </li>
+      </ul>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import Dialog from 'primevue/dialog';
 import api from '@/services/api';
 import { useAuthStore } from '@/stores/auth';
 import type { Cooperative, Owner } from '@/types';
@@ -201,6 +235,11 @@ const ownerships = ref<OwnershipRow[]>([]);
 const validationError = ref('');
 const submitError = ref('');
 const submitting = ref(false);
+
+const showOwnerListDialog = ref(false);
+const ownerListDialogIndex = ref(0);
+const dialogOwners = ref<Owner[]>([]);
+const dialogOwnersLoading = ref(false);
 
 const isAdmin = computed(() => authStore.userRole === 'admin');
 const currentCooperativeId = computed(() => authStore.cooperativeId ?? '');
@@ -249,19 +288,19 @@ function removeOwnership(index: number): void {
   ownerships.value.splice(index, 1);
 }
 
-let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+const searchTimeouts: ReturnType<typeof setTimeout>[] = [];
 async function onOwnerInput(index: number): Promise<void> {
   const row = ownerships.value[index];
   if (!row) return;
   row.owner_id = null;
   row.owner_name = '';
-  if (searchTimeout) clearTimeout(searchTimeout);
+  if (searchTimeouts[index]) clearTimeout(searchTimeouts[index]);
   if (row.searchQuery.trim().length < 2) {
     row.suggestions = [];
     row.showSuggestions = true;
     return;
   }
-  searchTimeout = setTimeout((): Promise<void> => {
+  searchTimeouts[index] = setTimeout((): Promise<void> => {
     return (async () => {
       try {
         const { data } = await api.get<Owner[]>('owners/search', {
@@ -290,6 +329,31 @@ function selectOwner(index: number, owner: Owner): void {
   row.searchQuery = owner.name + (owner.tax_id ? ` (${owner.tax_id})` : '');
   row.suggestions = [];
   row.showSuggestions = false;
+}
+
+function openOwnerListDialog(index: number): void {
+  ownerListDialogIndex.value = index;
+  showOwnerListDialog.value = true;
+}
+
+async function loadDialogOwners(): Promise<void> {
+  dialogOwnersLoading.value = true;
+  dialogOwners.value = [];
+  try {
+    const { data } = await api.get<Owner[]>('owners/', {
+      params: { skip: 0, limit: 500 },
+    });
+    dialogOwners.value = data ?? [];
+  } catch {
+    dialogOwners.value = [];
+  } finally {
+    dialogOwnersLoading.value = false;
+  }
+}
+
+function onSelectOwnerFromList(owner: Owner): void {
+  selectOwner(ownerListDialogIndex.value, owner);
+  showOwnerListDialog.value = false;
 }
 
 function validate(): boolean {
@@ -496,6 +560,62 @@ onMounted(async () => {
   font-size: 0.75rem;
   color: #64748b;
   line-height: 1.3;
+}
+
+.btn-pick-owner {
+  margin-top: 6px;
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+  color: var(--p-primary-color, #2563eb);
+  background: transparent;
+  border: 1px solid var(--p-primary-color, #2563eb);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-pick-owner:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.dialog-loading {
+  padding: 1rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.owner-list-dialog {
+  max-height: 60vh;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.owner-list-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+}
+.owner-list-item:hover {
+  background: #f1f5f9;
+}
+
+.owner-list-name {
+  font-weight: 500;
+}
+
+.owner-list-tax {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.owner-list-empty {
+  padding: 1rem;
+  text-align: center;
+  color: #64748b;
 }
 
 @media (max-width: 900px) {

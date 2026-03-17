@@ -20,6 +20,11 @@ class ILandPlotRepository(IRepository[LandPlot], ABC):
         pass
 
     @abstractmethod
+    async def get_by_id_any_cooperative(self, id: UUID) -> LandPlot | None:
+        """Get land plot by ID without cooperative filter (for admin)."""
+        pass
+
+    @abstractmethod
     async def get_all(self, cooperative_id: UUID) -> list[LandPlot]:
         """Get all land plots for cooperative."""
         pass
@@ -42,6 +47,11 @@ class ILandPlotRepository(IRepository[LandPlot], ABC):
     @abstractmethod
     async def delete(self, id: UUID, cooperative_id: UUID) -> None:
         """Delete land plot by ID."""
+        pass
+
+    @abstractmethod
+    async def delete_by_id_any_cooperative(self, id: UUID) -> bool:
+        """Delete land plot by ID without cooperative filter (for admin)."""
         pass
 
 
@@ -85,6 +95,11 @@ class IPlotOwnershipRepository(IRepository[PlotOwnership], ABC):
     @abstractmethod
     async def get_by_id(self, id: UUID, cooperative_id: UUID) -> PlotOwnership | None:
         """Get plot ownership by ID."""
+        pass
+
+    @abstractmethod
+    async def get_by_id_any_cooperative(self, id: UUID) -> PlotOwnership | None:
+        """Get plot ownership by ID without cooperative filter (for admin)."""
         pass
 
     @abstractmethod

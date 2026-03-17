@@ -158,12 +158,9 @@ const props = withDefaults(defineProps<Props>(), {
   emptyMessage: 'Нет данных',
 });
 
-const emit = defineEmits<{
+defineEmits<{
   rowClick: [item: unknown];
 }>();
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _emit = emit;
 
 // Search
 const searchQuery = ref('');

@@ -28,29 +28,3 @@ class BalanceUpdated(DomainEvent):
     new_balance: float  # Serialized Decimal
     total_accruals: float
     total_payments: float
-
-
-@dataclass
-class LandPlotCreated(DomainEvent):
-    """Event from land_management module - redefined here to avoid circular imports.
-
-    In production, this would be imported from a shared events package.
-    """
-
-    land_plot_id: UUID
-    cooperative_id: UUID
-    plot_number: str
-    area_sqm: float
-
-
-@dataclass
-class MeterCreated(DomainEvent):
-    """Event from meters module - redefined here to avoid circular imports.
-
-    In production, this would be imported from a shared events package.
-    """
-
-    meter_id: UUID
-    cooperative_id: UUID
-    meter_type: str
-    subject_type: str  # WATER_METER or ELECTRICITY_METER

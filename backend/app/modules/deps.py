@@ -4,19 +4,10 @@ This module provides dependency injection containers for each module,
 ensuring proper separation of concerns and testability.
 """
 
-from typing import Protocol
-
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db
-
-
-class SessionDep(Protocol):
-    """Protocol for database session dependency."""
-
-    def __call__(self, db: AsyncSession = Depends(get_db)) -> AsyncSession: ...
-
 
 # =============================================================================
 # Shared Kernel Dependencies
@@ -176,11 +167,46 @@ def get_get_land_plots_use_case(land_plot_repo=Depends(get_land_plot_repository)
     return GetLandPlotsUseCase(land_plot_repo)
 
 
-def get_update_land_plot_use_case(land_plot_repo=Depends(get_land_plot_repository)):
+def get_create_plot_ownership_use_case(
+    ownership_repo=Depends(get_plot_ownership_repository),
+    land_plot_repo=Depends(get_land_plot_repository),
+    event_dispatcher=Depends(get_event_dispatcher),
+):
+    """Get CreatePlotOwnershipUseCase instance."""
+    from app.modules.land_management.application.use_cases import CreatePlotOwnershipUseCase
+
+    return CreatePlotOwnershipUseCase(ownership_repo, land_plot_repo, event_dispatcher)
+
+
+def get_close_plot_ownership_use_case(
+    ownership_repo=Depends(get_plot_ownership_repository),
+    event_dispatcher=Depends(get_event_dispatcher),
+):
+    """Get ClosePlotOwnershipUseCase instance."""
+    from app.modules.land_management.application.use_cases import ClosePlotOwnershipUseCase
+
+    return ClosePlotOwnershipUseCase(ownership_repo, event_dispatcher)
+
+
+def get_current_plot_ownerships_use_case(ownership_repo=Depends(get_plot_ownership_repository)):
+    """Get GetCurrentPlotOwnershipsUseCase instance."""
+    from app.modules.land_management.application.use_cases import GetCurrentPlotOwnershipsUseCase
+
+    return GetCurrentPlotOwnershipsUseCase(ownership_repo)
+
+
+def get_update_land_plot_use_case(
+    land_plot_repo=Depends(get_land_plot_repository),
+    get_current_ownerships=Depends(get_current_plot_ownerships_use_case),
+    close_ownership=Depends(get_close_plot_ownership_use_case),
+    create_ownership=Depends(get_create_plot_ownership_use_case),
+):
     """Get UpdateLandPlotUseCase instance."""
     from app.modules.land_management.application.use_cases import UpdateLandPlotUseCase
 
-    return UpdateLandPlotUseCase(land_plot_repo)
+    return UpdateLandPlotUseCase(
+        land_plot_repo, get_current_ownerships, close_ownership, create_ownership
+    )
 
 
 def get_delete_land_plot_use_case(land_plot_repo=Depends(get_land_plot_repository)):
@@ -235,39 +261,11 @@ def get_search_owners_use_case(owner_repo=Depends(get_owner_repository)):
     return SearchOwnersUseCase(owner_repo)
 
 
-def get_create_plot_ownership_use_case(
-    ownership_repo=Depends(get_plot_ownership_repository),
-    land_plot_repo=Depends(get_land_plot_repository),
-    event_dispatcher=Depends(get_event_dispatcher),
-):
-    """Get CreatePlotOwnershipUseCase instance."""
-    from app.modules.land_management.application.use_cases import CreatePlotOwnershipUseCase
-
-    return CreatePlotOwnershipUseCase(ownership_repo, land_plot_repo, event_dispatcher)
-
-
-def get_close_plot_ownership_use_case(
-    ownership_repo=Depends(get_plot_ownership_repository),
-    event_dispatcher=Depends(get_event_dispatcher),
-):
-    """Get ClosePlotOwnershipUseCase instance."""
-    from app.modules.land_management.application.use_cases import ClosePlotOwnershipUseCase
-
-    return ClosePlotOwnershipUseCase(ownership_repo, event_dispatcher)
-
-
 def get_plot_ownership_use_case(ownership_repo=Depends(get_plot_ownership_repository)):
     """Get GetPlotOwnershipUseCase instance."""
     from app.modules.land_management.application.use_cases import GetPlotOwnershipUseCase
 
     return GetPlotOwnershipUseCase(ownership_repo)
-
-
-def get_current_plot_ownerships_use_case(ownership_repo=Depends(get_plot_ownership_repository)):
-    """Get GetCurrentPlotOwnershipsUseCase instance."""
-    from app.modules.land_management.application.use_cases import GetCurrentPlotOwnershipsUseCase
-
-    return GetCurrentPlotOwnershipsUseCase(ownership_repo)
 
 
 # =============================================================================

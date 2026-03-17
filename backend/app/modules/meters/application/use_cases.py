@@ -30,29 +30,10 @@ class CreateMeterUseCase:
 
     async def execute(self, data: MeterCreate, cooperative_id: UUID | None) -> Meter:
         """Create a new meter."""
-        # For admin users (cooperative_id=None), determine cooperative from owner's land plot
         if cooperative_id is None:
-            from sqlalchemy import select
-
-            from app.modules.land_management.infrastructure.models import (
-                LandPlotModel,
-                PlotOwnershipModel,
-            )
-
-            # Get cooperative from owner's land plot
-            query = (
-                select(LandPlotModel.cooperative_id)
-                .join(PlotOwnershipModel, LandPlotModel.id == PlotOwnershipModel.land_plot_id)
-                .where(PlotOwnershipModel.owner_id == data.owner_id)
-                .limit(1)
-            )
-            # Need to get session from repo
-            session = self.repo.session  # type: ignore[attr-defined]
-            result = await session.execute(query)
-            row = result.first()
-            if row is None:
+            cooperative_id = await self.repo.get_cooperative_id_by_owner_id(data.owner_id)
+            if cooperative_id is None:
                 raise ValueError(f"Owner with id {data.owner_id} has no land plots")
-            cooperative_id = row[0]
 
         entity = Meter(
             id=UUID(int=0),
@@ -98,30 +79,10 @@ class GetMeterUseCase:
 
     async def execute(self, meter_id: UUID, cooperative_id: UUID | None) -> Meter | None:
         """Get meter by ID."""
-        # For admin users (cooperative_id=None), determine cooperative from meter's owner
         if cooperative_id is None:
-            from sqlalchemy import select
-
-            from app.modules.land_management.infrastructure.models import (
-                LandPlotModel,
-                PlotOwnershipModel,
-            )
-            from app.modules.meters.infrastructure.models import MeterModel
-
-            # Get cooperative from meter's owner land plot
-            query = (
-                select(LandPlotModel.cooperative_id)
-                .join(PlotOwnershipModel, LandPlotModel.id == PlotOwnershipModel.land_plot_id)
-                .join(MeterModel, MeterModel.owner_id == PlotOwnershipModel.owner_id)
-                .where(MeterModel.id == meter_id)
-                .limit(1)
-            )
-            session = self.repo.session  # type: ignore[attr-defined]
-            result = await session.execute(query)
-            row = result.first()
-            if row is None:
+            cooperative_id = await self.repo.get_cooperative_id_by_meter_id(meter_id)
+            if cooperative_id is None:
                 return None
-            cooperative_id = row[0]
 
         return await self.repo.get_by_id(meter_id, cooperative_id)
 
@@ -181,30 +142,10 @@ class AddMeterReadingUseCase:
 
     async def execute(self, data: MeterReadingCreate, cooperative_id: UUID | None) -> MeterReading:
         """Add a meter reading."""
-        # For admin users (cooperative_id=None), determine cooperative from meter's owner
         if cooperative_id is None:
-            from sqlalchemy import select
-
-            from app.modules.land_management.infrastructure.models import (
-                LandPlotModel,
-                PlotOwnershipModel,
-            )
-            from app.modules.meters.infrastructure.models import MeterModel
-
-            # Get cooperative from meter's owner land plot
-            query = (
-                select(LandPlotModel.cooperative_id)
-                .join(PlotOwnershipModel, LandPlotModel.id == PlotOwnershipModel.land_plot_id)
-                .join(MeterModel, MeterModel.owner_id == PlotOwnershipModel.owner_id)
-                .where(MeterModel.id == data.meter_id)
-                .limit(1)
-            )
-            session = self.meter_repo.session  # type: ignore[attr-defined]
-            result = await session.execute(query)
-            row = result.first()
-            if row is None:
+            cooperative_id = await self.meter_repo.get_cooperative_id_by_meter_id(data.meter_id)
+            if cooperative_id is None:
                 raise ValueError(f"Meter with id {data.meter_id} not found")
-            cooperative_id = row[0]
 
         # Verify meter exists and belongs to cooperative
         meter = await self.meter_repo.get_by_id(data.meter_id, cooperative_id)

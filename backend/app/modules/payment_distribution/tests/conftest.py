@@ -20,18 +20,20 @@ TEST_DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite+aiosqlite:///:memory:
 if "DATABASE_URL" not in os.environ:
     os.environ["DATABASE_URL"] = TEST_DATABASE_URL
 
-# Импорт моделей до app, чтобы Base.metadata содержал все таблицы
-import app.modules.accruals.infrastructure.models  # noqa: F401
-import app.modules.administration.infrastructure.models  # noqa: F401
-import app.modules.cooperative_core.infrastructure.models  # noqa: F401
-import app.modules.expenses.infrastructure.models  # noqa: F401
-import app.modules.financial_core.infrastructure.models  # noqa: F401
-import app.modules.land_management.infrastructure.models  # noqa: F401
-import app.modules.meters.infrastructure.models  # noqa: F401
-import app.modules.payment_distribution.infrastructure.models  # noqa: F401
-import app.modules.payments.infrastructure.models  # noqa: F401
-from app.db.base import Base
-from app.main import app
+# isort: off
+# Импорт моделей до app, чтобы Base.metadata содержал все таблицы.
+import app.modules.accruals.infrastructure.models  # noqa: F401, E402
+import app.modules.administration.infrastructure.models  # noqa: F401, E402
+import app.modules.cooperative_core.infrastructure.models  # noqa: F401, E402
+import app.modules.expenses.infrastructure.models  # noqa: F401, E402
+import app.modules.financial_core.infrastructure.models  # noqa: F401, E402
+import app.modules.land_management.infrastructure.models  # noqa: F401, E402
+import app.modules.meters.infrastructure.models  # noqa: F401, E402
+import app.modules.payment_distribution.infrastructure.models  # noqa: F401, E402
+import app.modules.payments.infrastructure.models  # noqa: F401, E402
+from app.db.base import Base  # noqa: E402
+from app.main import app  # noqa: E402
+# isort: on
 
 
 @pytest.fixture(scope="session")

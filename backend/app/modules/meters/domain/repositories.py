@@ -20,6 +20,16 @@ class IMeterRepository(IRepository[Meter], ABC):
         pass
 
     @abstractmethod
+    async def get_cooperative_id_by_owner_id(self, owner_id: UUID) -> UUID | None:
+        """Resolve cooperative_id by owner_id via land plot ownership."""
+        pass
+
+    @abstractmethod
+    async def get_cooperative_id_by_meter_id(self, meter_id: UUID) -> UUID | None:
+        """Resolve cooperative_id by meter_id via owner and land plot ownership."""
+        pass
+
+    @abstractmethod
     async def add(self, entity: Meter) -> Meter:
         pass
 

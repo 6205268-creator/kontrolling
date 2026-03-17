@@ -306,6 +306,86 @@ async def test_update_land_plot(
 
 
 @pytest.mark.asyncio
+async def test_update_land_plot_with_ownerships(
+    async_client: AsyncClient,
+    test_db,
+    treasurer_token: str,
+    owner_test_data: Owner,
+    second_owner_test_data: Owner,
+) -> None:
+    """Тест обновления участка с сохранением списка владельцев."""
+    coop_response = await async_client.get(
+        "/api/cooperatives/",
+        headers={"Authorization": f"Bearer {treasurer_token}"},
+    )
+    coop_id = coop_response.json()[0]["id"]
+
+    # Создаём участок через API с одним владельцем
+    create_resp = await async_client.post(
+        "/api/land-plots/",
+        json={
+            "cooperative_id": coop_id,
+            "plot_number": "Участок для обновления",
+            "area_sqm": "600.00",
+            "status": "active",
+            "ownerships": [
+                {
+                    "owner_id": str(owner_test_data.id),
+                    "share_numerator": 1,
+                    "share_denominator": 1,
+                    "is_primary": True,
+                    "valid_from": str(date.today()),
+                }
+            ],
+        },
+        headers={"Authorization": f"Bearer {treasurer_token}"},
+    )
+    assert create_resp.status_code == 201
+    plot_id = create_resp.json()["id"]
+
+    # Обновляем участок и добавляем второго владельца (доли 1/2 и 1/2)
+    response = await async_client.patch(
+        f"/api/land-plots/{plot_id}",
+        json={
+            "plot_number": "Участок с двумя владельцами",
+            "ownerships": [
+                {
+                    "owner_id": str(owner_test_data.id),
+                    "share_numerator": 1,
+                    "share_denominator": 2,
+                    "is_primary": True,
+                    "valid_from": str(date.today()),
+                },
+                {
+                    "owner_id": str(second_owner_test_data.id),
+                    "share_numerator": 1,
+                    "share_denominator": 2,
+                    "is_primary": False,
+                    "valid_from": str(date.today()),
+                },
+            ],
+        },
+        headers={"Authorization": f"Bearer {treasurer_token}"},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["plot_number"] == "Участок с двумя владельцами"
+
+    # Проверяем, что владельцы сохранились — запрос участка по ID возвращает обновлённый список
+    get_resp = await async_client.get(
+        f"/api/land-plots/{plot_id}",
+        headers={"Authorization": f"Bearer {treasurer_token}"},
+    )
+    assert get_resp.status_code == 200
+    owners = get_resp.json().get("owners", [])
+    assert len(owners) == 2
+    owner_ids = {o["owner_id"] for o in owners}
+    assert str(owner_test_data.id) in owner_ids
+    assert str(second_owner_test_data.id) in owner_ids
+
+
+@pytest.mark.asyncio
 async def test_update_land_plot_not_found(
     async_client: AsyncClient,
     admin_token: str,
@@ -322,6 +402,66 @@ async def test_update_land_plot_not_found(
     )
 
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_update_land_plot_with_ownerships_as_admin(
+    async_client: AsyncClient,
+    test_db,
+    admin_token: str,
+    owner_test_data: Owner,
+) -> None:
+    """Admin может обновить участок и сохранить владельцев (cooperative_id из участка)."""
+    coop = Cooperative(name="СТ для admin")
+    test_db.add(coop)
+    await test_db.flush()
+
+    plot = LandPlot(
+        cooperative_id=coop.id,
+        plot_number="Участок admin",
+        area_sqm="500.00",
+        status="active",
+    )
+    test_db.add(plot)
+    await test_db.flush()
+
+    ownership = PlotOwnership(
+        land_plot_id=plot.id,
+        owner_id=owner_test_data.id,
+        share_numerator=1,
+        share_denominator=1,
+        is_primary=True,
+        valid_from=date.today(),
+    )
+    test_db.add(ownership)
+    await test_db.commit()
+
+    response = await async_client.patch(
+        f"/api/land-plots/{plot.id}",
+        json={
+            "plot_number": "Участок admin обновлён",
+            "ownerships": [
+                {
+                    "owner_id": str(owner_test_data.id),
+                    "share_numerator": 1,
+                    "share_denominator": 1,
+                    "is_primary": True,
+                    "valid_from": str(date.today()),
+                }
+            ],
+        },
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["plot_number"] == "Участок admin обновлён"
+
+    get_resp = await async_client.get(
+        f"/api/land-plots/{plot.id}",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert get_resp.status_code == 200
+    assert len(get_resp.json().get("owners", [])) == 1
 
 
 @pytest.mark.asyncio

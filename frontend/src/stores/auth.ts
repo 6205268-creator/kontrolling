@@ -34,32 +34,46 @@ export const useAuthStore = defineStore('auth', () => {
     const formData = new URLSearchParams();
     formData.append('username', credentials.username);
     formData.append('password', credentials.password);
-    const response = await api.post<{ access_token: string; token_type: string }>(
+    const response = await api.post<{ access_token?: string; token_type?: string }>(
       'auth/login',
       formData,
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+      {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        timeout: 15000,
+      }
     );
 
-    token.value = response.data.access_token;
-    localStorage.setItem('token', response.data.access_token);
+    const accessToken = response.data?.access_token;
+    if (typeof accessToken !== 'string' || !accessToken) {
+      throw new Error('Сервер вернул неверный ответ: нет токена. Проверьте, что бэкенд запущен и доступен.');
+    }
+
+    token.value = accessToken;
+    localStorage.setItem('token', accessToken);
 
     // Декодируем JWT токен для получения информации о пользователе
-    const tokenParts = response.data.access_token.split('.');
+    const tokenParts = accessToken.split('.');
     if (tokenParts.length < 2) {
-      throw new Error('Invalid token format');
+      throw new Error('Неверный формат токена от сервера.');
     }
     const payloadString = tokenParts[1];
     if (!payloadString) {
-      throw new Error('Invalid token payload');
+      throw new Error('Неверные данные токена.');
     }
-    const payload = JSON.parse(atob(payloadString));
+    let payload: Record<string, unknown>;
+    try {
+      payload = JSON.parse(atob(payloadString));
+    } catch {
+      throw new Error('Не удалось прочитать данные пользователя из токена.');
+    }
+    const coopId = payload.cooperative_id;
     user.value = {
-      id: payload.sub,
-      username: payload.username || payload.preferred_username || 'user',
-      email: payload.email,
-      role: payload.role || 'treasurer',
-      cooperative_id: payload.cooperative_id,
-      is_active: payload.is_active ?? true,
+      id: String(payload.sub ?? ''),
+      username: (payload.username as string) || (payload.preferred_username as string) || credentials.username,
+      email: typeof payload.email === 'string' ? payload.email : '',
+      role: (payload.role as User['role']) || 'treasurer',
+      cooperative_id: coopId != null && coopId !== '' ? String(coopId) : null,
+      is_active: (payload.is_active as boolean) ?? true,
     };
     localStorage.setItem('user', JSON.stringify(user.value));
 
@@ -74,21 +88,6 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('user');
   }
 
-  async function checkAuth(): Promise<boolean> {
-    if (!token.value) {
-      return false;
-    }
-
-    try {
-      // Проверяем валидность токена через health endpoint
-      await api.get('/api/health');
-      return true;
-    } catch {
-      logout();
-      return false;
-    }
-  }
-
   return {
     token,
     user,
@@ -98,7 +97,6 @@ export const useAuthStore = defineStore('auth', () => {
     cooperativeId,
     login,
     logout,
-    checkAuth,
     loadCooperativeName,
   };
 });

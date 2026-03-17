@@ -4,14 +4,13 @@ Subscribes to domain events from other modules and creates FinancialSubject auto
 Also handles payment and accrual events for logging purposes.
 """
 
-import asyncio
 import logging
 from typing import TYPE_CHECKING
 
+from app.modules.shared.domain.events import LandPlotCreated, MeterCreated
 from app.modules.shared.kernel.events import EventDispatcher
 
 from ..domain.entities import FinancialSubject
-from ..domain.events import LandPlotCreated, MeterCreated
 from ..domain.repositories import IFinancialSubjectRepository
 
 if TYPE_CHECKING:
@@ -205,12 +204,16 @@ def setup_event_handlers(
     # For now, we register sync wrappers that schedule the async handlers
 
     def sync_land_plot_handler(event: LandPlotCreated) -> None:
-        """Synchronous wrapper for async handler."""
-        asyncio.get_event_loop().run_until_complete(land_plot_handler(event))
+        """Schedule async handler as task in the running event loop."""
+        import asyncio as _asyncio
+
+        _asyncio.create_task(land_plot_handler(event))
 
     def sync_meter_handler(event: MeterCreated) -> None:
-        """Synchronous wrapper for async handler."""
-        asyncio.get_event_loop().run_until_complete(meter_handler(event))
+        """Schedule async handler as task in the running event loop."""
+        import asyncio as _asyncio
+
+        _asyncio.create_task(meter_handler(event))
 
     event_dispatcher.register(LandPlotCreated, sync_land_plot_handler)
     event_dispatcher.register(MeterCreated, sync_meter_handler)

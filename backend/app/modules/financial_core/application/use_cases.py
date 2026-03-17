@@ -4,7 +4,6 @@ from datetime import date
 from uuid import UUID
 
 from ..domain.entities import FinancialSubject
-from ..domain.events import LandPlotCreated, MeterCreated
 from ..domain.repositories import IFinancialSubjectRepository
 from .dtos import FinancialSubjectCreate
 
@@ -92,40 +91,3 @@ class GetBalancesByCooperativeUseCase:
             as_of_date: Date to calculate balances for. If None, uses today's date.
         """
         return await self.balance_repo.get_balances_by_cooperative(cooperative_id, as_of_date)
-
-
-# Event Handlers
-
-
-class LandPlotCreatedHandler:
-    """Handler for LandPlotCreated event.
-
-    Creates FinancialSubject automatically when a new LandPlot is created.
-    """
-
-    def __init__(self, fs_repo: IFinancialSubjectRepository):
-        self.fs_repo = fs_repo
-
-    def __call__(self, event: LandPlotCreated) -> None:
-        """Handle LandPlotCreated event.
-
-        Note: This is a synchronous handler. For async operations,
-        use async event bus or background tasks.
-        """
-        # Note: Actual FS creation should happen in async use case
-        # This is a simplified version - in production, use async event handling
-        pass  # Will be implemented with async event bus
-
-
-class MeterCreatedHandler:
-    """Handler for MeterCreated event.
-
-    Creates FinancialSubject automatically when a new Meter is created.
-    """
-
-    def __init__(self, fs_repo: IFinancialSubjectRepository):
-        self.fs_repo = fs_repo
-
-    def __call__(self, event: MeterCreated) -> None:
-        """Handle MeterCreated event."""
-        pass  # Will be implemented with async event bus

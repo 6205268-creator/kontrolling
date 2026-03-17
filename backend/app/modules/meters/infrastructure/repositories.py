@@ -67,6 +67,41 @@ class MeterRepository(IMeterRepository):
         models = result.scalars().all()
         return [model.to_domain() for model in models]
 
+    async def get_cooperative_id_by_owner_id(self, owner_id: UUID) -> UUID | None:
+        """Resolve cooperative_id by owner_id via land plot ownership."""
+        from app.modules.land_management.infrastructure.models import (
+            LandPlotModel,
+            PlotOwnershipModel,
+        )
+
+        query = (
+            select(LandPlotModel.cooperative_id)
+            .join(PlotOwnershipModel, LandPlotModel.id == PlotOwnershipModel.land_plot_id)
+            .where(PlotOwnershipModel.owner_id == owner_id)
+            .limit(1)
+        )
+        result = await self.session.execute(query)
+        row = result.first()
+        return row[0] if row else None
+
+    async def get_cooperative_id_by_meter_id(self, meter_id: UUID) -> UUID | None:
+        """Resolve cooperative_id by meter_id via owner and land plot ownership."""
+        from app.modules.land_management.infrastructure.models import (
+            LandPlotModel,
+            PlotOwnershipModel,
+        )
+
+        query = (
+            select(LandPlotModel.cooperative_id)
+            .join(PlotOwnershipModel, LandPlotModel.id == PlotOwnershipModel.land_plot_id)
+            .join(MeterModel, MeterModel.owner_id == PlotOwnershipModel.owner_id)
+            .where(MeterModel.id == meter_id)
+            .limit(1)
+        )
+        result = await self.session.execute(query)
+        row = result.first()
+        return row[0] if row else None
+
     async def add(self, entity: Meter) -> Meter:
         """Add new meter."""
         model = MeterModel.from_domain(entity)

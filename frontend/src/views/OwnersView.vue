@@ -2,32 +2,28 @@
   <div class="owners-view">
     <header class="view-header">
       <h1>Владельцы</h1>
-      <button
+      <Button
         v-if="canCreate"
-        class="btn btn-primary"
-        type="button"
+        label="Добавить владельца"
+        icon="pi pi-plus"
         @click="showCreateModal = true"
-      >
-        <UserPlus class="btn-icon" aria-hidden />
-        Добавить владельца
-      </button>
+      />
     </header>
 
     <div class="search-bar">
       <label for="search">Поиск:</label>
-      <input
+      <InputText
         id="search"
         v-model="searchQuery"
-        type="text"
         placeholder="По имени или УНП"
-        class="search-input"
+        class="search-input-pv"
         @input="onSearch"
       />
     </div>
 
-    <p v-if="ownersStore.error" class="error-message">
+    <Message v-if="ownersStore.error" severity="error" :closable="false">
       {{ ownersStore.error }}
-    </p>
+    </Message>
 
     <div v-if="ownersStore.loading" class="loading">Загрузка…</div>
 
@@ -60,89 +56,99 @@
       </table>
     </div>
 
-    <!-- Модалка создания владельца -->
-    <div v-if="showCreateModal" class="modal-overlay" @click="showCreateModal = false">
-      <div class="modal" @click.stop>
-        <div class="modal-header">
-          <h2>Новый владелец</h2>
-          <button class="close-btn" @click="showCreateModal = false">&times;</button>
+    <Dialog
+      v-model:visible="showCreateModal"
+      modal
+      header="Новый владелец"
+      :style="{ width: 'min(520px, 100%)' }"
+      :dismissable-mask="true"
+      @hide="createError = null"
+    >
+      <form id="owner-create-form" @submit.prevent="onCreateOwner" class="dialog-form">
+        <div class="form-group">
+          <label for="owner_type">Тип владельца:</label>
+          <Select
+            id="owner_type"
+            v-model="newOwner.owner_type"
+            :options="ownerTypeOptions"
+            option-label="label"
+            option-value="value"
+            placeholder="Выберите тип"
+            class="w-full"
+          />
         </div>
-        <form @submit.prevent="onCreateOwner">
-          <div class="form-group">
-            <label for="owner_type">Тип владельца:</label>
-            <select id="owner_type" v-model="newOwner.owner_type" required class="form-select">
-              <option value="physical">Физическое лицо</option>
-              <option value="legal">Юридическое лицо</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="name">Имя / Название:</label>
-            <input
-              id="name"
-              v-model="newOwner.name"
-              type="text"
-              required
-              class="form-input"
-              placeholder="ФИО или название организации"
-            />
-          </div>
-          <div class="form-group">
-            <label for="tax_id">УНП:</label>
-            <input
-              id="tax_id"
-              v-model="newOwner.tax_id"
-              type="text"
-              class="form-input"
-              placeholder="УНП (опционально)"
-            />
-          </div>
-          <div class="form-group">
-            <label for="contact_phone">Телефон:</label>
-            <input
-              id="contact_phone"
-              v-model="newOwner.contact_phone"
-              type="text"
-              class="form-input"
-              placeholder="+375 XX XXX XX XX"
-            />
-          </div>
-          <div class="form-group">
-            <label for="contact_email">Email:</label>
-            <input
-              id="contact_email"
-              v-model="newOwner.contact_email"
-              type="email"
-              class="form-input"
-              placeholder="email@example.com"
-            />
-          </div>
-          <p v-if="createError" class="error-message">{{ createError }}</p>
-          <div class="modal-actions">
-            <button type="button" class="btn btn-secondary" @click="showCreateModal = false">
-              Отмена
-            </button>
-            <button type="submit" class="btn btn-primary" :disabled="creating">
-              {{ creating ? 'Создание...' : 'Создать' }}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div class="form-group">
+          <label for="name">Имя / Название:</label>
+          <InputText
+            id="name"
+            v-model="newOwner.name"
+            required
+            placeholder="ФИО или название организации"
+            class="w-full"
+          />
+        </div>
+        <div class="form-group">
+          <label for="tax_id">УНП:</label>
+          <InputText
+            id="tax_id"
+            v-model="newOwner.tax_id"
+            placeholder="УНП (опционально)"
+            class="w-full"
+          />
+        </div>
+        <div class="form-group">
+          <label for="contact_phone">Телефон:</label>
+          <InputText
+            id="contact_phone"
+            v-model="newOwner.contact_phone"
+            placeholder="+375 XX XXX XX XX"
+            class="w-full"
+          />
+        </div>
+        <div class="form-group">
+          <label for="contact_email">Email:</label>
+          <InputText
+            id="contact_email"
+            v-model="newOwner.contact_email"
+            type="email"
+            placeholder="email@example.com"
+            class="w-full"
+          />
+        </div>
+        <Message v-if="createError" severity="error" :closable="false">
+          {{ createError }}
+        </Message>
+      </form>
+      <template #footer>
+        <Button label="Отмена" severity="secondary" @click="showCreateModal = false" />
+        <Button type="submit" form="owner-create-form" label="Создать" :loading="creating" />
+      </template>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { UserPlus } from 'lucide-vue-next';
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import Select from 'primevue/select';
+import Dialog from 'primevue/dialog';
+import Message from 'primevue/message';
 import { useAuthStore } from '@/stores/auth';
 import { useOwnersStore } from '@/stores/owners';
 import type { Owner } from '@/types';
+
+const ownerTypeOptions: { label: string; value: 'physical' | 'legal' }[] = [
+  { label: 'Физическое лицо', value: 'physical' },
+  { label: 'Юридическое лицо', value: 'legal' },
+];
 
 const authStore = useAuthStore();
 const ownersStore = useOwnersStore();
 
 const searchQuery = ref('');
 const filteredOwners = ref<Owner[]>([]);
+let searchDebounce: ReturnType<typeof setTimeout> | null = null;
 const showCreateModal = ref(false);
 const createError = ref<string | null>(null);
 const creating = ref(false);
@@ -171,12 +177,15 @@ function ownerTypeLabel(type: string): string {
   return labels[type] ?? type;
 }
 
-async function onSearch(): Promise<void> {
-  if (searchQuery.value.trim()) {
-    filteredOwners.value = await ownersStore.searchOwners(searchQuery.value);
-  } else {
-    filteredOwners.value = [...ownersStore.owners];
-  }
+function onSearch(): void {
+  if (searchDebounce) clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(async () => {
+    if (searchQuery.value.trim()) {
+      filteredOwners.value = await ownersStore.searchOwners(searchQuery.value);
+    } else {
+      filteredOwners.value = [...ownersStore.owners];
+    }
+  }, 300);
 }
 
 async function onCreateOwner(): Promise<void> {
@@ -231,8 +240,21 @@ onMounted(async () => {
   border: 1px solid var(--color-border);
 }
 
-.btn-icon {
-  width: 1.125rem;
-  height: 1.125rem;
+.search-input-pv {
+  min-width: 260px;
+}
+
+.dialog-form .form-group {
+  margin-bottom: 1rem;
+}
+.dialog-form .form-group label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-weight: var(--font-semibold);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+.dialog-form .w-full {
+  width: 100%;
 }
 </style>

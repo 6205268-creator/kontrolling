@@ -1,13 +1,13 @@
-/* ===== Design system: Контроллинг-СТ — Садовое Товарищество =====
-   Концепция: природа, сад, растения, зелень, простота для бухгалтеров
-   Шрифт: Manrope — мягкий, читаемый, дружелюбный
-   Цвета: зеленая палитра (растения), яблочный акцент, теплый фон */
+/* ===== Design system: Контроллинг-СТ — современный интерфейс =====
+   Концепция: нейтральный slate, акцент indigo, чёткая типографика
+   Шрифт: Plus Jakarta Sans — современный, читаемый
+   Цвета: slate + indigo (без зелёного) */
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
   /* ===== Typography ===== */
-  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -24,66 +24,66 @@
   --leading-normal: 1.5;
   --leading-relaxed: 1.625;
 
-  /* ===== Light Theme (default) — Garden Fresh ===== */
-  --color-bg: #f8faf8;
-  --color-bg-subtle: #f1f5f1;
+  /* ===== Light Theme — Slate + Indigo ===== */
+  --color-bg: #f8fafc;
+  --color-bg-subtle: #f1f5f9;
   --color-bg-elevated: #ffffff;
   --color-bg-card: #ffffff;
   
-  /* Sidebar — глубокий зеленый (ночной лес) */
-  --color-sidebar: #1a2e22;
-  --color-sidebar-hover: #23402f;
-  --color-sidebar-active: #2d523c;
-  --color-sidebar-accent: #10b981;
-  --color-sidebar-accent-hover: #059669;
-  --color-sidebar-muted: #94b8a3;
-  --color-sidebar-text: #f0fdf4;
+  /* Sidebar — тёмный slate */
+  --color-sidebar: #1e293b;
+  --color-sidebar-hover: #334155;
+  --color-sidebar-active: #475569;
+  --color-sidebar-accent: #6366f1;
+  --color-sidebar-accent-hover: #818cf8;
+  --color-sidebar-muted: #94a3b8;
+  --color-sidebar-text: #f8fafc;
   
   /* Text */
-  --color-text: #1c2a22;
-  --color-text-muted: #5a6f63;
-  --color-text-inverse: #f8faf8;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-text-inverse: #f8fafc;
   
   /* Borders */
-  --color-border: #d8e4dc;
-  --color-border-light: #e8f0eb;
-  --color-border-focus: #10b981;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  --color-border-focus: #6366f1;
   
-  /* Primary — изумрудный зеленый (основной) */
-  --color-primary: #10b981;
-  --color-primary-hover: #059669;
-  --color-primary-light: #d1fae5;
-  --color-primary-subtle: #ecfdf5;
-  --color-primary-gradient-from: #34d399;
-  --color-primary-gradient-to: #10b981;
+  /* Primary — indigo */
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-primary-light: #e0e7ff;
+  --color-primary-subtle: #eef2ff;
+  --color-primary-gradient-from: #818cf8;
+  --color-primary-gradient-to: #6366f1;
   
-  /* Secondary — яблочный красный (акцент для важных действий) */
+  /* Secondary — красный для опасных действий */
   --color-secondary: #ef4444;
   --color-secondary-hover: #dc2626;
   --color-secondary-light: #fee2e2;
   --color-secondary-subtle: #fef2f2;
   
-  /* Success — зеленый лист */
-  --color-success: #22c55e;
-  --color-success-bg: #f0fdf4;
-  --color-success-border: #86efac;
+  /* Success */
+  --color-success: #10b981;
+  --color-success-bg: #ecfdf5;
+  --color-success-border: #a7f3d0;
   
-  /* Error — красный */
+  /* Error */
   --color-error: #ef4444;
   --color-error-bg: #fef2f2;
   --color-error-border: #fca5a5;
   
-  /* Warning — оранжевый (осенние листья) */
+  /* Warning */
   --color-warning: #f59e0b;
   --color-warning-bg: #fffbeb;
   --color-warning-border: #fcd34d;
   
-  /* Info — голубой (небо) */
+  /* Info */
   --color-info: #0ea5e9;
   --color-info-bg: #f0f9ff;
   --color-info-border: #7dd3fc;
   
-  /* ===== Surfaces & Shadows — мягкие, натуральные ===== */
+  /* ===== Surfaces & Shadows ===== */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
@@ -91,12 +91,12 @@
   --radius-2xl: 24px;
   --radius-full: 9999px;
   
-  --shadow-sm: 0 1px 2px rgba(28, 42, 34, 0.04);
-  --shadow-md: 0 4px 8px rgba(28, 42, 34, 0.06), 0 2px 4px rgba(28, 42, 34, 0.03);
-  --shadow-lg: 0 12px 24px rgba(28, 42, 34, 0.08), 0 4px 8px rgba(28, 42, 34, 0.04);
-  --shadow-xl: 0 24px 48px rgba(28, 42, 34, 0.1), 0 8px 16px rgba(28, 42, 34, 0.05);
-  --shadow-inner: inset 0 1px 2px rgba(28, 42, 34, 0.04);
-  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.15);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 24px rgba(15, 23, 42, 0.1), 0 4px 8px rgba(15, 23, 42, 0.05);
+  --shadow-xl: 0 24px 48px rgba(15, 23, 42, 0.12), 0 8px 16px rgba(15, 23, 42, 0.06);
+  --shadow-inner: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-glow: 0 0 24px rgba(99, 102, 241, 0.2);
   
   /* ===== Transitions ===== */
   --transition-fast: 120ms ease;
@@ -104,60 +104,60 @@
   --transition-slow: 300ms ease;
 }
 
-/* ===== Dark Theme — Ночной Сад ===== */
+/* ===== Dark Theme — Slate + Indigo ===== */
 [data-theme="dark"] {
-  --color-bg: #0f1715;
-  --color-bg-subtle: #15201c;
-  --color-bg-elevated: #1a2924;
-  --color-bg-card: #1e2f28;
+  --color-bg: #0f172a;
+  --color-bg-subtle: #1e293b;
+  --color-bg-elevated: #334155;
+  --color-bg-card: #1e293b;
   
-  --color-sidebar: #0a1410;
-  --color-sidebar-hover: #15251d;
-  --color-sidebar-active: #1a2e25;
-  --color-sidebar-muted: #6b8f7e;
-  --color-sidebar-text: #e8f5e9;
+  --color-sidebar: #020617;
+  --color-sidebar-hover: #0f172a;
+  --color-sidebar-active: #1e293b;
+  --color-sidebar-muted: #64748b;
+  --color-sidebar-text: #f1f5f9;
   
-  --color-text: #e8f5e9;
-  --color-text-muted: #94b8a3;
-  --color-text-inverse: #0f1715;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-text-inverse: #0f172a;
   
-  --color-border: #2d4a3d;
-  --color-border-light: #233830;
-  --color-border-focus: #34d399;
+  --color-border: #334155;
+  --color-border-light: #1e293b;
+  --color-border-focus: #818cf8;
   
-  --color-primary: #34d399;
-  --color-primary-hover: #10b981;
-  --color-primary-light: #1a2e25;
-  --color-primary-subtle: #1a2e25;
-  --color-primary-gradient-from: #6ee7b7;
-  --color-primary-gradient-to: #34d399;
+  --color-primary: #818cf8;
+  --color-primary-hover: #6366f1;
+  --color-primary-light: #312e81;
+  --color-primary-subtle: #1e1b4b;
+  --color-primary-gradient-from: #a5b4fc;
+  --color-primary-gradient-to: #818cf8;
   
   --color-secondary: #f87171;
   --color-secondary-hover: #ef4444;
-  --color-secondary-light: #2a1f1e;
-  --color-secondary-subtle: #2a1f1e;
+  --color-secondary-light: #450a0a;
+  --color-secondary-subtle: #450a0a;
   
-  --color-success: #4ade80;
-  --color-success-bg: #1a2e22;
-  --color-success-border: #2d523c;
+  --color-success: #34d399;
+  --color-success-bg: #064e3b;
+  --color-success-border: #047857;
   
   --color-error: #f87171;
-  --color-error-bg: #2a1f1e;
-  --color-error-border: #5c2a2a;
+  --color-error-bg: #450a0a;
+  --color-error-border: #7f1d1d;
   
   --color-warning: #fbbf24;
-  --color-warning-bg: #2a2518;
-  --color-warning-border: #5c4a2a;
+  --color-warning-bg: #422006;
+  --color-warning-border: #78350f;
   
   --color-info: #38bdf8;
-  --color-info-bg: #1a252e;
-  --color-info-border: #2a4a5c;
+  --color-info-bg: #0c4a6e;
+  --color-info-border: #075985;
   
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.15);
-  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.35), 0 8px 16px rgba(0, 0, 0, 0.2);
-  --shadow-glow: 0 0 25px rgba(52, 211, 153, 0.2);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.25);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.45), 0 8px 16px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 28px rgba(129, 140, 248, 0.25);
 }
 
 /* ===== Global Reset ===== */
@@ -260,15 +260,15 @@ a:hover {
   cursor: not-allowed;
 }
 
-/* Primary — зеленый градиент */
+/* Primary — indigo */
 .btn-primary {
   background: linear-gradient(135deg, var(--color-primary-gradient-from) 0%, var(--color-primary-gradient-to) 100%);
   color: white;
-  box-shadow: var(--shadow-sm), 0 2px 4px rgba(16, 185, 129, 0.2);
+  box-shadow: var(--shadow-sm), 0 2px 4px rgba(99, 102, 241, 0.25);
 }
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #059669 0%, var(--color-primary-hover) 100%);
-  box-shadow: var(--shadow-md), 0 4px 8px rgba(16, 185, 129, 0.25);
+  background: linear-gradient(135deg, var(--color-primary-hover) 0%, #4338ca 100%);
+  box-shadow: var(--shadow-md), 0 4px 12px rgba(99, 102, 241, 0.35);
   transform: translateY(-1px);
 }
 
