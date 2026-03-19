@@ -145,7 +145,6 @@
 | [`qa-engineer`](.cursor/rules/agents/qa-engineer.mdc) | QA | Тест-кейсы, регрессия |
 | [`devops-infra-engineer`](.cursor/rules/agents/devops-infra-engineer.mdc) | DevOps | CI/CD, деплой, мониторинг |
 | [`security-engineer`](.cursor/rules/agents/security-engineer.mdc) | Security | Аудит, уязвимости |
-| [`ux-ui-designer`](.cursor/rules/agents/ux-ui-designer.mdc) | Design | Прототипы, дизайн-система |
 
 Порядок выполнения: [`agent-team-tasks-order.md`](.cursor/rules/agents/agent-team-tasks-order.mdc)
 
@@ -251,8 +250,6 @@
 | [`qa-engineer.mdc`](.cursor/rules/agents/qa-engineer.mdc) | QA-инженер | Тест-кейсы, проверка требований |
 | [`devops-infra-engineer.mdc`](.cursor/rules/agents/devops-infra-engineer.mdc) | DevOps | CI/CD, деплой, инфраструктура |
 | [`security-engineer.mdc`](.cursor/rules/agents/security-engineer.mdc) | Security-инженер | Аудит безопасности |
-| [`ux-ui-designer.mdc`](.cursor/rules/agents/ux-ui-designer.mdc) | UX/UI дизайнер | Прототипы, дизайн |
-| [`seo-content-specialist.mdc`](.cursor/rules/agents/seo-content-specialist.mdc) | SEO/контент | Контент, SEO (если применимо) |
 
 ---
 
