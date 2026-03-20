@@ -1,0 +1,34 @@
+feat(фаза 3 часть 1): Payment Distribution — сущности, модели, миграция
+
+Задача 3.1 — Ревизия модели:
+- Member — тонкая техническая сущность (owner_id + cooperative_id)
+- MemberPlot удалён — связь через PlotOwnership
+- Обновлена ER-диаграмма payment-distribution-erd.md
+
+Задача 3.2 — PersonalAccount:
+- PersonalAccount entity + model (лицевой счёт члена)
+- PersonalAccountTransaction entity + model (транзакции)
+- CreditAccountUseCase — зачисление платежа на счёт
+- DebitAccountUseCase — списание со счёта
+
+Задача 3.3 — PaymentDistribution:
+- PaymentDistribution entity + model (распределение платежа)
+- DistributePaymentUseCase — распределение по приоритетам
+- ReverseDistributionUseCase — отмена распределения
+
+Задача 3.5 — API endpoints:
+- GET /api/payment-distribution/members/{id}/account
+- GET /api/payment-distribution/members/{id}/account/transactions
+- GET /api/payment-distribution/payments/{id}/distributions
+- POST /api/payment-distribution/payments/{id}/distribute
+
+Инфраструктура:
+- Миграция 0013: members, personal_accounts, payment_distributions
+- Зарегистрированы модели в register_models.py
+- Зарегистрирован router в main.py
+
+Тесты: 230 passed, 5 skipped
+
+Ожидают реализации:
+- Интеграция с payments через Domain Events (Задача 3.4)
+- Полные тесты сценариев (Задача 3.5)

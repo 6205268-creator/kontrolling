@@ -18,6 +18,9 @@ from app.modules.land_management.api.owners_routes import router as owners_route
 from app.modules.land_management.api.routes import router as land_management_router
 from app.modules.meters.api.routes import router as meters_router
 from app.modules.payment_distribution.api.routes import router as payment_distribution_router
+from app.modules.payment_distribution.infrastructure.event_handlers import (
+    setup_payment_distribution_handlers,
+)
 from app.modules.payments.api.routes import router as payments_router
 from app.modules.reporting.api.routes import router as reporting_router
 from app.modules.shared.kernel.events import EventDispatcher
@@ -112,6 +115,7 @@ app.add_middleware(
 # Setup event handlers for domain events (logging, auto-creation of FinancialSubjects)
 _event_dispatcher = EventDispatcher()
 setup_event_handlers(_event_dispatcher, async_session_maker, FinancialSubjectRepository)
+setup_payment_distribution_handlers(_event_dispatcher, async_session_maker)
 
 # API routers
 app.include_router(cooperative_core_router, prefix="/api/cooperatives", tags=["cooperatives"])
