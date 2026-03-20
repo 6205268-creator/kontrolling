@@ -7,13 +7,15 @@ from datetime import date
 from decimal import Decimal
 from uuid import UUID
 
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.financial_core.domain.entities import Balance, FinancialSubject
 from app.modules.financial_core.domain.repositories import (
+    IAccrualAggregateProvider,
     IBalanceRepository,
     IFinancialSubjectRepository,
+    IPaymentAggregateProvider,
 )
 from app.modules.shared.kernel.money import Money
 
@@ -106,6 +108,8 @@ class BalanceRepository(IBalanceRepository):
     """SQLAlchemy implementation of Balance repository.
 
     Implements balance calculation as of a specific date (as_of_date).
+    Uses IAccrualAggregateProvider and IPaymentAggregateProvider to avoid
+    direct dependencies on accruals/payments infrastructure models.
 
     Rule: Operation participates in balance on date X if and only if:
     1. event_date <= X (accrual_date for Accrual, payment_date for Payment)
@@ -114,8 +118,15 @@ class BalanceRepository(IBalanceRepository):
     4. NOT cancelled OR (cancelled AND cancelled_at > X)
     """
 
-    def __init__(self, session: AsyncSession):
+    def __init__(
+        self,
+        session: AsyncSession,
+        accrual_provider: "IAccrualAggregateProvider",
+        payment_provider: "IPaymentAggregateProvider",
+    ):
         self.session = session
+        self.accrual_provider = accrual_provider
+        self.payment_provider = payment_provider
 
     async def calculate_balance(
         self,
@@ -137,10 +148,6 @@ class BalanceRepository(IBalanceRepository):
         if as_of_date is None:
             as_of_date = date.today()
 
-        # Import models from modules
-        from app.modules.accruals.infrastructure.models import AccrualModel as Accrual
-        from app.modules.payments.infrastructure.models import PaymentModel as Payment
-
         # Get financial subject
         result = await self.session.execute(
             select(FinancialSubjectModel).where(FinancialSubjectModel.id == financial_subject_id)
@@ -149,52 +156,15 @@ class BalanceRepository(IBalanceRepository):
         if subject is None:
             return None
 
-        # Build conditions for accruals
-        # 1. accrual_date <= as_of_date
-        # 2. status == 'applied'
-        # 3. (status != 'cancelled') OR (cancelled_at IS NOT NULL AND cancelled_at > as_of_date)
-        # 4. date(created_at) <= as_of_date (ADR 0002)
-        accrual_conditions = [
-            Accrual.financial_subject_id == financial_subject_id,
-            Accrual.accrual_date <= as_of_date,
-            func.date(Accrual.created_at) <= as_of_date,
-            Accrual.status == "applied",
-        ]
-        # Not cancelled OR cancelled after as_of_date
-        # Use func.date() to convert cancelled_at (datetime) to date for comparison
-        accrual_not_cancelled_condition = (Accrual.status != "cancelled") | (
-            (Accrual.cancelled_at.isnot(None)) & (func.date(Accrual.cancelled_at) > as_of_date)
+        # Get aggregated sums from providers
+        total_accruals = await self.accrual_provider.sum_participating(
+            financial_subject_id=financial_subject_id,
+            as_of_date=as_of_date,
         )
-        accrual_conditions.append(accrual_not_cancelled_condition)
-
-        # Sum of applied accruals
-        accruals_result = await self.session.execute(
-            select(func.sum(Accrual.amount)).where(*accrual_conditions)
+        total_payments = await self.payment_provider.sum_participating(
+            financial_subject_id=financial_subject_id,
+            as_of_date=as_of_date,
         )
-        total_accruals = accruals_result.scalar() or Decimal("0.00")
-
-        # Build conditions for payments
-        # 1. payment_date <= as_of_date
-        # 2. status == 'confirmed'
-        # 3. (status != 'cancelled') OR (cancelled_at IS NOT NULL AND cancelled_at > as_of_date)
-        # 4. date(created_at) <= as_of_date (ADR 0002)
-        payment_conditions = [
-            Payment.financial_subject_id == financial_subject_id,
-            Payment.payment_date <= as_of_date,
-            func.date(Payment.created_at) <= as_of_date,
-            Payment.status == "confirmed",
-        ]
-        # Not cancelled OR cancelled after as_of_date
-        payment_not_cancelled_condition = (Payment.status != "cancelled") | (
-            (Payment.cancelled_at.isnot(None)) & (func.date(Payment.cancelled_at) > as_of_date)
-        )
-        payment_conditions.append(payment_not_cancelled_condition)
-
-        # Sum of confirmed payments
-        payments_result = await self.session.execute(
-            select(func.sum(Payment.amount)).where(*payment_conditions)
-        )
-        total_payments = payments_result.scalar() or Decimal("0.00")
 
         return Balance(
             financial_subject_id=financial_subject_id,
@@ -224,10 +194,6 @@ class BalanceRepository(IBalanceRepository):
         if as_of_date is None:
             as_of_date = date.today()
 
-        # Import models from modules
-        from app.modules.accruals.infrastructure.models import AccrualModel as Accrual
-        from app.modules.payments.infrastructure.models import PaymentModel as Payment
-
         # Get all financial subjects for cooperative
         result = await self.session.execute(
             select(FinancialSubjectModel).where(
@@ -239,51 +205,15 @@ class BalanceRepository(IBalanceRepository):
         if not subjects:
             return []
 
-        subject_ids = [s.id for s in subjects]
-
-        # Build conditions for accruals (same as calculate_balance but for multiple subjects)
-        # ADR 0002: include created_at filter
-        accrual_conditions = [
-            Accrual.financial_subject_id.in_(subject_ids),
-            Accrual.accrual_date <= as_of_date,
-            func.date(Accrual.created_at) <= as_of_date,
-            Accrual.status == "applied",
-            (Accrual.status != "cancelled")
-            | ((Accrual.cancelled_at.isnot(None)) & (func.date(Accrual.cancelled_at) > as_of_date)),
-        ]
-
-        # Sum of accruals by subject (applied)
-        accruals_result = await self.session.execute(
-            select(
-                Accrual.financial_subject_id,
-                func.sum(Accrual.amount).label("total"),
-            )
-            .where(*accrual_conditions)
-            .group_by(Accrual.financial_subject_id)
+        # Get aggregated sums from providers by cooperative
+        accruals_map = await self.accrual_provider.sum_participating_by_cooperative(
+            cooperative_id=cooperative_id,
+            as_of_date=as_of_date,
         )
-        accruals_map = {row[0]: row[1] for row in accruals_result.all()}
-
-        # Build conditions for payments (same as calculate_balance but for multiple subjects)
-        # ADR 0002: include created_at filter
-        payment_conditions = [
-            Payment.financial_subject_id.in_(subject_ids),
-            Payment.payment_date <= as_of_date,
-            func.date(Payment.created_at) <= as_of_date,
-            Payment.status == "confirmed",
-            (Payment.status != "cancelled")
-            | ((Payment.cancelled_at.isnot(None)) & (func.date(Payment.cancelled_at) > as_of_date)),
-        ]
-
-        # Sum of payments by subject (confirmed)
-        payments_result = await self.session.execute(
-            select(
-                Payment.financial_subject_id,
-                func.sum(Payment.amount).label("total"),
-            )
-            .where(*payment_conditions)
-            .group_by(Payment.financial_subject_id)
+        payments_map = await self.payment_provider.sum_participating_by_cooperative(
+            cooperative_id=cooperative_id,
+            as_of_date=as_of_date,
         )
-        payments_map = {row[0]: row[1] for row in payments_result.all()}
 
         # Build result
         balances = []
