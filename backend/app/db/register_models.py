@@ -31,4 +31,7 @@ def import_all_models() -> None:
         models as land_management_models,  # noqa: F401
     )
     from app.modules.meters.infrastructure import models as meters_models  # noqa: F401
+    from app.modules.payment_distribution.infrastructure import (
+        models as payment_distribution_models,  # noqa: F401
+    )
     from app.modules.payments.infrastructure import models as payments_models  # noqa: F401

@@ -1,14 +1,13 @@
 # ER-диаграмма: модуль Payment Distribution
 
-**Назначение:** Модель данных модуля распределения платежей (Member, лицевые счета, распределение по долгам).  
+**Назначение:** Модель данных модуля распределения платежей (Member, лицевые счета, распределение по долгам).
 **Связано:** [ADR 0003](../architecture/adr/0003-payment-distribution-model.md), [payment-distribution-continue.md](../tasks/payment-distribution-continue.md).
 
 ## Сущности модуля
 
 | Таблица | Описание |
 |--------|----------|
-| `members` | Член СТ (связь Owner ↔ Cooperative) |
-| `member_plots` | Участки члена СТ (Member ↔ LandPlot, доля) |
+| `members` | Член СТ (связь Owner ↔ Cooperative) — тонкая техническая сущность |
 | `personal_accounts` | Лицевой счёт члена |
 | `personal_account_transactions` | Операции по лицевому счёту (зачисление, распределение) |
 | `payment_distributions` | Распределение платежа по виду долга (Payment → FinancialSubject) |
@@ -17,6 +16,13 @@
 | `contribution_type_settings` | Настройки видов взносов по модулю |
 | `meter_tariffs` | Тарифы по типам счётчиков |
 
+## Связь с PlotOwnership
+
+**Важно:** Связь Member ↔ LandPlot осуществляется **не через отдельную таблицу**, а через существующую `plot_ownership`:
+- `PlotOwnership.is_primary = true` означает, что владелец является членом СТ для данного участка
+- Member создаётся автоматически при первом `PlotOwnership.is_primary = true` для Owner в Cooperative
+- Участки члена получаются через запрос: `PlotOwnership WHERE owner_id = :member_owner_id AND is_primary = true`
+
 ## Диаграмма (Mermaid ER)
 
 ```mermaid
@@ -24,8 +30,10 @@ erDiagram
     cooperatives ||--o{ members : "has"
     owners ||--o{ members : "is_member"
     members ||--o| personal_accounts : "has"
-    members ||--o{ member_plots : "has"
-    land_plots ||--o{ member_plots : "linked"
+    
+    owners ||--o{ plot_ownership : "owns"
+    land_plots ||--o{ plot_ownership : "has"
+    plot_ownership }o--|| members : "defines_member_plots"
 
     personal_accounts ||--o{ personal_account_transactions : "has"
     payments ||--o{ personal_account_transactions : "credits"
@@ -33,6 +41,7 @@ erDiagram
 
     payments ||--o{ payment_distributions : "distributed_as"
     financial_subjects ||--o{ payment_distributions : "receives"
+    accruals ||--o| payment_distributions : "paid_by"
 
     cooperatives ||--o{ settings_modules : "has"
     settings_modules ||--o{ payment_distribution_rules : "has"
@@ -45,19 +54,9 @@ erDiagram
         uuid id PK
         uuid owner_id FK
         uuid cooperative_id FK
+        uuid personal_account_id FK
         string status
         datetime joined_date
-        datetime created_at
-        datetime updated_at
-    }
-
-    member_plots {
-        uuid id PK
-        uuid member_id FK
-        uuid land_plot_id FK
-        int share_numerator
-        int share_denominator
-        bool is_primary
         datetime created_at
     }
 
@@ -88,6 +87,7 @@ erDiagram
         uuid id PK
         uuid payment_id FK
         uuid financial_subject_id FK
+        uuid accrual_id FK
         string distribution_number
         datetime distributed_at
         decimal amount
@@ -129,12 +129,23 @@ erDiagram
         datetime valid_from
         datetime valid_to
     }
+    
+    plot_ownership {
+        uuid id PK
+        uuid land_plot_id FK
+        uuid owner_id FK
+        int share_numerator
+        int share_denominator
+        bool is_primary
+        datetime valid_from
+        datetime valid_to
+    }
 ```
 
 ## Связи с другими модулями
 
 - **cooperative_core:** `cooperatives` — Member, PersonalAccount, SettingsModule привязаны к СТ.
-- **land_management:** `owners`, `land_plots` — Member связан с Owner; MemberPlot — с LandPlot.
+- **land_management:** `owners`, `land_plots`, `plot_ownership` — Member связан с Owner через PlotOwnership.
 - **financial_core:** `financial_subjects` — PaymentDistribution зачисляет сумму на FinancialSubject.
 - **payments:** `payments` — платёж зачисляется на лицевой счёт и распределяется через PaymentDistribution.
-- **accruals:** `contribution_types` — правила и настройки видов взносов.
+- **accruals:** `contribution_types`, `accruals` — правила и настройки видов взносов, начисления оплачиваются распределением.
