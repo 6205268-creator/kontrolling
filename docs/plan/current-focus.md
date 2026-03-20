@@ -14,68 +14,38 @@
 
 ---
 
-## Текущая приоритетная задача (обновлено 2026-03-15)
+## Текущая приоритетная задача (обновлено 2026-03-19)
 
 ### Название
 
-**Модель распределения платежей (payment_distribution) и сопутствующие правки** — заготовка модуля, ADR, документация; правки API и фронтенда в рабочей копии.
+**Оптимизация финансовой модели** — устранение архитектурных дыр, 5 фаз от фундамента до долгов и пеней.
 
 ### Статус
 
 | Что | Статус |
 |-----|--------|
-| Модуль payment_distribution (заготовка) | 🟡 В рабочей копии (не в main) |
-| ADR 0003, ERD payment-distribution | 🟡 Добавлены |
-| Правки API (routes) и тестов (cooperatives, land_plots, owners) | 🟡 В рабочей копии |
-| Правки фронтенда (Accruals, LandPlots, Owners) | 🟡 В рабочей копии |
-| Задача Lead Architect (глоссарии, entities-minimal) | ⚪ Ожидает (см. `docs/tasks/lead-architect-glossary-entities-update.md`) |
-| **Merge в main** | ⚪ Не выполнялся (всё в ветке/рабочей копии) |
+| План оптимизации (5 фаз, INDEX + детальные файлы) | ✅ Готов, утверждён |
+| Фаза 1: Фундамент (due_date, баланс, Money VO) | ⚪ Следующая к выполнению |
+| Фаза 2: Архитектура баланса | ⚪ Ожидает (зависит от Фазы 1) |
+| Фаза 3: Распределение платежей | ⚪ Ожидает (зависит от Фазы 2) |
+| Фаза 4: Финансовые периоды и отчётность | ⚪ Ожидает |
+| Фаза 5: Долги и пени | ⚪ Ожидает |
+| Старые ветки (audit, payment_distribution) | 🟡 Решение: смержить аудит, архивировать payment_distribution |
 
 ### На чём остановились
 
-**Итог сессии 2026-03-17 (аудит, пункт 3):**
+**Итог сессии 2026-03-19 (планирование):**
 
-- Выполнен весь раздел 3 «Уборка (мелочи)» из `docs/tasks/TASK_audit_fixes_20260317.md`.
-- Удалён `SessionDep`, исправлена опечатка в DTO, удалён шаблонный `HelloWorld.vue`, убраны лишний CSS-класс и дублирующий `gap`, удалена неиспользуемая переменная `_emit`.
-- Backend-файлы из пункта 3.8 приведены в порядок по ruff; отдельный тестовый `conftest.py` для `payment_distribution` помечен для корректной регистрации моделей.
-- Следующий шаг по аудиту: вернуться к пунктам 1–2 из `TASK_audit_fixes_20260317.md` и затем прогнать проверки перед закрытием задачи.
+- Проведён анализ финансовой модели, выявлены 8 архитектурных дыр.
+- Составлен и утверждён **план оптимизации из 5 фаз** — [`docs/plan/financial-model-optimization/INDEX.md`](financial-model-optimization/INDEX.md).
+- Каждая фаза описана в отдельном файле (задачи, критерии приёмки, затрагиваемые модули).
+- Принято 10 архитектурных решений (см. INDEX, секция «Принятые решения»).
+- Код не менялся — сессия была полностью посвящена планированию.
 
-**Итог сессии 2026-03-15 (завершение дня):**
+**Ранее (итог сессии 2026-03-17):**
 
-- В репозитории есть **незакоммиченные изменения на main**: новый модуль `payment_distribution`, ADR 0003, ERD, правки API (accruals, cooperative_core, expenses, land_management, meters, payments), тесты, фронтенд (AccrualsView, LandPlotCreate/Edit, LandPlotsView, OwnersView), документы (mcp-frontend-design-servers, lead-architect-glossary-entities-update), правило frontend-design-system.
-- Для сохранения истории создана ветка `feature/2026-03-15-session`, все изменения закоммичены туда и запушены в GitHub. В main коммитов не было.
-- **Следующая сессия:** решить, продолжать ли интеграцию payment_distribution и правки в main (после проверок: pytest, ruff, seed_db) или сначала выполнить задачу Lead Architect (глоссарии, entities-minimal). Перед merge в main — прогон проверок и при необходимости ревью @architecture-guardian.
-
-**Ранее (итог сессии 2026-03-10 — Подготовка к full testing — завершение):**
-
-**Приоритет 1: MeterRepository и MeterReadingRepository (11 тестов)**
-- ✅ Добавлен метод `get_all(cooperative_id)` в `MeterRepository` для multitenancy
-- ✅ Реализованы все методы `IRepository` в `MeterReadingRepository`: `get_by_id`, `get_all`, `update`, `delete`
-- ✅ Исправлены use cases для admin пользователей (cooperative_id=None)
-- ✅ Добавлен endpoint GET `/api/meters/` для получения всех счётчиков товарищества
-- ✅ Обработаны IntegrityError для duplicate meter readings
-
-**Приоритет 2: Land plots тесты (3 теста)**
-- ✅ Исправлена генерация UUID для PlotOwnership (было `UUID(int=0)` → стало `uuid.uuid4()`)
-- ✅ Добавлен метод `delete_by_id_any_cooperative()` в LandPlotRepository для admin пользователей
-- ✅ Возврат `financial_subject_id` и `financial_subject_code` в ответе при создании участка
-
-**Приоритет 3: Reports тест (1 тест)**
-- ✅ Изменена ассерция с 400 → 422 для невалидного UUID (FastAPI автоматическая валидация)
-
-**Финальная проверка:**
-- ✅ pytest: 176 тестов прошли, 5 skipped (из 181)
-- ✅ ruff check: 0 ошибок (6 исправлено автоматически)
-- ✅ ruff format: 70 файлов отформатированы
-- ✅ architecture linter: все проверки пройдены
-- ✅ seed_db: данные создаются без ошибок
-
-**Git:**
-- ✅ Commit: `fix: all 15 failing tests fixed - project 100% ready for production`
-- ✅ 73 файла изменено (766 добавлений, 300 удалений)
-- ✅ Push выполнен успешно в `origin/main`
-
-**Следующая сессия:** см. блок «Что делать завтра» ниже.
+- По аудиту (`docs/tasks/TASK_audit_fixes_20260317.md`): части 1, 2 и 3 выполнены. Ветка `feature/audit-fixes-20260317`.
+- Ветка `feature/2026-03-15-session`: payment_distribution заготовка, ADR 0003, правки API/фронт.
 
 ---
 
@@ -83,23 +53,29 @@
 
 ### Ветка
 
-- **Текущее состояние (2026-03-15):** Все сегодняшние изменения сохранены в ветке **`feature/2026-03-15-session`** и запушены в GitHub. Локально можно переключиться на эту ветку и продолжить работу.
-- **Правило:** `.cursor/rules/git-branch-policy.mdc` — не коммитить в main, не мержить без твоего одобрения.
+- **Создать новую ветку** `feature/fin-model-phase-1` от main для Фазы 1.
+- **Старые ветки:** `feature/audit-fixes-20260317` — смержить в main (решение #10); `feature/2026-03-15-session` (payment_distribution) — архивировать (будет переделана в Фазе 3).
+- **Правило:** `.cursor/rules/git-branch-policy.mdc` — не коммитить в main, не мержить без одобрения.
 
-### Задача на завтра: подключить PrimeVue
+### Задача на завтра (первым делом)
 
-**Отдельная задача (по желанию):** подключить библиотеку PrimeVue к фронтенду — пошаговая инструкция в **[`docs/tasks/primevue-integration.md`](../tasks/primevue-integration.md)**. Установка, настройка `main.ts`, проверка кнопкой. Остальное (замена компонентов) — потом, по мере необходимости.
+1. **Открыть** `docs/plan/current-focus.md` — убедиться в контексте.
+2. **Разобраться со старыми ветками** (merge аудита в main, архивация payment_distribution) — по команде.
+3. **Начать Фазу 1** оптимизации финансовой модели:
+   - Читать: [`docs/plan/financial-model-optimization/phase-1-foundation.md`](financial-model-optimization/phase-1-foundation.md)
+   - Задачи: добавить `due_date` на начисления, исправить правило баланса, создать Money Value Object.
+   - Оценка: 2–3 сессии.
 
----
+### Где лежит план
 
-### Порядок работы на следующий раз
-
-1. **Открыть** `docs/plan/current-focus.md` (ты здесь) и при необходимости переключиться на ветку `feature/2026-03-15-session`.
-2. **Выбрать направление:**
-   - **Вариант A.** Продолжить работу по payment_distribution и текущим правкам: прогнать проверки (pytest, ruff, architecture_linter, seed_db), при необходимости доработать код, затем по твоей команде — merge в main.
-   - **Вариант B.** Задача для Lead Architect: обновить глоссарии и `entities-minimal.md` по спецификации [`docs/tasks/lead-architect-glossary-entities-update.md`](../tasks/lead-architect-glossary-entities-update.md) (глоссарии может менять только Lead Architect).
-   - **Вариант C.** Взять задачу из Топ-5 в [`docs/development-index.md`](../development-index.md) (например E2E, Docker, OpenAPI).
-3. **Перед merge в main:** убедиться, что pytest, ruff, seed_db и при необходимости architecture_linter проходят; при архитектурных изменениях — ревью @architecture-guardian.
+| Что | Путь |
+|-----|------|
+| INDEX (точка входа, сводка фаз) | [`docs/plan/financial-model-optimization/INDEX.md`](financial-model-optimization/INDEX.md) |
+| Фаза 1: Фундамент | [`phase-1-foundation.md`](financial-model-optimization/phase-1-foundation.md) |
+| Фаза 2: Архитектура баланса | [`phase-2-balance-architecture.md`](financial-model-optimization/phase-2-balance-architecture.md) |
+| Фаза 3: Распределение платежей | [`phase-3-payment-distribution.md`](financial-model-optimization/phase-3-payment-distribution.md) |
+| Фаза 4: Периоды и отчётность | [`phase-4-periods-reporting.md`](financial-model-optimization/phase-4-periods-reporting.md) |
+| Фаза 5: Долги и пени | [`phase-5-debt-penalties.md`](financial-model-optimization/phase-5-debt-penalties.md) |
 
 ---
 
@@ -111,13 +87,22 @@
 |------|----------|--------|
 | 1–5 | Ledger-ready спецификация | ✅ Завершено, merge в main |
 
-**Текущая рабочая копия (ветка feature/2026-03-15-session):**
+**Оптимизация финансовой модели:**
 
-| Что | Статус |
-|-----|--------|
-| Модуль payment_distribution, ADR 0003, ERD | Добавлены |
-| Правки API и фронтенда | В ветке, проверки не прогонялись в этой сессии |
-| Lead Architect: глоссарии, entities-minimal | Ожидает |
+| Фаза | Описание | Оценка | Статус |
+|------|----------|--------|--------|
+| 1 | Фундамент (due_date, баланс, Money VO) | 2–3 сессии | ⚪ Следующая |
+| 2 | Архитектура баланса (Clean Arch, Specification) | 2–3 сессии | ⚪ Ожидает |
+| 3 | Распределение платежей (модуль с нуля) | 5–6 сессий | ⚪ Ожидает |
+| 4 | Финансовые периоды и отчётность | 2–3 сессии | ⚪ Ожидает |
+| 5 | Долги и пени | 3–4 сессии | ⚪ Ожидает |
+
+**Старые ветки:**
+
+| Ветка | Что | Решение |
+|-------|-----|---------|
+| `feature/audit-fixes-20260317` | Аудит (части 1–3) | Смержить в main |
+| `feature/2026-03-15-session` | payment_distribution заготовка | Архивировать (переделка в Фазе 3) |
 
 ---
 
@@ -125,12 +110,14 @@
 
 | Вопрос | Документ |
 |--------|----------|
-| **Полная спецификация реализации** (файлы, тесты, этапы) | [`docs/tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md`](../tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md) |
+| **План оптимизации финансовой модели (INDEX)** | [`docs/plan/financial-model-optimization/INDEX.md`](financial-model-optimization/INDEX.md) |
+| Полная спецификация реализации (ledger-ready) | [`docs/tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md`](../tasks/IMPLEMENTATION_SPEC_LEDGER_READY.md) |
 | Анализ архитектуры и выводы | [`docs/plan/financial-architecture-analysis.md`](financial-architecture-analysis.md) |
 | ADR 0002 (временная модель, ledger-ready) | [`docs/architecture/adr/0002-financial-temporal-and-ledger-ready.md`](../architecture/adr/0002-financial-temporal-and-ledger-ready.md) |
+| ADR 0003 (модель распределения платежей) | [`docs/architecture/adr/0003-payment-distribution-model.md`](../architecture/adr/0003-payment-distribution-model.md) |
 | Общая точка входа по проекту (Топ-5, дорожная карта) | [`docs/development-index.md`](../development-index.md) |
 | План разработки и целостность (как вести задачи) | [`docs/plan/development-plan-and-integrity.md`](development-plan-and-integrity.md) |
-| Где что лежит (таблица) | Секция 5 в [`development-plan-and-integrity.md`](development-plan-and-integrity.md) |
+| **ТЗ: матрица «жизнь СТ» + раннер (для отдельной сессии)** | [`docs/scenario/TECHNICAL-SPEC-life-scenario-matrix-and-runner.md`](../scenario/TECHNICAL-SPEC-life-scenario-matrix-and-runner.md) |
 
 ---
 
@@ -144,4 +131,6 @@
 
 *Обновляй этот файл в конце сессии: что сделали, на каком этапе остановились, что первым делом делать в следующий раз.*
 
-*Последнее обновление: 2026-03-15 (итог сессии: изменения в ветке feature/2026-03-15-session, push в GitHub)*
+*Последнее обновление: 2026-03-20 — добавлено ТЗ на матрицу года жизни СТ и будущий раннер: [`docs/scenario/TECHNICAL-SPEC-life-scenario-matrix-and-runner.md`](../scenario/TECHNICAL-SPEC-life-scenario-matrix-and-runner.md) (передача контекста в новую сессию). Приоритет по коду без изменений: финмодель Фаза 1.*
+
+*Предыдущее: 2026-03-19 — план оптимизации финансовой модели из 5 фаз; ветки и Фаза 1.*
