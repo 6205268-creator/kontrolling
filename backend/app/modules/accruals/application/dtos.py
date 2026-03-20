@@ -16,6 +16,7 @@ class AccrualBase(BaseModel):
     accrual_date: date = Field(..., description="Дата начисления")
     period_start: date = Field(..., description="Начало периода")
     period_end: date | None = Field(None, description="Конец периода")
+    due_date: date | None = Field(None, description="Срок оплаты")
 
 
 class AccrualCreate(AccrualBase):
@@ -44,6 +45,7 @@ class AccrualInDB(AccrualBase):
     cancelled_by_user_id: UUID | None = None
     cancellation_reason: str | None = None
     operation_number: str = Field(..., description="Уникальный номер операции")
+    due_date: date | None = Field(None, description="Срок оплаты")
 
 
 class AccrualBatchCreate(BaseModel):

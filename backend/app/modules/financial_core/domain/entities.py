@@ -5,10 +5,10 @@ Pure Python - no framework dependencies (FastAPI, SQLAlchemy, Pydantic).
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from decimal import Decimal
 from uuid import UUID
 
 from app.modules.shared.kernel.entities import BaseEntity
+from app.modules.shared.kernel.money import Money
 
 
 @dataclass
@@ -45,24 +45,24 @@ class Balance:
     subject_id: UUID
     cooperative_id: UUID
     code: str
-    total_accruals: Decimal
-    total_payments: Decimal
-    balance: Decimal = field(init=False)
+    total_accruals: Money
+    total_payments: Money
+    balance: Money = field(init=False)
 
     def __post_init__(self):
-        self.balance = self.total_accruals - self.total_payments
+        self.balance = Money(self.total_accruals.amount - self.total_payments.amount)
 
     @property
     def is_in_debt(self) -> bool:
         """Check if subject has debt (positive balance)."""
-        return self.balance > 0
+        return self.balance.is_positive
 
     @property
     def has_credit(self) -> bool:
         """Check if subject has overpayment (negative balance)."""
-        return self.balance < 0
+        return self.balance.is_negative
 
     @property
     def is_balanced(self) -> bool:
         """Check if subject balance is zero."""
-        return self.balance == Decimal("0.00")
+        return self.balance.is_zero

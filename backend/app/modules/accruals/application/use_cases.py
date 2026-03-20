@@ -52,6 +52,7 @@ class CreateAccrualUseCase:
             accrual_date=data.accrual_date,
             period_start=data.period_start,
             period_end=data.period_end,
+            due_date=data.due_date,
             status="created",
             operation_number=operation_number,
         )
@@ -247,6 +248,7 @@ class MassCreateAccrualsUseCase:
                 accrual_date=data.accrual_date,
                 period_start=data.period_start,
                 period_end=data.period_end,
+                due_date=data.due_date,
                 status="created",
                 operation_number=operation_number,
             )

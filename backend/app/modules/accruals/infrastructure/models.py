@@ -44,6 +44,7 @@ class AccrualModel(Base):
     accrual_date: Mapped[date] = mapped_column(Date, nullable=False)
     period_start: Mapped[date] = mapped_column(Date, nullable=False)
     period_end: Mapped[date | None] = mapped_column(Date, nullable=True)
+    due_date: Mapped[date | None] = mapped_column(Date, nullable=True, comment="Срок оплаты")
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="created")
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC)
@@ -77,6 +78,7 @@ class AccrualModel(Base):
             accrual_date=self.accrual_date,
             period_start=self.period_start,
             period_end=self.period_end,
+            due_date=self.due_date,
             status=self.status,
             created_at=self.created_at,
             updated_at=self.updated_at,
@@ -97,6 +99,7 @@ class AccrualModel(Base):
             accrual_date=entity.accrual_date,
             period_start=entity.period_start,
             period_end=entity.period_end,
+            due_date=entity.due_date,
             status=entity.status,
             created_at=entity.created_at,
             updated_at=entity.updated_at,
@@ -127,6 +130,7 @@ class AccrualHistoryModel(Base):
     accrual_date: Mapped[date] = mapped_column(Date, nullable=False)
     period_start: Mapped[date] = mapped_column(Date, nullable=False)
     period_end: Mapped[date | None] = mapped_column(Date, nullable=True)
+    due_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

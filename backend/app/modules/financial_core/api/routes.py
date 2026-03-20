@@ -117,9 +117,9 @@ async def get_financial_subject_balance(
         subject_id=balance.subject_id,
         cooperative_id=balance.cooperative_id,
         code=balance.code,
-        total_accruals=balance.total_accruals,
-        total_payments=balance.total_payments,
-        balance=balance.balance,
+        total_accruals=balance.total_accruals.to_decimal(),
+        total_payments=balance.total_payments.to_decimal(),
+        balance=balance.balance.to_decimal(),
     )
 
 
@@ -160,9 +160,9 @@ async def get_balances_by_cooperative(
             subject_id=b.subject_id,
             cooperative_id=b.cooperative_id,
             code=b.code,
-            total_accruals=b.total_accruals,
-            total_payments=b.total_payments,
-            balance=b.balance,
+            total_accruals=b.total_accruals.to_decimal(),
+            total_payments=b.total_payments.to_decimal(),
+            balance=b.balance.to_decimal(),
         )
         for b in balances
     ]

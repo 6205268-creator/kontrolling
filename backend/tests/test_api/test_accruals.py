@@ -467,3 +467,69 @@ async def test_create_accrual_missing_params(
     )
 
     assert response.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_create_accrual_with_due_date(
+    async_client: AsyncClient,
+    admin_token: str,
+    financial_subject_fixture: FinancialSubject,
+    contribution_type_fixture: ContributionType,
+) -> None:
+    """Тест создания начисления с due_date."""
+    from datetime import timedelta
+
+    subject = financial_subject_fixture
+    ct = contribution_type_fixture
+    due = date.today() + timedelta(days=30)
+
+    response = await async_client.post(
+        f"/api/accruals/?cooperative_id={str(subject.cooperative_id)}",
+        json={
+            "financial_subject_id": str(subject.id),
+            "contribution_type_id": str(ct.id),
+            "amount": "1500.00",
+            "accrual_date": str(date.today()),
+            "period_start": str(date.today().replace(month=1, day=1)),
+            "period_end": str(date.today().replace(month=12, day=31)),
+            "due_date": str(due),
+        },
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["amount"] == "1500.00"
+    assert data["status"] == "created"
+    assert data["due_date"] == str(due)
+
+
+@pytest.mark.asyncio
+async def test_create_accrual_without_due_date(
+    async_client: AsyncClient,
+    admin_token: str,
+    financial_subject_fixture: FinancialSubject,
+    contribution_type_fixture: ContributionType,
+) -> None:
+    """Тест создания начисления без due_date (null)."""
+    subject = financial_subject_fixture
+    ct = contribution_type_fixture
+
+    response = await async_client.post(
+        f"/api/accruals/?cooperative_id={str(subject.cooperative_id)}",
+        json={
+            "financial_subject_id": str(subject.id),
+            "contribution_type_id": str(ct.id),
+            "amount": "1500.00",
+            "accrual_date": str(date.today()),
+            "period_start": str(date.today().replace(month=1, day=1)),
+            "period_end": str(date.today().replace(month=12, day=31)),
+        },
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["amount"] == "1500.00"
+    assert data["status"] == "created"
+    assert data["due_date"] is None

@@ -394,7 +394,7 @@ async def test_get_balance_as_of_date(
     test_db.add(contribution_type)
     await test_db.flush()
 
-    # Создаём начисление на 2025-01-10
+    # Создаём начисление на 2025-01-10 с created_at в прошлом
     accrual = Accrual(
         financial_subject_id=subject.id,
         contribution_type_id=contribution_type.id,
@@ -403,10 +403,11 @@ async def test_get_balance_as_of_date(
         period_start=date(2025, 1, 1),
         status="applied",
         operation_number="ACC-DATE-1",
+        created_at=datetime(2025, 1, 10, 12, 0, 0),  # Устанавливаем created_at в прошлом
     )
     test_db.add(accrual)
 
-    # Создаём платёж на 2025-01-15
+    # Создаём платёж на 2025-01-15 с created_at в прошлом
     owner = Owner(owner_type="physical", name="Плательщик")
     test_db.add(owner)
     await test_db.flush()
@@ -418,6 +419,7 @@ async def test_get_balance_as_of_date(
         payment_date=date(2025, 1, 15),
         status="confirmed",
         operation_number="PAY-DATE-1",
+        created_at=datetime(2025, 1, 15, 12, 0, 0),  # Устанавливаем created_at в прошлом
     )
     test_db.add(payment)
     await test_db.commit()

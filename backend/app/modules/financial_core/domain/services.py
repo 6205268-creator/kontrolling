@@ -3,7 +3,7 @@
 Pure Python - no framework dependencies.
 """
 
-from decimal import Decimal
+from app.modules.shared.kernel.money import Money
 
 
 class BalanceCalculator:
@@ -13,10 +13,7 @@ class BalanceCalculator:
     """
 
     @staticmethod
-    def calculate(
-        total_accruals: Decimal,
-        total_payments: Decimal,
-    ) -> Decimal:
+    def calculate(total_accruals: Money, total_payments: Money) -> Money:
         """Calculate balance from accruals and payments.
 
         Args:
@@ -26,14 +23,14 @@ class BalanceCalculator:
         Returns:
             Balance amount (positive = debt, negative = credit).
         """
-        return total_accruals - total_payments
+        return Money(total_accruals.amount - total_payments.amount)
 
     @staticmethod
-    def is_in_debt(balance: Decimal) -> bool:
+    def is_in_debt(balance: Money) -> bool:
         """Check if balance indicates debt."""
-        return balance > Decimal("0.00")
+        return balance.is_positive
 
     @staticmethod
-    def has_credit(balance: Decimal) -> bool:
+    def has_credit(balance: Money) -> bool:
         """Check if balance indicates overpayment."""
-        return balance < Decimal("0.00")
+        return balance.is_negative

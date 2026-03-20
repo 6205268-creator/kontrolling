@@ -15,6 +15,7 @@ from app.modules.financial_core.domain.repositories import (
     IBalanceRepository,
     IFinancialSubjectRepository,
 )
+from app.modules.shared.kernel.money import Money
 
 from .models import FinancialSubjectModel
 
@@ -152,9 +153,11 @@ class BalanceRepository(IBalanceRepository):
         # 1. accrual_date <= as_of_date
         # 2. status == 'applied'
         # 3. (status != 'cancelled') OR (cancelled_at IS NOT NULL AND cancelled_at > as_of_date)
+        # 4. date(created_at) <= as_of_date (ADR 0002)
         accrual_conditions = [
             Accrual.financial_subject_id == financial_subject_id,
             Accrual.accrual_date <= as_of_date,
+            func.date(Accrual.created_at) <= as_of_date,
             Accrual.status == "applied",
         ]
         # Not cancelled OR cancelled after as_of_date
@@ -174,9 +177,11 @@ class BalanceRepository(IBalanceRepository):
         # 1. payment_date <= as_of_date
         # 2. status == 'confirmed'
         # 3. (status != 'cancelled') OR (cancelled_at IS NOT NULL AND cancelled_at > as_of_date)
+        # 4. date(created_at) <= as_of_date (ADR 0002)
         payment_conditions = [
             Payment.financial_subject_id == financial_subject_id,
             Payment.payment_date <= as_of_date,
+            func.date(Payment.created_at) <= as_of_date,
             Payment.status == "confirmed",
         ]
         # Not cancelled OR cancelled after as_of_date
@@ -197,8 +202,8 @@ class BalanceRepository(IBalanceRepository):
             subject_id=subject.subject_id,
             cooperative_id=subject.cooperative_id,
             code=subject.code,
-            total_accruals=total_accruals,
-            total_payments=total_payments,
+            total_accruals=Money(total_accruals),
+            total_payments=Money(total_payments),
         )
 
     async def get_balances_by_cooperative(
@@ -237,9 +242,11 @@ class BalanceRepository(IBalanceRepository):
         subject_ids = [s.id for s in subjects]
 
         # Build conditions for accruals (same as calculate_balance but for multiple subjects)
+        # ADR 0002: include created_at filter
         accrual_conditions = [
             Accrual.financial_subject_id.in_(subject_ids),
             Accrual.accrual_date <= as_of_date,
+            func.date(Accrual.created_at) <= as_of_date,
             Accrual.status == "applied",
             (Accrual.status != "cancelled")
             | ((Accrual.cancelled_at.isnot(None)) & (func.date(Accrual.cancelled_at) > as_of_date)),
@@ -256,10 +263,12 @@ class BalanceRepository(IBalanceRepository):
         )
         accruals_map = {row[0]: row[1] for row in accruals_result.all()}
 
-        # Build conditions for payments
+        # Build conditions for payments (same as calculate_balance but for multiple subjects)
+        # ADR 0002: include created_at filter
         payment_conditions = [
             Payment.financial_subject_id.in_(subject_ids),
             Payment.payment_date <= as_of_date,
+            func.date(Payment.created_at) <= as_of_date,
             Payment.status == "confirmed",
             (Payment.status != "cancelled")
             | ((Payment.cancelled_at.isnot(None)) & (func.date(Payment.cancelled_at) > as_of_date)),
@@ -288,8 +297,8 @@ class BalanceRepository(IBalanceRepository):
                     subject_id=subject.subject_id,
                     cooperative_id=subject.cooperative_id,
                     code=subject.code,
-                    total_accruals=total_accruals,
-                    total_payments=total_payments,
+                    total_accruals=Money(total_accruals),
+                    total_payments=Money(total_payments),
                 )
             )
 
