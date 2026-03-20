@@ -37,6 +37,9 @@ class Accrual:
     Представляет собой задолженность по взносу или услуге за определённый период.
     Все начисления привязываются к FinancialSubject, а не напрямую к участку.
     Статусы: created (создано) → applied (применено) → cancelled (отменено).
+    
+    Attributes:
+        due_date: Дата, до которой начисление должно быть оплачено. None — срок не установлен.
     """
 
     financial_subject_id: UUID
@@ -45,6 +48,7 @@ class Accrual:
     accrual_date: date
     period_start: date
     period_end: date | None
+    due_date: date | None = None
     status: str = "created"  # created, applied, cancelled
     created_at: datetime | None = None
     updated_at: datetime | None = None

@@ -64,6 +64,7 @@ def _get_history_config():
                 "accrual_date",
                 "period_start",
                 "period_end",
+                "due_date",
                 "status",
                 "created_at",
                 "updated_at",

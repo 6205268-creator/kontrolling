@@ -164,6 +164,7 @@ async def seed(session) -> None:
                 accrual_date=today,
                 period_start=period_start,
                 period_end=today,
+                due_date=today.replace(day=today.day + 30),  # Срок оплаты +30 дней
                 status="applied",
                 operation_number=f"ACC-SEED-{i + 1}",
             )
