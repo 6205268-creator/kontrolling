@@ -80,11 +80,29 @@ def get_financial_subject_repository(db: AsyncSession = Depends(get_db)):
     return FinancialSubjectRepository(db)
 
 
-def get_balance_repository(db: AsyncSession = Depends(get_db)):
+def get_accrual_aggregate_provider(db: AsyncSession = Depends(get_db)):
+    """Get AccrualAggregateProvider instance."""
+    from app.modules.accruals.infrastructure.repositories import AccrualAggregateProvider
+
+    return AccrualAggregateProvider(db)
+
+
+def get_payment_aggregate_provider(db: AsyncSession = Depends(get_db)):
+    """Get PaymentAggregateProvider instance."""
+    from app.modules.payments.infrastructure.repositories import PaymentAggregateProvider
+
+    return PaymentAggregateProvider(db)
+
+
+def get_balance_repository(
+    db: AsyncSession = Depends(get_db),
+    accrual_provider=Depends(get_accrual_aggregate_provider),
+    payment_provider=Depends(get_payment_aggregate_provider),
+):
     """Get BalanceRepository instance."""
     from app.modules.financial_core.infrastructure.repositories import BalanceRepository
 
-    return BalanceRepository(db)
+    return BalanceRepository(db, accrual_provider, payment_provider)
 
 
 def get_get_financial_subject_use_case(fs_repo=Depends(get_financial_subject_repository)):

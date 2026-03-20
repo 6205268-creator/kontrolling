@@ -3,13 +3,16 @@
 SQLAlchemy implementation of accruals repositories.
 """
 
+from datetime import date
+from decimal import Decimal
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.accruals.domain.entities import Accrual, ContributionType
 from app.modules.accruals.domain.repositories import IAccrualRepository, IContributionTypeRepository
+from app.modules.financial_core.domain.repositories import IAccrualAggregateProvider
 
 from .models import AccrualModel, ContributionTypeModel
 
@@ -203,3 +206,81 @@ class ContributionTypeRepository(IContributionTypeRepository):
         if model:
             await self.session.delete(model)
             await self.session.commit()
+
+
+class AccrualAggregateProvider(IAccrualAggregateProvider):
+    """Accrual aggregate provider for balance calculation.
+
+    This class provides aggregated accrual data to financial_core module
+    without requiring direct dependency on AccrualModel.
+    """
+
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def sum_participating(
+        self,
+        financial_subject_id: UUID,
+        as_of_date: date,
+    ) -> Decimal:
+        """Get sum of accruals participating in balance as of date.
+
+        Uses BalanceParticipationSqlFilter to determine which accruals participate.
+        """
+        from app.modules.financial_core.domain.balance_spec import BalanceParticipationRule
+        from app.modules.financial_core.infrastructure.balance_spec_sql import (
+            BalanceParticipationSqlFilter,
+        )
+
+        rule = BalanceParticipationRule(as_of_date)
+        sql_filter = BalanceParticipationSqlFilter(rule)
+
+        filter_condition = sql_filter.accrual_filter(
+            AccrualModel,
+            financial_subject_id_filter=financial_subject_id,
+        )
+
+        result = await self.session.execute(
+            select(func.sum(AccrualModel.amount)).where(filter_condition)
+        )
+        total = result.scalar() or Decimal("0.00")
+        return total
+
+    async def sum_participating_by_cooperative(
+        self,
+        cooperative_id: UUID,
+        as_of_date: date,
+    ) -> dict[UUID, Decimal]:
+        """Get sums of accruals for all subjects in cooperative as of date.
+
+        Returns dict mapping financial_subject_id to sum.
+        """
+        from app.modules.financial_core.domain.balance_spec import BalanceParticipationRule
+        from app.modules.financial_core.infrastructure.balance_spec_sql import (
+            BalanceParticipationSqlFilter,
+        )
+        from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
+
+        rule = BalanceParticipationRule(as_of_date)
+        sql_filter = BalanceParticipationSqlFilter(rule)
+
+        # Join with FinancialSubject to filter by cooperative
+        filter_condition = sql_filter.accrual_filter(AccrualModel)
+        filter_condition = filter_condition & (
+            FinancialSubjectModel.cooperative_id == cooperative_id
+        )
+
+        result = await self.session.execute(
+            select(
+                AccrualModel.financial_subject_id,
+                func.sum(AccrualModel.amount).label("total"),
+            )
+            .join(
+                FinancialSubjectModel,
+                AccrualModel.financial_subject_id == FinancialSubjectModel.id,
+            )
+            .where(filter_condition)
+            .group_by(AccrualModel.financial_subject_id)
+        )
+
+        return {row[0]: (row[1] or Decimal("0.00")) for row in result.all()}
