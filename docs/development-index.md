@@ -3,7 +3,7 @@
 **PRIMARY WORK PLAN — Single entry point. Everything starts here. Read this first.**
 
 **Статус:** Актуальный  
-**Последнее обновление:** 2026-03-15  
+**Последнее обновление:** 2026-03-22  
 **Владелец:** Lead Architect  
 **Аудитория:** Агенты Cursor, разработчики проекта
 

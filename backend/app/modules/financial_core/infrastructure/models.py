@@ -24,6 +24,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, Guid
+from app.modules.financial_core.domain.entities import SubjectType
 
 
 def generate_financial_subject_code() -> str:
@@ -76,7 +77,7 @@ class FinancialSubjectModel(Base):
 
         return FinancialSubject(
             id=self.id,
-            subject_type=self.subject_type,
+            subject_type=SubjectType(self.subject_type),
             subject_id=self.subject_id,
             cooperative_id=self.cooperative_id,
             code=self.code,

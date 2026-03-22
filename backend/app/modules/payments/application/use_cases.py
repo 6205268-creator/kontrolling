@@ -1,5 +1,6 @@
 """Use cases for payments module."""
 
+import uuid
 from datetime import datetime
 from uuid import UUID, uuid4
 
@@ -50,7 +51,7 @@ class RegisterPaymentUseCase:
 
         operation_number = f"PAY-{data.financial_subject_id.hex[:8]}-{uuid4().hex[:8]}"
         entity = Payment(
-            id=UUID(int=0),
+            id=uuid.uuid4(),
             financial_subject_id=data.financial_subject_id,
             payer_owner_id=data.payer_owner_id,
             amount=data.amount,

@@ -106,7 +106,7 @@ class MeterRepository(IMeterRepository):
         """Add new meter."""
         model = MeterModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -123,7 +123,7 @@ class MeterRepository(IMeterRepository):
         model.installation_date = entity.installation_date
         model.status = entity.status
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -134,7 +134,7 @@ class MeterRepository(IMeterRepository):
         model = result.scalar_one_or_none()
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
 
 class MeterReadingRepository(IMeterReadingRepository):
@@ -204,7 +204,7 @@ class MeterReadingRepository(IMeterReadingRepository):
         """Add new meter reading."""
         model = MeterReadingModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -220,7 +220,7 @@ class MeterReadingRepository(IMeterReadingRepository):
         model.reading_value = entity.reading_value
         model.reading_date = entity.reading_date
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -248,4 +248,4 @@ class MeterReadingRepository(IMeterReadingRepository):
         model = result.scalar_one_or_none()
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()

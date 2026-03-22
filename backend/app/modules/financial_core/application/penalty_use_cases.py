@@ -16,6 +16,7 @@ from app.modules.financial_core.domain.entities import DebtLine, PenaltySettings
 from app.modules.financial_core.domain.penalty_strategy import PenaltyCalculator
 from app.modules.financial_core.domain.repositories import (
     IDebtLineRepository,
+    IFinancialSubjectRepository,
     IPenaltySettingsRepository,
 )
 from app.modules.shared.kernel.exceptions import ValidationError
@@ -174,10 +175,12 @@ class WriteOffPenaltyUseCase:
         accrual_repo: IAccrualRepository,
         contribution_type_repo: IContributionTypeRepository,
         cancel_accrual: CancelAccrualUseCase,
+        fs_repo: IFinancialSubjectRepository,
     ):
         self._accrual_repo = accrual_repo
         self._contribution_types = contribution_type_repo
         self._cancel = cancel_accrual
+        self._fs_repo = fs_repo
 
     async def execute(
         self,
@@ -186,8 +189,11 @@ class WriteOffPenaltyUseCase:
         user_id: UUID,
         reason: str | None = None,
     ) -> None:
-        accrual = await self._accrual_repo.get_by_id(accrual_id, cooperative_id)
+        accrual = await self._accrual_repo.get_by_id(accrual_id)
         if accrual is None:
+            raise ValidationError("Начисление не найдено")
+        fs = await self._fs_repo.get_by_id(accrual.financial_subject_id, cooperative_id)
+        if fs is None:
             raise ValidationError("Начисление не найдено")
         ct = await self._contribution_types.get_by_id(accrual.contribution_type_id, UUID(int=0))
         if ct is None or ct.code != "PENALTY":

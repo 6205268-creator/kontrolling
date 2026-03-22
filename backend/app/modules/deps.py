@@ -8,17 +8,16 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db
+from app.modules.shared.kernel.events import EventDispatcher
 
 # =============================================================================
 # Shared Kernel Dependencies
 # =============================================================================
 
 
-def get_event_dispatcher():
-    """Get global event dispatcher instance."""
-    from app.modules.shared.kernel.events import EventDispatcher
-
-    return EventDispatcher()
+def get_event_dispatcher() -> EventDispatcher:
+    """Return the global EventDispatcher singleton."""
+    return EventDispatcher
 
 
 # =============================================================================
@@ -387,47 +386,58 @@ def get_create_accrual_use_case(
     return CreateAccrualUseCase(accrual_repo, fs_repo, period_guard)
 
 
-def get_get_accrual_use_case(accrual_repo=Depends(get_accrual_repository)):
+def get_get_accrual_use_case(
+    accrual_repo=Depends(get_accrual_repository),
+    fs_repo=Depends(get_financial_subject_repository),
+):
     """Get GetAccrualUseCase instance."""
     from app.modules.accruals.application.use_cases import GetAccrualUseCase
 
-    return GetAccrualUseCase(accrual_repo)
+    return GetAccrualUseCase(accrual_repo, fs_repo)
 
 
-def get_accruals_by_financial_subject_use_case(accrual_repo=Depends(get_accrual_repository)):
+def get_accruals_by_financial_subject_use_case(
+    accrual_repo=Depends(get_accrual_repository),
+    fs_repo=Depends(get_financial_subject_repository),
+):
     """Get GetAccrualsByFinancialSubjectUseCase instance."""
     from app.modules.accruals.application.use_cases import GetAccrualsByFinancialSubjectUseCase
 
-    return GetAccrualsByFinancialSubjectUseCase(accrual_repo)
+    return GetAccrualsByFinancialSubjectUseCase(accrual_repo, fs_repo)
 
 
-def get_accruals_by_cooperative_use_case(accrual_repo=Depends(get_accrual_repository)):
+def get_accruals_by_cooperative_use_case(
+    accrual_repo=Depends(get_accrual_repository),
+    fs_repo=Depends(get_financial_subject_repository),
+):
     """Get GetAccrualsByCooperativeUseCase instance."""
     from app.modules.accruals.application.use_cases import GetAccrualsByCooperativeUseCase
 
-    return GetAccrualsByCooperativeUseCase(accrual_repo)
+    return GetAccrualsByCooperativeUseCase(accrual_repo, fs_repo)
 
 
 def get_apply_accrual_use_case(
     accrual_repo=Depends(get_accrual_repository),
     event_dispatcher=Depends(get_event_dispatcher),
     period_guard=Depends(get_period_operation_guard),
+    fs_repo=Depends(get_financial_subject_repository),
 ):
     """Get ApplyAccrualUseCase instance."""
     from app.modules.accruals.application.use_cases import ApplyAccrualUseCase
 
-    return ApplyAccrualUseCase(accrual_repo, event_dispatcher, period_guard)
+    return ApplyAccrualUseCase(accrual_repo, event_dispatcher, period_guard, fs_repo)
 
 
 def get_cancel_accrual_use_case(
     accrual_repo=Depends(get_accrual_repository),
     event_dispatcher=Depends(get_event_dispatcher),
     period_guard=Depends(get_period_operation_guard),
+    fs_repo=Depends(get_financial_subject_repository),
 ):
     """Get CancelAccrualUseCase instance."""
     from app.modules.accruals.application.use_cases import CancelAccrualUseCase
 
-    return CancelAccrualUseCase(accrual_repo, event_dispatcher, period_guard)
+    return CancelAccrualUseCase(accrual_repo, event_dispatcher, period_guard, fs_repo)
 
 
 def get_accrue_penalties_use_case(
@@ -456,10 +466,11 @@ def get_write_off_penalty_use_case(
     accrual_repo=Depends(get_accrual_repository),
     contribution_type_repo=Depends(get_contribution_type_repository),
     cancel_accrual=Depends(get_cancel_accrual_use_case),
+    fs_repo=Depends(get_financial_subject_repository),
 ):
     from app.modules.financial_core.application.penalty_use_cases import WriteOffPenaltyUseCase
 
-    return WriteOffPenaltyUseCase(accrual_repo, contribution_type_repo, cancel_accrual)
+    return WriteOffPenaltyUseCase(accrual_repo, contribution_type_repo, cancel_accrual, fs_repo)
 
 
 def get_mass_create_accruals_use_case(

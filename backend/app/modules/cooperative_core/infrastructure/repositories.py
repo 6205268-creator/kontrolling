@@ -48,7 +48,7 @@ class CooperativeRepository(ICooperativeRepository):
         """Add new cooperative."""
         model = domain_to_orm(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return orm_to_domain(model)
 
@@ -67,7 +67,7 @@ class CooperativeRepository(ICooperativeRepository):
         model.period_reopen_allowed_days = entity.period_reopen_allowed_days
         model.penalty_accrual_schedule = entity.penalty_accrual_schedule
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return orm_to_domain(model)
 
@@ -82,4 +82,4 @@ class CooperativeRepository(ICooperativeRepository):
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()

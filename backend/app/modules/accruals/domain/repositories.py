@@ -15,8 +15,8 @@ class IAccrualRepository(IRepository[Accrual], ABC):
     """Repository interface for Accrual operations."""
 
     @abstractmethod
-    async def get_by_id(self, id: UUID, cooperative_id: UUID) -> Accrual | None:
-        """Get accrual by ID, filtered by cooperative via financial_subject."""
+    async def get_by_id(self, id: UUID) -> Accrual | None:
+        """Get accrual by ID. Cooperative scope is enforced in application layer."""
         pass
 
     @abstractmethod
@@ -28,15 +28,23 @@ class IAccrualRepository(IRepository[Accrual], ABC):
     async def get_by_financial_subject(
         self,
         financial_subject_id: UUID,
-        cooperative_id: UUID,
     ) -> list[Accrual]:
-        """Get all accruals for a financial subject."""
+        """Get all accruals for a financial subject. Cooperative scope in application layer."""
         pass
 
     @abstractmethod
-    async def get_by_cooperative(self, cooperative_id: UUID) -> list[Accrual]:
-        """Get all accruals for a cooperative."""
+    async def get_by_cooperative(
+        self,
+        cooperative_id: UUID,
+        financial_subject_ids: list[UUID] | None = None,
+    ) -> list[Accrual]:
+        """Get accruals. If financial_subject_ids provided — filter by them,
+        otherwise return all (cooperative scope enforced by caller)."""
         pass
+
+    async def get_all(self, cooperative_id: UUID) -> list[Accrual]:
+        """IRepository: thin wrapper; prefer get_by_cooperative with subject ids from caller."""
+        return await self.get_by_cooperative(cooperative_id)
 
     @abstractmethod
     async def add(self, entity: Accrual) -> Accrual:

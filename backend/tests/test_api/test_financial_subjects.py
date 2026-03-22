@@ -224,6 +224,7 @@ async def test_get_financial_subject_balance(
 async def test_get_financial_subject_balance_not_found(
     async_client: AsyncClient,
     admin_token: str,
+    sample_cooperative: Cooperative,
 ) -> None:
     """Тест получения баланса несуществующего субъекта."""
     import uuid
@@ -233,6 +234,7 @@ async def test_get_financial_subject_balance_not_found(
     response = await async_client.get(
         f"/api/financial-subjects/{fake_id}/balance",
         headers={"Authorization": f"Bearer {admin_token}"},
+        params={"cooperative_id": str(sample_cooperative.id)},
     )
 
     assert response.status_code == 404

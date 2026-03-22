@@ -19,6 +19,13 @@ class PeriodType(StrEnum):
     YEARLY = "yearly"
 
 
+class SubjectType(StrEnum):
+    LAND_PLOT = "LAND_PLOT"
+    WATER_METER = "WATER_METER"
+    ELECTRICITY_METER = "ELECTRICITY_METER"
+    GENERAL_DECISION = "GENERAL_DECISION"
+
+
 @dataclass
 class FinancialSubject(BaseEntity):
     """Финансовый субъект — центр финансовой ответственности.
@@ -32,7 +39,7 @@ class FinancialSubject(BaseEntity):
     - GENERAL_DECISION — решение общего собрания
     """
 
-    subject_type: str  # LAND_PLOT, WATER_METER, ELECTRICITY_METER, GENERAL_DECISION
+    subject_type: SubjectType  # LAND_PLOT, WATER_METER, ELECTRICITY_METER, GENERAL_DECISION
     subject_id: UUID
     cooperative_id: UUID
     code: str
@@ -49,7 +56,7 @@ class Balance:
     """
 
     financial_subject_id: UUID
-    subject_type: str
+    subject_type: SubjectType
     subject_id: UUID
     cooperative_id: UUID
     code: str
@@ -58,7 +65,7 @@ class Balance:
     balance: Money = field(init=False)
 
     def __post_init__(self):
-        self.balance = Money(self.total_accruals.amount - self.total_payments.amount)
+        self.balance = Money(self.total_accruals.amount - self.total_payments.amount).rounded()
 
     @property
     def is_in_debt(self) -> bool:
@@ -245,7 +252,7 @@ class BalanceSnapshot:
     id: UUID | None = None
 
     def __post_init__(self):
-        self.balance = Money(self.total_accruals.amount - self.total_payments.amount)
+        self.balance = Money(self.total_accruals.amount - self.total_payments.amount).rounded()
 
 
 @dataclass
@@ -333,3 +340,9 @@ class PenaltySettings:
     effective_to: date | None = None
     created_at: datetime | None = None
     id: UUID | None = None
+
+    def __post_init__(self) -> None:
+        if self.grace_period_days < 0:
+            raise ValueError("grace_period_days must be >= 0")
+        if self.daily_rate < Decimal("0"):
+            raise ValueError("daily_rate must be >= 0")

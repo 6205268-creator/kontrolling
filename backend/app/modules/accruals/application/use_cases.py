@@ -3,6 +3,7 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
+from app.modules.financial_core.domain.repositories import IFinancialSubjectRepository
 from app.modules.shared.kernel.events import EventDispatcher
 from app.modules.shared.kernel.exceptions import ValidationError
 
@@ -71,19 +72,28 @@ class CreateAccrualUseCase:
 class GetAccrualUseCase:
     """Use case for getting an Accrual by ID."""
 
-    def __init__(self, repo: IAccrualRepository):
+    def __init__(self, repo: IAccrualRepository, fs_repo=None):
         self.repo = repo
+        self.fs_repo = fs_repo
 
     async def execute(self, accrual_id: UUID, cooperative_id: UUID) -> Accrual | None:
         """Get accrual by ID."""
-        return await self.repo.get_by_id(accrual_id, cooperative_id)
+        accrual = await self.repo.get_by_id(accrual_id)
+        if accrual is None:
+            return None
+        if self.fs_repo:
+            fs = await self.fs_repo.get_by_id(accrual.financial_subject_id, cooperative_id)
+            if fs is None:
+                return None
+        return accrual
 
 
 class GetAccrualsByFinancialSubjectUseCase:
     """Use case for getting accruals by financial subject."""
 
-    def __init__(self, repo: IAccrualRepository):
+    def __init__(self, repo: IAccrualRepository, fs_repo=None):
         self.repo = repo
+        self.fs_repo = fs_repo
 
     async def execute(
         self,
@@ -91,18 +101,34 @@ class GetAccrualsByFinancialSubjectUseCase:
         cooperative_id: UUID,
     ) -> list[Accrual]:
         """Get all accruals for a financial subject."""
-        return await self.repo.get_by_financial_subject(financial_subject_id, cooperative_id)
+        if self.fs_repo:
+            fs = await self.fs_repo.get_by_id(financial_subject_id, cooperative_id)
+            if fs is None:
+                return []
+        return await self.repo.get_by_financial_subject(financial_subject_id)
 
 
 class GetAccrualsByCooperativeUseCase:
     """Use case for getting accruals by cooperative."""
 
-    def __init__(self, repo: IAccrualRepository):
+    def __init__(
+        self,
+        repo: IAccrualRepository,
+        fs_repo: IFinancialSubjectRepository,
+    ):
         self.repo = repo
+        self.fs_repo = fs_repo
 
     async def execute(self, cooperative_id: UUID) -> list[Accrual]:
         """Get all accruals for a cooperative."""
-        return await self.repo.get_by_cooperative(cooperative_id)
+        subjects = await self.fs_repo.get_all(cooperative_id)
+        subject_ids = [s.id for s in subjects]
+        if not subject_ids:
+            return []
+        return await self.repo.get_by_cooperative(
+            cooperative_id,
+            financial_subject_ids=subject_ids,
+        )
 
 
 class ApplyAccrualUseCase:
@@ -113,10 +139,12 @@ class ApplyAccrualUseCase:
         repo: IAccrualRepository,
         event_dispatcher: EventDispatcher | None = None,
         period_guard=None,
+        fs_repo=None,
     ):
         self.repo = repo
         self.event_dispatcher = event_dispatcher
         self.period_guard = period_guard
+        self.fs_repo = fs_repo
 
     async def execute(self, accrual_id: UUID, cooperative_id: UUID) -> Accrual:
         """Apply accrual (change status to 'applied').
@@ -131,10 +159,14 @@ class ApplyAccrualUseCase:
         Raises:
             ValidationError: If accrual not found or invalid status.
         """
-        accrual = await self.repo.get_by_id(accrual_id, cooperative_id)
+        accrual = await self.repo.get_by_id(accrual_id)
 
         if accrual is None:
             raise ValidationError("Accrual not found")
+        if self.fs_repo:
+            fs = await self.fs_repo.get_by_id(accrual.financial_subject_id, cooperative_id)
+            if fs is None:
+                raise ValidationError("Accrual not found")
 
         if accrual.status != "created":
             raise ValidationError(
@@ -173,10 +205,12 @@ class CancelAccrualUseCase:
         repo: IAccrualRepository,
         event_dispatcher: EventDispatcher | None = None,
         period_guard=None,
+        fs_repo=None,
     ):
         self.repo = repo
         self.event_dispatcher = event_dispatcher
         self.period_guard = period_guard
+        self.fs_repo = fs_repo
 
     async def execute(
         self,
@@ -203,10 +237,14 @@ class CancelAccrualUseCase:
         """
         from datetime import UTC, datetime
 
-        accrual = await self.repo.get_by_id(accrual_id, cooperative_id)
+        accrual = await self.repo.get_by_id(accrual_id)
 
         if accrual is None:
             raise ValidationError("Accrual not found")
+        if self.fs_repo:
+            fs = await self.fs_repo.get_by_id(accrual.financial_subject_id, cooperative_id)
+            if fs is None:
+                raise ValidationError("Accrual not found")
 
         # Use entity method for cancellation (Rich Domain pattern)
         accrual.cancel(

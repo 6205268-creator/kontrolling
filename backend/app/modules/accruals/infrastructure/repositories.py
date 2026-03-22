@@ -23,20 +23,9 @@ class AccrualRepository(IAccrualRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_by_id(self, id: UUID, cooperative_id: UUID) -> Accrual | None:
-        """Get accrual by ID, filtered by cooperative via financial_subject."""
-        from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-
-        query = (
-            select(AccrualModel)
-            .join(
-                FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id
-            )
-            .where(
-                AccrualModel.id == id,
-                FinancialSubjectModel.cooperative_id == cooperative_id,
-            )
-        )
+    async def get_by_id(self, id: UUID) -> Accrual | None:
+        """Get accrual by ID. Cooperative scope is enforced in application layer."""
+        query = select(AccrualModel).where(AccrualModel.id == id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
         return model.to_domain() if model else None
@@ -50,51 +39,41 @@ class AccrualRepository(IAccrualRepository):
     async def get_by_financial_subject(
         self,
         financial_subject_id: UUID,
-        cooperative_id: UUID,
     ) -> list[Accrual]:
-        """Get all accruals for a financial subject."""
-        from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-
+        """Get all accruals for a financial subject. Cooperative scope in application layer."""
         query = (
             select(AccrualModel)
-            .join(
-                FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id
-            )
-            .where(
-                AccrualModel.financial_subject_id == financial_subject_id,
-                FinancialSubjectModel.cooperative_id == cooperative_id,
-            )
+            .where(AccrualModel.financial_subject_id == financial_subject_id)
             .order_by(AccrualModel.accrual_date.desc())
         )
         result = await self.session.execute(query)
         models = result.scalars().all()
-        return [model.to_domain() for model in models]
+        return [m.to_domain() for m in models]
 
-    async def get_by_cooperative(self, cooperative_id: UUID) -> list[Accrual]:
-        """Get all accruals for a cooperative."""
-        from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-
-        query = (
-            select(AccrualModel)
-            .join(
-                FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id
+    async def get_by_cooperative(
+        self,
+        cooperative_id: UUID,
+        financial_subject_ids: list[UUID] | None = None,
+    ) -> list[Accrual]:
+        """Get accruals. If financial_subject_ids provided — filter by them,
+        otherwise return all (cooperative scope enforced by caller)."""
+        if financial_subject_ids is not None:
+            query = (
+                select(AccrualModel)
+                .where(AccrualModel.financial_subject_id.in_(financial_subject_ids))
+                .order_by(AccrualModel.accrual_date.desc())
             )
-            .where(FinancialSubjectModel.cooperative_id == cooperative_id)
-            .order_by(AccrualModel.accrual_date.desc())
-        )
+        else:
+            query = select(AccrualModel).order_by(AccrualModel.accrual_date.desc())
         result = await self.session.execute(query)
         models = result.scalars().all()
         return [model.to_domain() for model in models]
-
-    async def get_all(self, cooperative_id: UUID) -> list[Accrual]:
-        """Get all accruals for a cooperative (alias for get_by_cooperative)."""
-        return await self.get_by_cooperative(cooperative_id)
 
     async def add(self, entity: Accrual) -> Accrual:
         """Add new accrual."""
         model = AccrualModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -121,7 +100,7 @@ class AccrualRepository(IAccrualRepository):
         model.cancelled_by_user_id = entity.cancelled_by_user_id
         model.cancellation_reason = entity.cancellation_reason
 
-        await self.session.commit()
+        await self.session.flush()
 
         # Re-fetch to get fresh data from DB (amount should be unchanged)
         self.session.expunge(model)
@@ -131,24 +110,12 @@ class AccrualRepository(IAccrualRepository):
 
     async def delete(self, id: UUID, cooperative_id: UUID) -> None:
         """Delete accrual by ID."""
-        from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
-
-        query = (
-            select(AccrualModel)
-            .join(
-                FinancialSubjectModel, AccrualModel.financial_subject_id == FinancialSubjectModel.id
-            )
-            .where(
-                AccrualModel.id == id,
-                FinancialSubjectModel.cooperative_id == cooperative_id,
-            )
-        )
+        query = select(AccrualModel).where(AccrualModel.id == id)
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
-
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
 
 class ContributionTypeRepository(IContributionTypeRepository):
@@ -182,7 +149,7 @@ class ContributionTypeRepository(IContributionTypeRepository):
         """Add new contribution type."""
         model = ContributionTypeModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -200,7 +167,7 @@ class ContributionTypeRepository(IContributionTypeRepository):
         model.description = entity.description
         model.is_system = entity.is_system
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -214,7 +181,7 @@ class ContributionTypeRepository(IContributionTypeRepository):
             if model.is_system:
                 raise ValueError("Нельзя удалить системный вид взноса")
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
 
 class AccrualAggregateProvider(IAccrualAggregateProvider):

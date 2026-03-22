@@ -11,6 +11,7 @@ from sqlalchemy.pool import StaticPool
 # Использовать SQLite для тестов, чтобы не требовать PostgreSQL/asyncpg при импорте app
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 os.environ["DATABASE_URL"] = TEST_DATABASE_URL
+os.environ.setdefault("SECRET_KEY", "test-secret-key-for-tests-only-32chars")
 
 # Импортируем Base до app чтобы таблицы создались правильно
 # Импорт моделей из модулей Clean Architecture
@@ -110,9 +111,14 @@ async def async_client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, Non
     from app.api import deps
     from app.db import session as db_session
 
-    # Переопределяем get_db чтобы использовалась test_db
+    # Как app.db.session.get_db: commit после успешного запроса (репозитории только flush).
     async def override_get_db() -> AsyncGenerator[AsyncSession, None]:
-        yield test_db
+        try:
+            yield test_db
+            await test_db.commit()
+        except Exception:
+            await test_db.rollback()
+            raise
 
     app.dependency_overrides[deps.get_db] = override_get_db
     app.dependency_overrides[db_session.get_db] = override_get_db

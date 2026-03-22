@@ -97,6 +97,12 @@ async def get_financial_subject_balance(
         current_user.cooperative_id if current_user.role != "admin" else cooperative_id
     )
 
+    if current_user.role == "admin" and user_cooperative_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Admin должен указать cooperative_id в query параметрах",
+        )
+
     subject = await get_subject_use_case.execute(
         subject_id=subject_id,
         cooperative_id=user_cooperative_id,

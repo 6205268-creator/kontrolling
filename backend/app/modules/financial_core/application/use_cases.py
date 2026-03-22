@@ -1,5 +1,6 @@
 """Use cases for financial_core module."""
 
+import uuid
 from datetime import UTC, date, datetime
 from uuid import UUID
 
@@ -55,7 +56,7 @@ class CreateFinancialSubjectUseCase:
     async def execute(self, data: FinancialSubjectCreate) -> FinancialSubject:
         """Create a new financial subject."""
         entity = FinancialSubject(
-            id=UUID(int=0),  # Will be set by repository
+            id=uuid.uuid4(),
             subject_type=data.subject_type,
             subject_id=data.subject_id,
             cooperative_id=data.cooperative_id,

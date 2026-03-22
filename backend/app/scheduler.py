@@ -58,7 +58,9 @@ async def _penalty_accrual_tick() -> None:
             contribution_type_repo = ContributionTypeRepository(session)
             fs_repo = FinancialSubjectRepository(session)
             create_uc = CreateAccrualUseCase(accrual_repo, fs_repo, period_guard)
-            apply_uc = ApplyAccrualUseCase(accrual_repo, EventDispatcher(), period_guard)
+            apply_uc = ApplyAccrualUseCase(
+                accrual_repo, EventDispatcher(), period_guard, fs_repo
+            )
             uc = AccruePenaltiesUseCase(
                 debt_repo,
                 penalty_settings_repo,

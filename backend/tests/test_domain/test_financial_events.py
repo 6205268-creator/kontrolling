@@ -15,6 +15,7 @@ from app.modules.cooperative_core.infrastructure.models import CooperativeModel 
 from app.modules.financial_core.infrastructure.models import (
     FinancialSubjectModel as FinancialSubject,
 )
+from app.modules.financial_core.infrastructure.repositories import FinancialSubjectRepository
 from app.modules.payments.domain.events import PaymentCancelled, PaymentConfirmed
 from app.modules.payments.infrastructure.repositories import PaymentRepository
 from app.modules.shared.kernel.events import EventDispatcher
@@ -200,7 +201,8 @@ async def test_accrual_applied_event_dispatched(
 
     # Apply accrual with event dispatcher
     repo = AccrualRepository(test_db)
-    use_case = ApplyAccrualUseCase(repo, event_dispatcher)
+    fs_repo = FinancialSubjectRepository(test_db)
+    use_case = ApplyAccrualUseCase(repo, event_dispatcher, fs_repo=fs_repo)
 
     result = await use_case.execute(accrual_id=accrual_model.id, cooperative_id=coop.id)
 
@@ -258,7 +260,8 @@ async def test_accrual_cancelled_event_dispatched(
 
     # Cancel accrual with event dispatcher
     repo = AccrualRepository(test_db)
-    use_case = CancelAccrualUseCase(repo, event_dispatcher)
+    fs_repo = FinancialSubjectRepository(test_db)
+    use_case = CancelAccrualUseCase(repo, event_dispatcher, fs_repo=fs_repo)
 
     user_id = UUID(int=456)
     result = await use_case.execute(

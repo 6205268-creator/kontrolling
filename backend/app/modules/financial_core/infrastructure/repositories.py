@@ -84,7 +84,7 @@ class FinancialSubjectRepository(IFinancialSubjectRepository):
         """Add new financial subject."""
         model = FinancialSubjectModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -103,7 +103,7 @@ class FinancialSubjectRepository(IFinancialSubjectRepository):
         model.code = entity.code
         model.status = entity.status
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -118,7 +118,7 @@ class FinancialSubjectRepository(IFinancialSubjectRepository):
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
 
 class BalanceRepository(IBalanceRepository):
@@ -340,7 +340,7 @@ class FinancialPeriodRepository(IFinancialPeriodRepository):
         """Add new period."""
         model = FinancialPeriodModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -357,7 +357,7 @@ class FinancialPeriodRepository(IFinancialPeriodRepository):
         model.closed_at = entity.closed_at
         model.closed_by_user_id = entity.closed_by_user_id
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -372,7 +372,7 @@ class FinancialPeriodRepository(IFinancialPeriodRepository):
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
 
 # =============================================================================
@@ -420,7 +420,6 @@ class BalanceSnapshotRepository(IBalanceSnapshotRepository):
         self.session.add(model)
         await self.session.flush()
         await self.session.refresh(model)
-        await self.session.commit()
         return model.to_domain()
 
     async def delete_by_period(
@@ -442,7 +441,7 @@ class BalanceSnapshotRepository(IBalanceSnapshotRepository):
             count += 1
 
         if count > 0:
-            await self.session.commit()
+            await self.session.flush()
 
         return count
 
@@ -511,7 +510,7 @@ class DebtLineRepository(IDebtLineRepository):
     async def add(self, entity: DebtLine) -> DebtLine:
         m = DebtLineModel.from_domain(entity)
         self.session.add(m)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(m)
         return m.to_domain()
 
@@ -523,7 +522,7 @@ class DebtLineRepository(IDebtLineRepository):
             raise ValueError(f"DebtLine {entity.id} not found")
         m.paid_amount = entity.paid_amount.amount
         m.status = entity.status
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(m)
         return m.to_domain()
 
@@ -555,7 +554,7 @@ class PenaltySettingsRepository(IPenaltySettingsRepository):
     async def add(self, entity: PenaltySettings) -> PenaltySettings:
         m = PenaltySettingsModel.from_domain(entity)
         self.session.add(m)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(m)
         return m.to_domain()
 
@@ -571,7 +570,7 @@ class PenaltySettingsRepository(IPenaltySettingsRepository):
         m.grace_period_days = entity.grace_period_days
         m.effective_from = entity.effective_from
         m.effective_to = entity.effective_to
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(m)
         return m.to_domain()
 
@@ -584,4 +583,4 @@ class PenaltySettingsRepository(IPenaltySettingsRepository):
         m = r.scalar_one_or_none()
         if m:
             await self.session.delete(m)
-            await self.session.commit()
+            await self.session.flush()

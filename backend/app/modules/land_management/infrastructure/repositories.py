@@ -62,7 +62,7 @@ class LandPlotRepository(ILandPlotRepository):
         """Add new land plot."""
         model = LandPlotModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -80,7 +80,7 @@ class LandPlotRepository(ILandPlotRepository):
         model.cadastral_number = entity.cadastral_number
         model.status = entity.status
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -95,7 +95,7 @@ class LandPlotRepository(ILandPlotRepository):
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
     async def delete_by_id_any_cooperative(self, id: UUID) -> bool:
         """Delete land plot by ID without cooperative filter (for admin)."""
@@ -105,7 +105,7 @@ class LandPlotRepository(ILandPlotRepository):
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
             return True
         return False
 
@@ -153,7 +153,7 @@ class OwnerRepository(IOwnerRepository):
         """Add new owner."""
         model = OwnerModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -172,7 +172,7 @@ class OwnerRepository(IOwnerRepository):
         model.contact_phone = entity.contact_phone
         model.contact_email = entity.contact_email
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -184,7 +184,7 @@ class OwnerRepository(IOwnerRepository):
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
 
 class PlotOwnershipRepository(IPlotOwnershipRepository):
@@ -262,7 +262,7 @@ class PlotOwnershipRepository(IPlotOwnershipRepository):
         """Add new plot ownership."""
         model = PlotOwnershipModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -281,7 +281,7 @@ class PlotOwnershipRepository(IPlotOwnershipRepository):
         model.valid_from = entity.valid_from
         model.valid_to = entity.valid_to
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -300,4 +300,4 @@ class PlotOwnershipRepository(IPlotOwnershipRepository):
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()

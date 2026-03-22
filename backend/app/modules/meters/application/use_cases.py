@@ -1,5 +1,6 @@
 """Use cases for meters module."""
 
+import uuid
 from uuid import UUID
 
 from app.modules.financial_core.domain.entities import FinancialSubject
@@ -36,7 +37,7 @@ class CreateMeterUseCase:
                 raise ValueError(f"Owner with id {data.owner_id} has no land plots")
 
         entity = Meter(
-            id=UUID(int=0),
+            id=uuid.uuid4(),
             owner_id=data.owner_id,
             meter_type=data.meter_type,
             serial_number=data.serial_number,
@@ -49,7 +50,7 @@ class CreateMeterUseCase:
         fs_code = f"FS-M-{created_meter.serial_number}"
         subject_type = f"{created_meter.meter_type}_METER"
         fs = FinancialSubject(
-            id=UUID(int=0),
+            id=uuid.uuid4(),
             subject_type=subject_type,
             subject_id=created_meter.id,
             cooperative_id=cooperative_id,
@@ -153,7 +154,7 @@ class AddMeterReadingUseCase:
             raise ValueError(f"Meter with id {data.meter_id} not found")
 
         entity = MeterReading(
-            id=UUID(int=0),
+            id=uuid.uuid4(),
             meter_id=data.meter_id,
             reading_value=data.reading_value,
             reading_date=data.reading_date,

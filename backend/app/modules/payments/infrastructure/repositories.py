@@ -104,7 +104,7 @@ class PaymentRepository(IPaymentRepository):
         """Add new payment."""
         model = PaymentModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -131,7 +131,7 @@ class PaymentRepository(IPaymentRepository):
         model.cancelled_by_user_id = entity.cancelled_by_user_id
         model.cancellation_reason = entity.cancellation_reason
 
-        await self.session.commit()
+        await self.session.flush()
 
         # Re-fetch to get fresh data from DB (amount should be unchanged)
         self.session.expunge(model)
@@ -158,7 +158,7 @@ class PaymentRepository(IPaymentRepository):
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
 
 class PaymentAggregateProvider(IPaymentAggregateProvider):

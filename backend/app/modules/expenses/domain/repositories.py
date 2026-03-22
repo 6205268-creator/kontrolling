@@ -36,11 +36,11 @@ class IExpenseCategoryRepository(IRepository[ExpenseCategory], ABC):
     """Repository interface for ExpenseCategory operations."""
 
     @abstractmethod
-    async def get_all(self, cooperative_id: UUID) -> list[ExpenseCategory]:
+    async def get_all(self) -> list[ExpenseCategory]:
         pass
 
     @abstractmethod
-    async def get_by_id(self, id: UUID, cooperative_id: UUID) -> ExpenseCategory | None:
+    async def get_by_id(self, id: UUID) -> ExpenseCategory | None:
         pass
 
     @abstractmethod

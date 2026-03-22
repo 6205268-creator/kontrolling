@@ -105,7 +105,7 @@ class MemberRepository(IMemberRepository):
         """Add new member."""
         model = MemberModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -122,7 +122,7 @@ class MemberRepository(IMemberRepository):
         model.personal_account_id = entity.personal_account_id
         model.joined_at = entity.joined_at
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -137,7 +137,7 @@ class MemberRepository(IMemberRepository):
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
 
 class PersonalAccountRepository(IPersonalAccountRepository):
@@ -218,7 +218,7 @@ class PersonalAccountRepository(IPersonalAccountRepository):
         model.status = entity.status
         model.closed_at = entity.closed_at
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -226,7 +226,7 @@ class PersonalAccountRepository(IPersonalAccountRepository):
         """Add new account (alias for create_for_member)."""
         model = PersonalAccountModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -241,7 +241,7 @@ class PersonalAccountRepository(IPersonalAccountRepository):
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
 
 class PersonalAccountTransactionRepository(IPersonalAccountTransactionRepository):
@@ -340,7 +340,7 @@ class PersonalAccountTransactionRepository(IPersonalAccountTransactionRepository
         """Add new transaction."""
         model = PersonalAccountTransactionModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -358,7 +358,7 @@ class PersonalAccountTransactionRepository(IPersonalAccountTransactionRepository
         model.type = entity.type
         model.description = entity.description
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -372,7 +372,7 @@ class PersonalAccountTransactionRepository(IPersonalAccountTransactionRepository
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
 
 class PaymentDistributionRepository(IPaymentDistributionRepository):
@@ -451,7 +451,7 @@ class PaymentDistributionRepository(IPaymentDistributionRepository):
         """Add new distribution."""
         model = PaymentDistributionModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -468,7 +468,7 @@ class PaymentDistributionRepository(IPaymentDistributionRepository):
 
         model.status = entity.status
 
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -482,4 +482,4 @@ class PaymentDistributionRepository(IPaymentDistributionRepository):
 
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()

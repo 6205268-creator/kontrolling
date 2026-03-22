@@ -5,6 +5,7 @@ Also handles payment and accrual events for logging purposes.
 """
 
 import logging
+import uuid
 from typing import TYPE_CHECKING
 
 from app.modules.shared.domain.events import LandPlotCreated, MeterCreated
@@ -56,10 +57,6 @@ class LandPlotCreatedHandler:
             repo = self.fs_repo_class(session)
 
             # Create FinancialSubject for the land plot
-            import uuid
-
-            from ..domain.entities import FinancialSubject
-
             fs = FinancialSubject(
                 id=uuid.uuid4(),
                 subject_type="LAND_PLOT",
@@ -70,7 +67,6 @@ class LandPlotCreatedHandler:
             )
 
             await repo.add(fs)
-            await session.commit()
 
 
 class MeterCreatedHandler:
@@ -96,8 +92,6 @@ class MeterCreatedHandler:
             repo = self.fs_repo_class(session)
 
             # Create FinancialSubject for the meter
-            import uuid
-
             subject_type = f"{event.meter_type}_METER"
             fs = FinancialSubject(
                 id=uuid.uuid4(),
@@ -109,7 +103,6 @@ class MeterCreatedHandler:
             )
 
             await repo.add(fs)
-            await session.commit()
 
 
 class PaymentConfirmedHandler:

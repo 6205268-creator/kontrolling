@@ -45,7 +45,7 @@ class ExpenseRepository(IExpenseRepository):
         """Add new expense."""
         model = ExpenseModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -70,7 +70,7 @@ class ExpenseRepository(IExpenseRepository):
         model.cancelled_by_user_id = entity.cancelled_by_user_id
         model.cancellation_reason = entity.cancellation_reason
 
-        await self.session.commit()
+        await self.session.flush()
 
         # Re-fetch to get fresh data from DB (amount should be unchanged)
         self.session.expunge(model)
@@ -88,7 +88,7 @@ class ExpenseRepository(IExpenseRepository):
         model = result.scalar_one_or_none()
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()
 
 
 class ExpenseCategoryRepository(IExpenseCategoryRepository):
@@ -97,14 +97,14 @@ class ExpenseCategoryRepository(IExpenseCategoryRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_all(self, cooperative_id: UUID) -> list[ExpenseCategory]:
-        """Get all expense categories."""
+    async def get_all(self) -> list[ExpenseCategory]:
+        """Get all expense categories (global catalog)."""
         query = select(ExpenseCategoryModel).order_by(ExpenseCategoryModel.name)
         result = await self.session.execute(query)
         models = result.scalars().all()
         return [model.to_domain() for model in models]
 
-    async def get_by_id(self, id: UUID, cooperative_id: UUID) -> ExpenseCategory | None:
+    async def get_by_id(self, id: UUID) -> ExpenseCategory | None:
         """Get expense category by ID."""
         query = select(ExpenseCategoryModel).where(ExpenseCategoryModel.id == id)
         result = await self.session.execute(query)
@@ -115,7 +115,7 @@ class ExpenseCategoryRepository(IExpenseCategoryRepository):
         """Add new expense category."""
         model = ExpenseCategoryModel.from_domain(entity)
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -129,7 +129,7 @@ class ExpenseCategoryRepository(IExpenseCategoryRepository):
         model.name = entity.name
         model.code = entity.code
         model.description = entity.description
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
         return model.to_domain()
 
@@ -140,4 +140,4 @@ class ExpenseCategoryRepository(IExpenseCategoryRepository):
         model = result.scalar_one_or_none()
         if model:
             await self.session.delete(model)
-            await self.session.commit()
+            await self.session.flush()

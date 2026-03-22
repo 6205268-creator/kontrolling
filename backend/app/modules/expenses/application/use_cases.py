@@ -1,7 +1,8 @@
 """Use cases for expenses module."""
 
+import uuid
 from datetime import datetime
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from app.modules.shared.kernel.exceptions import ValidationError
 
@@ -22,13 +23,13 @@ class CreateExpenseUseCase:
         if data.amount <= 0:
             raise ValidationError("Amount must be positive")
 
-        category = await self.category_repo.get_by_id(data.category_id, UUID(int=0))
+        category = await self.category_repo.get_by_id(data.category_id)
         if category is None:
             raise ValidationError("Category not found")
 
-        operation_number = f"EXP-{data.cooperative_id.hex[:8]}-{uuid4().hex[:8]}"
+        operation_number = f"EXP-{data.cooperative_id.hex[:8]}-{uuid.uuid4().hex[:8]}"
         entity = Expense(
-            id=UUID(int=0),
+            id=uuid.uuid4(),
             cooperative_id=data.cooperative_id,
             category_id=data.category_id,
             amount=data.amount,
@@ -132,4 +133,4 @@ class GetExpenseCategoriesUseCase:
 
     async def execute(self) -> list:
         """Get all expense categories."""
-        return await self.repo.get_all(UUID(int=0))
+        return await self.repo.get_all()
