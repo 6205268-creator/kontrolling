@@ -26,6 +26,17 @@ class CooperativeUpdate(BaseModel):
     name: str | None = Field(None, description="Название СТ", min_length=1, max_length=255)
     unp: str | None = Field(None, description="УНП", max_length=20)
     address: str | None = Field(None, description="Адрес", max_length=512)
+    period_reopen_allowed_days: int | None = Field(
+        None,
+        description="Дней на переоткрытие закрытого периода казначеем",
+        ge=0,
+        le=3650,
+    )
+    penalty_accrual_schedule: str | None = Field(
+        None,
+        description="Автоначисление пеней: monthly, weekly, disabled",
+        pattern="^(monthly|weekly|disabled)$",
+    )
 
 
 class CooperativeInDB(CooperativeBase):
@@ -34,5 +45,7 @@ class CooperativeInDB(CooperativeBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
+    period_reopen_allowed_days: int = 30
+    penalty_accrual_schedule: str = "monthly"
     created_at: datetime
     updated_at: datetime

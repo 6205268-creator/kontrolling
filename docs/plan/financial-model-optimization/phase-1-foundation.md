@@ -36,7 +36,7 @@
 - При массовом создании (`MassCreateAccrualsUseCase`): `due_date` задаётся для всех начислений партии.
 - В ответах: `due_date` возвращается.
 
-**Миграция Alembic:**
+**Схема БД (ORM):**
 - Новый столбец `due_date` (Date, nullable) в таблице `accruals`.
 - Добавить в `accruals_history`.
 
@@ -57,7 +57,6 @@ backend/app/modules/accruals/infrastructure/models.py
 backend/app/modules/accruals/application/dtos.py
 backend/app/modules/accruals/api/routes.py
 backend/app/modules/accruals/application/use_cases.py
-backend/alembic/versions/  (новая миграция)
 backend/app/scripts/seed_db.py
 backend/app/db/history_events.py  (добавить due_date в snapshot_columns)
 backend/tests/test_api/test_accruals.py

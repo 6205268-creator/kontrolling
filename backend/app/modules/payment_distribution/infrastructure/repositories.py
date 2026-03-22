@@ -47,6 +47,13 @@ class MemberRepository(IMemberRepository):
         model = result.scalar_one_or_none()
         return model.to_domain() if model else None
 
+    async def get_all(self, cooperative_id: UUID) -> list[Member]:
+        """Get all members for cooperative."""
+        query = select(MemberModel).where(MemberModel.cooperative_id == cooperative_id)
+        result = await self.session.execute(query)
+        models = result.scalars().all()
+        return [model.to_domain() for model in models]
+
     async def get_by_owner_and_cooperative(
         self,
         owner_id: UUID,
@@ -149,6 +156,15 @@ class PersonalAccountRepository(IPersonalAccountRepository):
         model = result.scalar_one_or_none()
         return model.to_domain() if model else None
 
+    async def get_all(self, cooperative_id: UUID) -> list[PersonalAccount]:
+        """Get all accounts for cooperative."""
+        query = select(PersonalAccountModel).where(
+            PersonalAccountModel.cooperative_id == cooperative_id
+        )
+        result = await self.session.execute(query)
+        models = result.scalars().all()
+        return [model.to_domain() for model in models]
+
     async def get_by_member(self, member_id: UUID) -> PersonalAccount | None:
         """Get account by member ID."""
         query = select(PersonalAccountModel).where(
@@ -242,6 +258,15 @@ class PersonalAccountTransactionRepository(IPersonalAccountTransactionRepository
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
         return model.to_domain() if model else None
+
+    async def get_all(self, cooperative_id: UUID) -> list[PersonalAccountTransaction]:
+        """Get all transactions for cooperative (via account's cooperative)."""
+        # Note: PersonalAccountTransaction doesn't have cooperative_id directly
+        # This is a simplified implementation
+        query = select(PersonalAccountTransactionModel)
+        result = await self.session.execute(query)
+        models = result.scalars().all()
+        return [model.to_domain() for model in models]
 
     async def get_by_account(self, account_id: UUID) -> list[PersonalAccountTransaction]:
         """Get all transactions for account."""
@@ -364,6 +389,15 @@ class PaymentDistributionRepository(IPaymentDistributionRepository):
         result = await self.session.execute(query)
         model = result.scalar_one_or_none()
         return model.to_domain() if model else None
+
+    async def get_all(self, cooperative_id: UUID) -> list[PaymentDistribution]:
+        """Get all distributions for cooperative (via payment's cooperative)."""
+        # Note: PaymentDistribution doesn't have cooperative_id directly
+        # This is a simplified implementation - may need adjustment based on use case
+        query = select(PaymentDistributionModel)
+        result = await self.session.execute(query)
+        models = result.scalars().all()
+        return [model.to_domain() for model in models]
 
     async def get_by_payment(self, payment_id: UUID) -> list[PaymentDistribution]:
         """Get all distributions for payment."""

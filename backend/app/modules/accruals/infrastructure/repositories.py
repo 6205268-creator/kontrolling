@@ -41,6 +41,12 @@ class AccrualRepository(IAccrualRepository):
         model = result.scalar_one_or_none()
         return model.to_domain() if model else None
 
+    async def get_by_operation_number(self, operation_number: str) -> Accrual | None:
+        query = select(AccrualModel).where(AccrualModel.operation_number == operation_number)
+        result = await self.session.execute(query)
+        model = result.scalar_one_or_none()
+        return model.to_domain() if model else None
+
     async def get_by_financial_subject(
         self,
         financial_subject_id: UUID,
@@ -192,6 +198,7 @@ class ContributionTypeRepository(IContributionTypeRepository):
         model.name = entity.name
         model.code = entity.code
         model.description = entity.description
+        model.is_system = entity.is_system
 
         await self.session.commit()
         await self.session.refresh(model)
@@ -204,6 +211,8 @@ class ContributionTypeRepository(IContributionTypeRepository):
         model = result.scalar_one_or_none()
 
         if model:
+            if model.is_system:
+                raise ValueError("Нельзя удалить системный вид взноса")
             await self.session.delete(model)
             await self.session.commit()
 
@@ -283,4 +292,47 @@ class AccrualAggregateProvider(IAccrualAggregateProvider):
             .group_by(AccrualModel.financial_subject_id)
         )
 
+        return {row[0]: (row[1] or Decimal("0.00")) for row in result.all()}
+
+    async def sum_applied_in_period(
+        self,
+        financial_subject_id: UUID,
+        period_start: date,
+        period_end: date,
+    ) -> Decimal:
+        result = await self.session.execute(
+            select(func.sum(AccrualModel.amount)).where(
+                AccrualModel.financial_subject_id == financial_subject_id,
+                AccrualModel.status == "applied",
+                AccrualModel.accrual_date >= period_start,
+                AccrualModel.accrual_date <= period_end,
+            )
+        )
+        return result.scalar() or Decimal("0.00")
+
+    async def sum_applied_in_period_by_cooperative(
+        self,
+        cooperative_id: UUID,
+        period_start: date,
+        period_end: date,
+    ) -> dict[UUID, Decimal]:
+        from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
+
+        result = await self.session.execute(
+            select(
+                AccrualModel.financial_subject_id,
+                func.sum(AccrualModel.amount).label("total"),
+            )
+            .join(
+                FinancialSubjectModel,
+                AccrualModel.financial_subject_id == FinancialSubjectModel.id,
+            )
+            .where(
+                FinancialSubjectModel.cooperative_id == cooperative_id,
+                AccrualModel.status == "applied",
+                AccrualModel.accrual_date >= period_start,
+                AccrualModel.accrual_date <= period_end,
+            )
+            .group_by(AccrualModel.financial_subject_id)
+        )
         return {row[0]: (row[1] or Decimal("0.00")) for row in result.all()}

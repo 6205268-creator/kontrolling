@@ -20,5 +20,7 @@ class Cooperative(BaseEntity):
     name: str
     unp: str | None = None
     address: str | None = None
+    period_reopen_allowed_days: int = 30
+    penalty_accrual_schedule: str = "monthly"  # monthly, weekly, disabled
     created_at: datetime | None = None
     updated_at: datetime | None = None

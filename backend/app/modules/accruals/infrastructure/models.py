@@ -9,7 +9,7 @@ import uuid
 from datetime import UTC, date, datetime
 from decimal import Decimal
 
-from sqlalchemy import CheckConstraint, Date, DateTime, ForeignKey, Numeric, String, Text
+from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, ForeignKey, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, Guid
@@ -156,6 +156,9 @@ class ContributionTypeModel(Base):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     code: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
     description: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    is_system: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, comment="Системный тип (PENALTY и др.)"
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
@@ -171,6 +174,7 @@ class ContributionTypeModel(Base):
             name=self.name,
             code=self.code,
             description=self.description,
+            is_system=self.is_system,
             created_at=self.created_at,
         )
 
@@ -181,6 +185,7 @@ class ContributionTypeModel(Base):
             "name": entity.name,
             "code": entity.code,
             "description": entity.description,
+            "is_system": entity.is_system,
             "created_at": entity.created_at,
         }
         if entity.id is not None:

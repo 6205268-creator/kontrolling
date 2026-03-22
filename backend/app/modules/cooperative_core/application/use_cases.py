@@ -42,6 +42,7 @@ class CreateCooperativeUseCase:
             name=data.name,
             unp=data.unp,
             address=data.address,
+            period_reopen_allowed_days=30,
         )
 
         return await self.repo.add(entity)

@@ -264,8 +264,14 @@ class DistributePaymentUseCase:
                 description=f"Оплата {debt.description}",
             )
 
+            # Debit the account
+            account.debit(distribute_amount)
+
             # Update remaining
             remaining = Money(remaining.amount - distribute_amount.amount)
+
+        # Update account balance in DB
+        await self.account_repo.update(account)
 
         # Publish events
         if self.event_dispatcher:
@@ -275,7 +281,10 @@ class DistributePaymentUseCase:
                         distribution_id=distribution.id,
                         payment_id=payment_id,
                         financial_subject_id=distribution.financial_subject_id,
-                        amount=distribution.amount,
+                        accrual_id=distribution.accrual_id,
+                        amount=distribution.amount.to_decimal(),
+                        priority=distribution.priority,
+                        occurred_at=distributed_at or datetime.now(UTC),
                     )
                 )
 
@@ -345,6 +354,9 @@ class ReverseDistributionUseCase:
             self.event_dispatcher.dispatch(
                 PaymentRefunded(
                     distribution_id=distribution_id,
-                    amount=distribution.amount,
+                    amount=distribution.amount.to_decimal(),
+                    occurred_at=reversed_at,
+                    accrual_id=distribution.accrual_id,
+                    financial_subject_id=distribution.financial_subject_id,
                 )
             )

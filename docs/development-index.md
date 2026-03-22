@@ -291,13 +291,9 @@ ruff check .
 ruff format --check .
 ```
 
-### Миграции (Alembic)
+### Схема БД
 
-```powershell
-cd backend
-alembic revision --autogenerate -m "описание"
-alembic upgrade head
-```
+Таблицы создаются из ORM-моделей при старте API (`Base.metadata.create_all` в `app/main.py` после `import_all_models()`). Отдельных миграций Alembic в проекте нет — при смене моделей достаточно пересоздать БД или договориться о генерации данных заново.
 
 ### Seed Database (тестовые данные)
 

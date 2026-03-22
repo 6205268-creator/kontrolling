@@ -105,6 +105,68 @@ def get_balance_repository(
     return BalanceRepository(db, accrual_provider, payment_provider)
 
 
+def get_financial_period_repository(db: AsyncSession = Depends(get_db)):
+    """Get FinancialPeriodRepository instance."""
+    from app.modules.financial_core.infrastructure.repositories import FinancialPeriodRepository
+
+    return FinancialPeriodRepository(db)
+
+
+def get_balance_snapshot_repository(db: AsyncSession = Depends(get_db)):
+    """Get BalanceSnapshotRepository instance."""
+    from app.modules.financial_core.infrastructure.repositories import BalanceSnapshotRepository
+
+    return BalanceSnapshotRepository(db)
+
+
+def get_debt_line_repository(db: AsyncSession = Depends(get_db)):
+    """Репозиторий строк долга (фаза 5)."""
+    from app.modules.financial_core.infrastructure.repositories import DebtLineRepository
+
+    return DebtLineRepository(db)
+
+
+def get_penalty_settings_repository(db: AsyncSession = Depends(get_db)):
+    """Настройки пеней."""
+    from app.modules.financial_core.infrastructure.repositories import PenaltySettingsRepository
+
+    return PenaltySettingsRepository(db)
+
+
+def get_simple_daily_penalty_strategy():
+    from app.modules.financial_core.domain.penalty_strategy import SimpleDailyPenaltyStrategy
+
+    return SimpleDailyPenaltyStrategy()
+
+
+def get_penalty_calculator(
+    strategy=Depends(get_simple_daily_penalty_strategy),
+):
+    from app.modules.financial_core.domain.penalty_strategy import PenaltyCalculator
+
+    return PenaltyCalculator(strategy)
+
+
+def get_calculate_penalties_use_case(
+    debt_repo=Depends(get_debt_line_repository),
+    penalty_settings_repo=Depends(get_penalty_settings_repository),
+    calculator=Depends(get_penalty_calculator),
+):
+    from app.modules.financial_core.application.penalty_use_cases import CalculatePenaltiesUseCase
+
+    return CalculatePenaltiesUseCase(debt_repo, penalty_settings_repo, calculator)
+
+
+def get_period_operation_guard(
+    period_repo=Depends(get_financial_period_repository),
+    coop_repo=Depends(get_cooperative_repository),
+):
+    """Guard: операции только в открытом финансовом периоде."""
+    from app.modules.financial_core.application.period_operation_guard import PeriodOperationGuard
+
+    return PeriodOperationGuard(period_repo, coop_repo)
+
+
 def get_get_financial_subject_use_case(fs_repo=Depends(get_financial_subject_repository)):
     """Get GetFinancialSubjectUseCase instance."""
     from app.modules.financial_core.application.use_cases import GetFinancialSubjectUseCase
@@ -119,18 +181,27 @@ def get_get_financial_subjects_use_case(fs_repo=Depends(get_financial_subject_re
     return GetFinancialSubjectsUseCase(fs_repo)
 
 
-def get_get_balance_use_case(balance_repo=Depends(get_balance_repository)):
+def get_get_balance_use_case(
+    balance_repo=Depends(get_balance_repository),
+    period_repo=Depends(get_financial_period_repository),
+    snapshot_repo=Depends(get_balance_snapshot_repository),
+):
     """Get GetBalanceUseCase instance."""
     from app.modules.financial_core.application.use_cases import GetBalanceUseCase
 
-    return GetBalanceUseCase(balance_repo)
+    return GetBalanceUseCase(balance_repo, period_repo, snapshot_repo)
 
 
-def get_get_balances_by_cooperative_use_case(balance_repo=Depends(get_balance_repository)):
+def get_get_balances_by_cooperative_use_case(
+    balance_repo=Depends(get_balance_repository),
+    period_repo=Depends(get_financial_period_repository),
+    snapshot_repo=Depends(get_balance_snapshot_repository),
+    fs_repo=Depends(get_financial_subject_repository),
+):
     """Get GetBalancesByCooperativeUseCase instance."""
     from app.modules.financial_core.application.use_cases import GetBalancesByCooperativeUseCase
 
-    return GetBalancesByCooperativeUseCase(balance_repo)
+    return GetBalancesByCooperativeUseCase(balance_repo, period_repo, snapshot_repo, fs_repo)
 
 
 # =============================================================================
@@ -308,11 +379,12 @@ def get_contribution_type_repository(db: AsyncSession = Depends(get_db)):
 def get_create_accrual_use_case(
     accrual_repo=Depends(get_accrual_repository),
     fs_repo=Depends(get_financial_subject_repository),
+    period_guard=Depends(get_period_operation_guard),
 ):
     """Get CreateAccrualUseCase instance."""
     from app.modules.accruals.application.use_cases import CreateAccrualUseCase
 
-    return CreateAccrualUseCase(accrual_repo, fs_repo)
+    return CreateAccrualUseCase(accrual_repo, fs_repo, period_guard)
 
 
 def get_get_accrual_use_case(accrual_repo=Depends(get_accrual_repository)):
@@ -339,31 +411,66 @@ def get_accruals_by_cooperative_use_case(accrual_repo=Depends(get_accrual_reposi
 def get_apply_accrual_use_case(
     accrual_repo=Depends(get_accrual_repository),
     event_dispatcher=Depends(get_event_dispatcher),
+    period_guard=Depends(get_period_operation_guard),
 ):
     """Get ApplyAccrualUseCase instance."""
     from app.modules.accruals.application.use_cases import ApplyAccrualUseCase
 
-    return ApplyAccrualUseCase(accrual_repo, event_dispatcher)
+    return ApplyAccrualUseCase(accrual_repo, event_dispatcher, period_guard)
 
 
 def get_cancel_accrual_use_case(
     accrual_repo=Depends(get_accrual_repository),
     event_dispatcher=Depends(get_event_dispatcher),
+    period_guard=Depends(get_period_operation_guard),
 ):
     """Get CancelAccrualUseCase instance."""
     from app.modules.accruals.application.use_cases import CancelAccrualUseCase
 
-    return CancelAccrualUseCase(accrual_repo, event_dispatcher)
+    return CancelAccrualUseCase(accrual_repo, event_dispatcher, period_guard)
+
+
+def get_accrue_penalties_use_case(
+    debt_repo=Depends(get_debt_line_repository),
+    penalty_settings_repo=Depends(get_penalty_settings_repository),
+    calculator=Depends(get_penalty_calculator),
+    accrual_repo=Depends(get_accrual_repository),
+    contribution_type_repo=Depends(get_contribution_type_repository),
+    create_accrual=Depends(get_create_accrual_use_case),
+    apply_accrual=Depends(get_apply_accrual_use_case),
+):
+    from app.modules.financial_core.application.penalty_use_cases import AccruePenaltiesUseCase
+
+    return AccruePenaltiesUseCase(
+        debt_repo,
+        penalty_settings_repo,
+        calculator,
+        accrual_repo,
+        contribution_type_repo,
+        create_accrual,
+        apply_accrual,
+    )
+
+
+def get_write_off_penalty_use_case(
+    accrual_repo=Depends(get_accrual_repository),
+    contribution_type_repo=Depends(get_contribution_type_repository),
+    cancel_accrual=Depends(get_cancel_accrual_use_case),
+):
+    from app.modules.financial_core.application.penalty_use_cases import WriteOffPenaltyUseCase
+
+    return WriteOffPenaltyUseCase(accrual_repo, contribution_type_repo, cancel_accrual)
 
 
 def get_mass_create_accruals_use_case(
     accrual_repo=Depends(get_accrual_repository),
     fs_repo=Depends(get_financial_subject_repository),
+    period_guard=Depends(get_period_operation_guard),
 ):
     """Get MassCreateAccrualsUseCase instance."""
     from app.modules.accruals.application.use_cases import MassCreateAccrualsUseCase
 
-    return MassCreateAccrualsUseCase(accrual_repo, fs_repo)
+    return MassCreateAccrualsUseCase(accrual_repo, fs_repo, period_guard)
 
 
 def get_get_contribution_types_use_case(ct_repo=Depends(get_contribution_type_repository)):
@@ -389,11 +496,12 @@ def get_register_payment_use_case(
     payment_repo=Depends(get_payment_repository),
     fs_repo=Depends(get_financial_subject_repository),
     event_dispatcher=Depends(get_event_dispatcher),
+    period_guard=Depends(get_period_operation_guard),
 ):
     """Get RegisterPaymentUseCase instance."""
     from app.modules.payments.application.use_cases import RegisterPaymentUseCase
 
-    return RegisterPaymentUseCase(payment_repo, event_dispatcher, fs_repo)
+    return RegisterPaymentUseCase(payment_repo, event_dispatcher, fs_repo, period_guard)
 
 
 def get_get_payment_use_case(payment_repo=Depends(get_payment_repository)):
@@ -427,11 +535,12 @@ def get_payments_by_cooperative_use_case(payment_repo=Depends(get_payment_reposi
 def get_cancel_payment_use_case(
     payment_repo=Depends(get_payment_repository),
     event_dispatcher=Depends(get_event_dispatcher),
+    period_guard=Depends(get_period_operation_guard),
 ):
     """Get CancelPaymentUseCase instance."""
     from app.modules.payments.application.use_cases import CancelPaymentUseCase
 
-    return CancelPaymentUseCase(payment_repo, event_dispatcher)
+    return CancelPaymentUseCase(payment_repo, event_dispatcher, period_guard)
 
 
 # =============================================================================
@@ -587,11 +696,19 @@ def get_reporting_read_service(db: AsyncSession = Depends(get_db)):
 
 def get_generate_debtor_report_use_case(
     read_service=Depends(get_reporting_read_service),
+    debt_repo=Depends(get_debt_line_repository),
+    penalty_settings_repo=Depends(get_penalty_settings_repository),
+    calculator=Depends(get_penalty_calculator),
 ):
     """Get GenerateDebtorReportUseCase instance."""
     from app.modules.reporting.application.use_cases import GenerateDebtorReportUseCase
 
-    return GenerateDebtorReportUseCase(read_service)
+    return GenerateDebtorReportUseCase(
+        read_service,
+        debt_repo,
+        penalty_settings_repo,
+        calculator,
+    )
 
 
 def get_generate_cash_flow_use_case(
@@ -601,6 +718,27 @@ def get_generate_cash_flow_use_case(
     from app.modules.reporting.application.use_cases import GenerateCashFlowUseCase
 
     return GenerateCashFlowUseCase(read_service)
+
+
+def get_turnover_sheet_use_case(
+    fs_repo=Depends(get_financial_subject_repository),
+    period_repo=Depends(get_financial_period_repository),
+    snapshot_repo=Depends(get_balance_snapshot_repository),
+    balance_repo=Depends(get_balance_repository),
+    accrual_provider=Depends(get_accrual_aggregate_provider),
+    payment_provider=Depends(get_payment_aggregate_provider),
+):
+    """Get GetTurnoverSheetUseCase instance."""
+    from app.modules.reporting.application.use_cases import GetTurnoverSheetUseCase
+
+    return GetTurnoverSheetUseCase(
+        fs_repo,
+        period_repo,
+        snapshot_repo,
+        balance_repo,
+        accrual_provider,
+        payment_provider,
+    )
 
 
 # =============================================================================
@@ -613,3 +751,144 @@ def get_app_user_repository(db: AsyncSession = Depends(get_db)):
     from app.modules.administration.infrastructure.repositories import AppUserRepository
 
     return AppUserRepository(db)
+
+
+# =============================================================================
+# Payment Distribution Dependencies
+# =============================================================================
+
+
+def get_member_repository(db: AsyncSession = Depends(get_db)):
+    """Get MemberRepository instance."""
+    from app.modules.payment_distribution.infrastructure.repositories import MemberRepository
+
+    return MemberRepository(db)
+
+
+def get_personal_account_repository(db: AsyncSession = Depends(get_db)):
+    """Get PersonalAccountRepository instance."""
+    from app.modules.payment_distribution.infrastructure.repositories import (
+        PersonalAccountRepository,
+    )
+
+    return PersonalAccountRepository(db)
+
+
+def get_personal_account_transaction_repository(db: AsyncSession = Depends(get_db)):
+    """Get PersonalAccountTransactionRepository instance."""
+    from app.modules.payment_distribution.infrastructure.repositories import (
+        PersonalAccountTransactionRepository,
+    )
+
+    return PersonalAccountTransactionRepository(db)
+
+
+def get_payment_distribution_repository(db: AsyncSession = Depends(get_db)):
+    """Get PaymentDistributionRepository instance."""
+    from app.modules.payment_distribution.infrastructure.repositories import (
+        PaymentDistributionRepository,
+    )
+
+    return PaymentDistributionRepository(db)
+
+
+def get_debt_provider(db: AsyncSession = Depends(get_db)):
+    """Get DebtProvider instance."""
+    from app.modules.payment_distribution.infrastructure.debt_provider import DebtProvider
+
+    return DebtProvider(db)
+
+
+def get_credit_account_use_case(
+    member_repo=Depends(get_member_repository),
+    account_repo=Depends(get_personal_account_repository),
+    transaction_repo=Depends(get_personal_account_transaction_repository),
+    event_dispatcher=Depends(get_event_dispatcher),
+):
+    """Get CreditAccountUseCase instance."""
+    from app.modules.payment_distribution.application.use_cases import CreditAccountUseCase
+
+    return CreditAccountUseCase(member_repo, account_repo, transaction_repo, event_dispatcher)
+
+
+def get_distribute_payment_use_case(
+    member_repo=Depends(get_member_repository),
+    account_repo=Depends(get_personal_account_repository),
+    distribution_repo=Depends(get_payment_distribution_repository),
+    transaction_repo=Depends(get_personal_account_transaction_repository),
+    debt_provider=Depends(get_debt_provider),
+    event_dispatcher=Depends(get_event_dispatcher),
+):
+    """Get DistributePaymentUseCase instance."""
+    from app.modules.payment_distribution.application.use_cases import DistributePaymentUseCase
+
+    return DistributePaymentUseCase(
+        member_repo,
+        account_repo,
+        distribution_repo,
+        transaction_repo,
+        debt_provider,
+        event_dispatcher,
+    )
+
+
+# =============================================================================
+# Financial Period Dependencies (Phase 4)
+# =============================================================================
+
+
+def get_create_financial_period_use_case(period_repo=Depends(get_financial_period_repository)):
+    """Get CreateFinancialPeriodUseCase instance."""
+    from app.modules.financial_core.application.use_cases import CreateFinancialPeriodUseCase
+
+    return CreateFinancialPeriodUseCase(period_repo)
+
+
+def get_close_financial_period_use_case(
+    period_repo=Depends(get_financial_period_repository),
+    balance_repo=Depends(get_balance_repository),
+    snapshot_repo=Depends(get_balance_snapshot_repository),
+    fs_repo=Depends(get_financial_subject_repository),
+):
+    """Get CloseFinancialPeriodUseCase instance."""
+    from app.modules.financial_core.application.use_cases import CloseFinancialPeriodUseCase
+
+    return CloseFinancialPeriodUseCase(period_repo, balance_repo, snapshot_repo, fs_repo)
+
+
+def get_reopen_financial_period_use_case(
+    period_repo=Depends(get_financial_period_repository),
+    snapshot_repo=Depends(get_balance_snapshot_repository),
+    coop_repo=Depends(get_cooperative_repository),
+):
+    """Get ReopenFinancialPeriodUseCase instance."""
+    from app.modules.financial_core.application.use_cases import ReopenFinancialPeriodUseCase
+
+    return ReopenFinancialPeriodUseCase(period_repo, snapshot_repo, coop_repo)
+
+
+def get_lock_financial_period_use_case(period_repo=Depends(get_financial_period_repository)):
+    """Get LockFinancialPeriodUseCase instance."""
+    from app.modules.financial_core.application.use_cases import LockFinancialPeriodUseCase
+
+    return LockFinancialPeriodUseCase(period_repo)
+
+
+def get_financial_periods_use_case(
+    period_repo=Depends(get_financial_period_repository),
+    coop_repo=Depends(get_cooperative_repository),
+):
+    """Get GetFinancialPeriodsUseCase instance."""
+    from app.modules.financial_core.application.use_cases import GetFinancialPeriodsUseCase
+
+    return GetFinancialPeriodsUseCase(period_repo, coop_repo)
+
+
+def get_financial_period_by_date_use_case(
+    period_repo=Depends(get_financial_period_repository),
+    coop_repo=Depends(get_cooperative_repository),
+):
+    """Get GetFinancialPeriodByDateUseCase instance."""
+    from app.modules.financial_core.application.use_cases import GetFinancialPeriodByDateUseCase
+
+    return GetFinancialPeriodByDateUseCase(period_repo, coop_repo)

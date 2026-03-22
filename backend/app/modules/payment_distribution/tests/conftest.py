@@ -35,6 +35,9 @@ from app.db.base import Base  # noqa: E402
 from app.main import app  # noqa: E402
 # isort: on
 
+# Фикстуры из fixtures.py (pytest подхватывает из conftest; без дублирования в test_use_cases)
+from .fixtures import member_fixture, money_factory, personal_account_fixture  # noqa: F401, E402
+
 
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:

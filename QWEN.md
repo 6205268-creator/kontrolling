@@ -10,7 +10,7 @@
 
 | Уровень | Технология |
 |---------|------------|
-| **Backend** | Python 3.11+ • FastAPI • SQLAlchemy 2.0 (async) • Alembic • PostgreSQL 15+ (asyncpg) |
+| **Backend** | Python 3.11+ • FastAPI • SQLAlchemy 2.0 (async) • PostgreSQL 15+ (asyncpg); схема из ORM при старте, без Alembic |
 | **Frontend** | Vue 3 + TypeScript • Vite • Pinia • Vue Router |
 | **Auth** | JWT + bcrypt (python-jose, passlib) |
 | **Тесты** | pytest + pytest-asyncio (backend) • Vitest (frontend) • Playwright (e2e) |
@@ -29,8 +29,7 @@ kontrolling/
 │   │   ├── db/                 # DB сессии, базовая модель
 │   │   ├── api/deps.py         # Общие зависимости
 │   │   └── modules/            # Модули Clean Architecture (9 доменов)
-│   ├── tests/                  # Тесты backend (197 тестов)
-│   ├── alembic/                # Миграции БД
+│   ├── tests/                  # Тесты backend
 │   ├── requirements.txt
 │   └── pyproject.toml
 ├── frontend/                   # Vue 3 SPA (15 представлений, 6 Pinia stores)
@@ -92,10 +91,6 @@ uvicorn app.main:app --reload
 # Запуск тестов (используется in-memory SQLite — PostgreSQL не требуется)
 pytest
 pytest tests/test_health.py::test_health_returns_ok
-
-# Миграции Alembic
-alembic revision --autogenerate -m "описание"
-alembic upgrade head
 
 # Lint
 ruff check .
@@ -278,7 +273,6 @@ python -m app.scripts.seed_db
 | [`docs/architecture/environment-policy.md`](docs/architecture/environment-policy.md) | Политика окружений |
 | [`docs/architecture/adr/README.md`](docs/architecture/adr/README.md) | Процесс ADR |
 | [`docs/plan/current-focus.md`](docs/plan/current-focus.md) | Текущий фокус задач, workflow-документы |
-| [`docs/tasks/workflow-orchestration.md`](docs/tasks/workflow-orchestration.md) | Оркестрация workflow, pre-commit чек-лист |
 
 ---
 
@@ -286,7 +280,7 @@ python -m app.scripts.seed_db
 
 ### Context7 MCP (использовать всегда)
 
-Для **любой документации библиотек/API** (FastAPI, SQLAlchemy, Vue, Pydantic, pytest, Alembic, httpx и т.д.) **всегда** использовать Context7 MCP — не полагаться на знания модели.
+Для **любой документации библиотек/API** (FastAPI, SQLAlchemy, Vue, Pydantic, pytest, httpx и т.д.) **всегда** использовать Context7 MCP — не полагаться на знания модели.
 
 Конфиг: `.cursor/mcp.json` | Правило: `.cursor/rules/context7-docs.mdc`
 

@@ -59,6 +59,8 @@ class PaymentRefunded(DomainEvent):
     distribution_id: UUID
     amount: Decimal
     occurred_at: datetime
+    accrual_id: UUID | None = None
+    financial_subject_id: UUID | None = None
 
 
 @dataclass

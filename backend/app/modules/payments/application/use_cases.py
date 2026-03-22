@@ -20,10 +20,12 @@ class RegisterPaymentUseCase:
         repo: IPaymentRepository,
         event_dispatcher: EventDispatcher | None = None,
         fs_repo=None,
+        period_guard=None,
     ):
         self.repo = repo
         self.event_dispatcher = event_dispatcher
         self.fs_repo = fs_repo
+        self.period_guard = period_guard
 
     async def execute(self, data: PaymentCreate, cooperative_id: UUID) -> Payment:
         """Register a new payment.
@@ -38,6 +40,9 @@ class RegisterPaymentUseCase:
                 raise ValidationError(
                     "Financial subject does not belong to the specified cooperative"
                 )
+
+        if self.period_guard:
+            await self.period_guard.ensure_open_for_date(cooperative_id, data.payment_date)
 
         # Domain validation
         if data.amount <= 0:
@@ -63,6 +68,7 @@ class RegisterPaymentUseCase:
             self.event_dispatcher.dispatch(
                 PaymentConfirmed(
                     payment_id=result.id,
+                    cooperative_id=cooperative_id,
                     financial_subject_id=result.financial_subject_id,
                     payer_owner_id=result.payer_owner_id,
                     amount=result.amount,
@@ -125,9 +131,15 @@ class GetPaymentsByCooperativeUseCase:
 class CancelPaymentUseCase:
     """Use case for cancelling a Payment."""
 
-    def __init__(self, repo: IPaymentRepository, event_dispatcher: EventDispatcher | None = None):
+    def __init__(
+        self,
+        repo: IPaymentRepository,
+        event_dispatcher: EventDispatcher | None = None,
+        period_guard=None,
+    ):
         self.repo = repo
         self.event_dispatcher = event_dispatcher
+        self.period_guard = period_guard
 
     async def execute(
         self,
@@ -158,6 +170,9 @@ class CancelPaymentUseCase:
 
         if payment is None:
             raise ValidationError("Payment not found")
+
+        if self.period_guard:
+            await self.period_guard.ensure_open_for_date(cooperative_id, payment.payment_date)
 
         # Use entity method for cancellation (Rich Domain pattern)
         payment.cancel(

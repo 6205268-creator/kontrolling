@@ -10,7 +10,7 @@
 
 ## Решение
 
-- **Бэкенд:** Python 3.11+, FastAPI, SQLAlchemy 2.0 (async), Alembic.
+- **Бэкенд:** Python 3.11+, FastAPI, SQLAlchemy 2.0 (async); схема БД из ORM при старте приложения (без Alembic).
 - **База данных:** PostgreSQL 15+ (драйвер asyncpg).
 - **Фронтенд:** Vue 3, TypeScript, Vite, Pinia (SPA).
 - **Аутентификация:** JWT + bcrypt (python-jose, passlib).

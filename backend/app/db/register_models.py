@@ -1,20 +1,12 @@
-"""Register all module models for Alembic migrations.
+"""Регистрация всех ORM-модулей для заполнения Base.metadata.
 
-This module imports all SQLAlchemy models from modules to ensure
-they are included in Base.metadata for migration generation.
-
-Usage in alembic/env.py:
-    from app.db.register_models import import_all_models
-    import_all_models()
+Нужно вызывать перед созданием таблиц (например `Base.metadata.create_all`
+при старте приложения или в тестах), иначе часть таблиц не попадёт в метаданные.
 """
 
 
 def import_all_models() -> None:
-    """Import all models from modules for Alembic.
-
-    This function should be called before alembic autogenerate
-    to ensure all module tables are discovered.
-    """
+    """Импортирует модели всех модулей, чтобы таблицы зарегистрировались в Base.metadata."""
     # Import all module models to register them with Base.metadata
     from app.modules.accruals.infrastructure import models as accruals_models  # noqa: F401
     from app.modules.administration.infrastructure import (

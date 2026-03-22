@@ -16,6 +16,7 @@ from app.modules.deps import (
     get_delete_land_plot_use_case,
     get_get_land_plot_use_case,
     get_get_land_plots_use_case,
+    get_get_owner_use_case,
     get_update_land_plot_use_case,
 )
 
@@ -41,17 +42,18 @@ router = APIRouter()
 async def get_land_plots(
     current_user: Annotated[AppUser, Depends(get_current_user)],
     use_case=Depends(get_get_land_plots_use_case),
+    get_ownerships_use_case=Depends(get_current_plot_ownerships_use_case),
+    get_owner_use_case=Depends(get_get_owner_use_case),
     cooperative_id: UUID | None = Query(None, description="Фильтр по СТ"),
     skip: int = 0,
     limit: int = 100,
 ) -> list[LandPlotWithOwners]:
     """
-    Получить список участков.
+    Получить список участков с владельцами (ФИО и доля).
 
     - **admin**: может указать cooperative_id или получить все
     - **chairman/treasurer**: видят только участки своего СТ
     """
-    # Для не-admin пользователей используем их СТ
     if current_user.role != "admin":
         cooperative_id = current_user.cooperative_id
 
@@ -62,25 +64,44 @@ async def get_land_plots(
         )
 
     plots = await use_case.execute(cooperative_id=cooperative_id, skip=skip, limit=limit)
-
-    # For now, return basic list without owners/financial subject details
-    # This would need a separate use case to fetch owners and financial subjects
-    return [
-        LandPlotWithOwners(
-            id=plot.id,
-            cooperative_id=plot.cooperative_id,
-            plot_number=plot.plot_number,
-            area_sqm=plot.area_sqm,
-            cadastral_number=plot.cadastral_number,
-            status=plot.status,
-            created_at=plot.created_at,
-            updated_at=plot.updated_at,
-            owners=[],
-            financial_subject_id=None,
-            financial_subject_code=None,
+    result = []
+    for plot in plots:
+        ownerships = await get_ownerships_use_case.execute(plot.id)
+        owners_payload = []
+        for o in ownerships:
+            owner = await get_owner_use_case.execute(owner_id=o.owner_id)
+            owner_name = owner.name if owner else "—"
+            owners_payload.append(
+                PlotOwnershipInDB(
+                    id=o.id,
+                    land_plot_id=o.land_plot_id,
+                    owner_id=o.owner_id,
+                    share_numerator=o.share_numerator,
+                    share_denominator=o.share_denominator,
+                    is_primary=o.is_primary,
+                    valid_from=o.valid_from,
+                    valid_to=o.valid_to,
+                    created_at=o.created_at,
+                    updated_at=o.updated_at,
+                    owner_name=owner_name,
+                )
+            )
+        result.append(
+            LandPlotWithOwners(
+                id=plot.id,
+                cooperative_id=plot.cooperative_id,
+                plot_number=plot.plot_number,
+                area_sqm=plot.area_sqm,
+                cadastral_number=plot.cadastral_number,
+                status=plot.status,
+                created_at=plot.created_at,
+                updated_at=plot.updated_at,
+                owners=owners_payload,
+                financial_subject_id=None,
+                financial_subject_code=None,
+            )
         )
-        for plot in plots
-    ]
+    return result
 
 
 @router.get(
@@ -94,8 +115,9 @@ async def get_land_plot(
     current_user: Annotated[AppUser, Depends(get_current_user)],
     get_plot_use_case=Depends(get_get_land_plot_use_case),
     get_ownerships_use_case=Depends(get_current_plot_ownerships_use_case),
+    get_owner_use_case=Depends(get_get_owner_use_case),
 ) -> LandPlotWithOwners:
-    """Получить участок по ID с владельцами и финансовым субъектом."""
+    """Получить участок по ID с владельцами (ФИО и доля) и финансовым субъектом."""
     plot = await get_plot_use_case.execute(
         plot_id=plot_id, cooperative_id=current_user.cooperative_id
     )
@@ -106,26 +128,18 @@ async def get_land_plot(
             detail="Участок не найден",
         )
 
-    # Проверка доступа: admin видит все, остальные только своё СТ
     if current_user.role != "admin" and current_user.cooperative_id != plot.cooperative_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Нет доступа к данному участку",
         )
 
-    # Get current ownerships
     ownerships = await get_ownerships_use_case.execute(plot_id)
-
-    return LandPlotWithOwners(
-        id=plot.id,
-        cooperative_id=plot.cooperative_id,
-        plot_number=plot.plot_number,
-        area_sqm=plot.area_sqm,
-        cadastral_number=plot.cadastral_number,
-        status=plot.status,
-        created_at=plot.created_at,
-        updated_at=plot.updated_at,
-        owners=[
+    owners_payload = []
+    for o in ownerships:
+        owner = await get_owner_use_case.execute(owner_id=o.owner_id)
+        owner_name = owner.name if owner else "—"
+        owners_payload.append(
             PlotOwnershipInDB(
                 id=o.id,
                 land_plot_id=o.land_plot_id,
@@ -137,10 +151,21 @@ async def get_land_plot(
                 valid_to=o.valid_to,
                 created_at=o.created_at,
                 updated_at=o.updated_at,
+                owner_name=owner_name,
             )
-            for o in ownerships
-        ],
-        financial_subject_id=None,  # Would need to query financial_core
+        )
+
+    return LandPlotWithOwners(
+        id=plot.id,
+        cooperative_id=plot.cooperative_id,
+        plot_number=plot.plot_number,
+        area_sqm=plot.area_sqm,
+        cadastral_number=plot.cadastral_number,
+        status=plot.status,
+        created_at=plot.created_at,
+        updated_at=plot.updated_at,
+        owners=owners_payload,
+        financial_subject_id=None,
         financial_subject_code=None,
     )
 

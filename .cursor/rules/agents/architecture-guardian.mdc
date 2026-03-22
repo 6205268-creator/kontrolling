@@ -59,7 +59,6 @@ grep -A5 "class Payment" backend/app/modules/payments/infrastructure/models.py
 **Что проверять:**
 
 - Новые ORM-модели зарегистрированы в `backend/app/db/register_models.py`
-- Миграции Alembic созданы и применимы
 - Нет «висячих» FK (ссылки на несуществующие таблицы)
 
 **Как проверять:**
@@ -67,12 +66,9 @@ grep -A5 "class Payment" backend/app/modules/payments/infrastructure/models.py
 ```bash
 # Проверить register_models.py
 grep -i "<имя_новой_модели>" backend/app/db/register_models.py
-
-# Проверить миграции
-ls backend/alembic/versions/ | tail -n 3
 ```
 
-**Нарушение:** Если новая модель не добавлена в `register_models.py` или нет миграции.
+**Нарушение:** Если новая модель не добавлена в `register_models.py` (схема поднимается из ORM при старте, без Alembic).
 
 ---
 

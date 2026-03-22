@@ -49,7 +49,6 @@ ADR 0003 вводит `Member` (связь Owner ↔ Cooperative) и `MemberPlot
 backend/app/modules/payment_distribution/domain/entities.py
 backend/app/modules/payment_distribution/infrastructure/models.py
 backend/app/modules/payment_distribution/infrastructure/repositories.py  (get_or_create_by_ownership)
-backend/alembic/versions/  (миграция: удалить member_plots если создана)
 docs/data-model/payment-distribution-erd.md
 ```
 

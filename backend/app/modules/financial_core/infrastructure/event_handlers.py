@@ -188,6 +188,7 @@ def setup_event_handlers(
     event_dispatcher: EventDispatcher,
     session_factory,
     fs_repo_class: type[IFinancialSubjectRepository],
+    debt_line_repo_class,
 ) -> None:
     """Setup event handlers for financial_core module.
 
@@ -226,3 +227,41 @@ def setup_event_handlers(
     event_dispatcher.register(PaymentCancelled, PaymentCancelledHandler())
     event_dispatcher.register(AccrualApplied, AccrualAppliedHandler())
     event_dispatcher.register(AccrualCancelled, AccrualCancelledHandler())
+
+    from app.modules.financial_core.infrastructure.debt_event_handlers import (
+        DebtLineAccrualAppliedHandler,
+        DebtLineAccrualCancelledHandler,
+        DebtLinePaymentDistributedHandler,
+        DebtLinePaymentRefundedHandler,
+    )
+    from app.modules.payment_distribution.domain.events import PaymentDistributed, PaymentRefunded
+
+    h_acc_applied = DebtLineAccrualAppliedHandler(session_factory, debt_line_repo_class)
+    h_acc_cancel = DebtLineAccrualCancelledHandler(session_factory, debt_line_repo_class)
+    h_pay_dist = DebtLinePaymentDistributedHandler(session_factory, debt_line_repo_class)
+    h_pay_ref = DebtLinePaymentRefundedHandler(session_factory, debt_line_repo_class)
+
+    def sync_debt_acc_applied(event) -> None:
+        import asyncio as _asyncio
+
+        _asyncio.create_task(h_acc_applied(event))
+
+    def sync_debt_acc_cancel(event) -> None:
+        import asyncio as _asyncio
+
+        _asyncio.create_task(h_acc_cancel(event))
+
+    def sync_debt_pay_dist(event) -> None:
+        import asyncio as _asyncio
+
+        _asyncio.create_task(h_pay_dist(event))
+
+    def sync_debt_pay_ref(event) -> None:
+        import asyncio as _asyncio
+
+        _asyncio.create_task(h_pay_ref(event))
+
+    event_dispatcher.register(AccrualApplied, sync_debt_acc_applied)
+    event_dispatcher.register(AccrualCancelled, sync_debt_acc_cancel)
+    event_dispatcher.register(PaymentDistributed, sync_debt_pay_dist)
+    event_dispatcher.register(PaymentRefunded, sync_debt_pay_ref)

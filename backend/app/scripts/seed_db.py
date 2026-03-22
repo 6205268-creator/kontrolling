@@ -137,6 +137,12 @@ async def seed(session) -> None:
         ContributionTypeModel(
             name="Электроэнергия", code="ELECTRICITY", description="Взнос за электроэнергию"
         ),
+        ContributionTypeModel(
+            name="Пени",
+            code="PENALTY",
+            description="Пени (системный тип)",
+            is_system=True,
+        ),
     ]
     session.add_all(ctypes)
     await session.flush()

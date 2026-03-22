@@ -20,6 +20,11 @@ class IAccrualRepository(IRepository[Accrual], ABC):
         pass
 
     @abstractmethod
+    async def get_by_operation_number(self, operation_number: str) -> Accrual | None:
+        """По уникальному номеру операции (глобально уникален в БД)."""
+        pass
+
+    @abstractmethod
     async def get_by_financial_subject(
         self,
         financial_subject_id: UUID,

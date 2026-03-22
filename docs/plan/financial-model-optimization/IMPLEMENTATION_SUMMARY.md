@@ -1,20 +1,16 @@
-# Финансовая модель — Итог реализации (Фазы 1-3)
+# Финансовая модель — итог реализации (фазы 1–5)
 
-**Дата:** 2026-03-20  
-**Статус:** ✅ Завершено, merge в main  
-**Ветка:** `main` (коммиты `7478ba8`, `463c0ee`, `65b265f`)
+**Обновлено:** 2026-03-22  
+**Статус:** План [`INDEX.md`](INDEX.md) реализован по фазам 1–5.  
+**Ранние коммиты (фазы 1–3):** `main` — `7478ba8`, `463c0ee`, `65b265f`. Фазы 4–5: связанный код в репозитории (см. ниже).
 
 ---
 
 ## Краткое резюме
 
-Реализована **устойчивая финансовая модель** для системы учёта СТ с соблюдением Clean Architecture, типовую безопасность денежных сумм и автоматическое распределение платежей.
+Реализована **устойчивая финансовая модель** для учёта СТ: Clean Architecture, Money VO, распределение платежей, **финансовые периоды и снимки баланса**, **строки долга и пени**, отчёты (оборотная ведомость, должники).
 
-**Тесты:** 230 passed, 5 skipped  
-**ruff:** All checks passed  
-**Миграций Alembic:** 2 (0012, 0013)  
-**Создано файлов:** 25+  
-**Изменено файлов:** 15+
+**Проверка качества:** из каталога `backend` — `pytest`, `ruff check`, `ruff format --check`. Точное число тестов не фиксируется в документе (растёт с фичами). Схема БД — из ORM при старте приложения, без Alembic.
 
 ---
 
@@ -27,14 +23,13 @@
 
 | Задача | Результат |
 |--------|-----------|
-| **1.1 due_date** | Поле `due_date` на Accrual, миграция 0012, API, тесты |
+| **1.1 due_date** | Поле `due_date` на Accrual, ORM/API, тесты |
 | **1.2 Правило баланса** | Исправлен фильтр по `created_at` (ADR 0002) |
 | **1.3 Money VO** | `shared/kernel/money.py`, 27 тестов |
 
 ### Файлы
 
 - `backend/app/modules/shared/kernel/money.py` — Money Value Object
-- `backend/alembic/versions/0012_add_due_date_to_accruals.py`
 - `backend/tests/test_core/test_money.py`
 - `backend/tests/test_api/test_accruals.py` (3 новых теста)
 
@@ -127,7 +122,6 @@ class BalanceRepository:
 - `backend/app/modules/payment_distribution/application/use_cases.py`
 - `backend/app/modules/payment_distribution/application/dtos.py`
 - `backend/app/modules/payment_distribution/api/routes.py`
-- `backend/alembic/versions/0013_add_payment_distribution_tables.py`
 - `backend/app/modules/payment_distribution/tests/test_use_cases.py` (3 теста)
 - `docs/data-model/payment-distribution-erd.md` (обновлена)
 
@@ -159,6 +153,38 @@ class PaymentConfirmedHandler:
         # 2. Credit account
         # 3. Distribute by priority
 ```
+
+---
+
+## Фаза 4: Финансовые периоды и отчётность
+
+**Закрыта:** 2026-03-22.
+
+| Направление | Реализация (ориентиры) |
+|-------------|-------------------------|
+| Периоды | `FinancialPeriod`, репозитории, API в `financial_core` |
+| Окно переоткрытия | `cooperatives.period_reopen_allowed_days` |
+| Блокировка операций | `PeriodOperationGuard`, `period_auto_lock`; интеграция в начисления и платежи |
+| Снимки | `BalanceSnapshot` при закрытии периода; чтение баланса из snapshot в закрытом периоде |
+| Оборотка | `GetTurnoverSheetUseCase`, `GET /api/reports/turnover` |
+| Тесты | `backend/tests/test_api/test_financial_periods_phase4.py` |
+
+**Оговорка:** частичный unique для `financial_periods` задаётся в ORM — см. [`docs/plan/current-focus.md`](../current-focus.md) (блок «Не дублировать: Фаза 4»).
+
+---
+
+## Фаза 5: Долги и пени
+
+**Закрыта:** 2026-03-22.
+
+| Направление | Реализация (ориентиры) |
+|-------------|-------------------------|
+| Долг | `DebtLine`, обработчики событий начислений и распределения платежей |
+| Пени | `PenaltyCalculator`, стратегия, `AccruePenaltiesUseCase`, API `/api/penalties` |
+| Планировщик | `app/scheduler.py` — автоначисление пеней по расписанию кооператива |
+| Отчёт | `GET /api/reports/debtors`, тесты в `backend/tests/test_api/test_reports.py` |
+
+Критерии приёмки и детали: [`phase-5-debt-penalties.md`](phase-5-debt-penalties.md).
 
 ---
 
@@ -205,21 +231,14 @@ PaymentConfirmed → PaymentConfirmedHandler
 
 ---
 
-## Следующие шаги (пост-MVP)
+## Вне объёма фаз 1–5 (идеи / пост-MVP)
 
-### Фаза 4: Финансовые периоды и отчётность
+Не входили в закрытие плана [`INDEX.md`](INDEX.md) как обязательные критерии фаз:
 
-- [ ] Закрытие периодов (lock past periods)
-- [ ] BalanceSnapshot для ускорения запросов
-- [ ] Оборотно-сальдовая ведомость
-- [ ] Отчёт «Движение денежных средств»
-
-### Фаза 5: Долги и пени
-
-- [ ] Сущность Debt (долг на дату)
-- [ ] Расчёт пеней (процент от суммы × дни просрочки)
-- [ ] PaymentDistributionRule (настройка приоритетов)
-- [ ] Требования об оплате (notification)
+- Отчёт **«Движение денежных средств»** (отдельный регламентированный отчёт).
+- **PaymentDistributionRule** как настраиваемые приоритеты распределения (UI/конфиг).
+- **Требования об оплате / уведомления** (notification).
+- Импорт и сверка **банковских выписок** — отдельный контур от сценария «год жизни СТ» (см. [`docs/plan/current-focus.md`](../current-focus.md)).
 
 ---
 
@@ -286,18 +305,11 @@ pytest
 ruff check .
 ruff format --check .
 
-# Миграции
-alembic upgrade head
-
 # Seed (тестовые данные)
 python -m app.scripts.seed_db
 ```
 
-**Результат:**
-- ✅ 230 тестов пройдено
-- ✅ ruff без ошибок
-- ✅ Миграции применяются
-- ✅ Seed работает
+**Ожидаемый результат:** все тесты проходят, ruff чистый, seed выполняется при необходимости (проверять актуальным прогоном).
 
 ---
 
@@ -312,5 +324,4 @@ python -m app.scripts.seed_db
 
 ---
 
-*Документ создан: 2026-03-20*  
-*Для продолжения работы см. `docs/plan/financial-model-optimization/phase-4-periods-reporting.md`*
+*Первоначально: 2026-03-20 (фазы 1–3). Обновлено: 2026-03-22 (фазы 4–5, единый статус с [`INDEX.md`](INDEX.md)).*

@@ -22,7 +22,11 @@ class AccrualBase(BaseModel):
 class AccrualCreate(AccrualBase):
     """Schema for creating an Accrual."""
 
-    pass
+    operation_number: str | None = Field(
+        None,
+        max_length=50,
+        description="Уникальный номер операции; если не задан — сгенерируется",
+    )
 
 
 class AccrualUpdate(BaseModel):
@@ -63,3 +67,4 @@ class ContributionTypeInDB(BaseModel):
     name: str = Field(..., description="Название")
     code: str = Field(..., description="Код")
     description: str | None = Field(None, description="Описание")
+    is_system: bool = Field(False, description="Системный тип")

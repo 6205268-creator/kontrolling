@@ -29,11 +29,13 @@ class PaymentConfirmedHandler:
         credit_account_use_case_class,
         distribute_payment_use_case_class,
         member_repo_class,
+        event_dispatcher,
     ):
         self.session_factory = session_factory
         self.credit_account_use_case_class = credit_account_use_case_class
         self.distribute_payment_use_case_class = distribute_payment_use_case_class
         self.member_repo_class = member_repo_class
+        self.event_dispatcher = event_dispatcher
 
     async def __call__(self, event) -> None:
         """Handle PaymentConfirmed event.
@@ -87,12 +89,15 @@ class PaymentConfirmedHandler:
             # Distribute payment use case
             distribution_repo = PaymentDistributionRepository(session)
 
+            from app.modules.payment_distribution.infrastructure.debt_provider import DebtProvider
+
             distribute_use_case = self.distribute_payment_use_case_class(
                 member_repo=member_repo,
                 account_repo=account_repo,
                 distribution_repo=distribution_repo,
                 transaction_repo=transaction_repo,
-                debt_provider=None,  # TODO: Implement debt provider
+                debt_provider=DebtProvider(session),
+                event_dispatcher=self.event_dispatcher,
             )
 
             # Distribute payment across debts
@@ -145,6 +150,7 @@ def setup_payment_distribution_handlers(
         credit_account_use_case_class=CreditAccountUseCase,
         distribute_payment_use_case_class=DistributePaymentUseCase,
         member_repo_class=MemberRepository,
+        event_dispatcher=event_dispatcher,
     )
 
     # Register handler

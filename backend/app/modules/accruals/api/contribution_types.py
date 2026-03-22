@@ -32,6 +32,7 @@ async def get_contribution_types(
             name=t.name,
             code=t.code,
             description=t.description,
+            is_system=t.is_system,
         )
         for t in types_list
     ]

@@ -15,7 +15,7 @@
 
 | Файл | Роль | Когда использовать |
 |------|------|--------------------|
-| [backend-developer.md](backend-developer.md) | Backend-разработчик | API, модели данных, миграции, бизнес-логика, авторизация, тесты бэкенда |
+| [backend-developer.md](backend-developer.md) | Backend-разработчик | API, модели данных (ORM), бизнес-логика, авторизация, тесты бэкенда |
 | [frontend-developer.md](frontend-developer.md) | Frontend-разработчик | Страницы, компоненты, формы, интеграция с API, роутинг, состояние, стили |
 | [project-orchestrator.md](project-orchestrator.md) | Оркестратор/PM | Планирование, декомпозиция задач, координация ролей, приёмка результатов |
 | [qa-engineer.md](qa-engineer.md) | QA-инженер | Проверка по требованиям, тест-кейсы, регрессия, отчёты о дефектах |

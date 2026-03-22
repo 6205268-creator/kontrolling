@@ -16,10 +16,12 @@ class AccrualApplied(DomainEvent):
     """Event published when an Accrual is applied (status: created → applied)."""
 
     accrual_id: UUID
+    cooperative_id: UUID
     financial_subject_id: UUID
     contribution_type_id: UUID
     amount: Decimal
     accrual_date: date
+    due_date: date | None
     operation_number: str
 
 

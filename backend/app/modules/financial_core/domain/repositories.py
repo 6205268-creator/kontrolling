@@ -10,7 +10,14 @@ from uuid import UUID
 
 from app.modules.shared.kernel.repositories import IRepository
 
-from .entities import Balance, FinancialSubject
+from .entities import (
+    Balance,
+    BalanceSnapshot,
+    DebtLine,
+    FinancialPeriod,
+    FinancialSubject,
+    PenaltySettings,
+)
 
 
 class IFinancialSubjectRepository(IRepository[FinancialSubject], ABC):
@@ -135,6 +142,26 @@ class IAccrualAggregateProvider(ABC):
         """
         pass
 
+    @abstractmethod
+    async def sum_applied_in_period(
+        self,
+        financial_subject_id: UUID,
+        period_start: date,
+        period_end: date,
+    ) -> Decimal:
+        """Сумма начислений со статусом applied за интервал дат (по accrual_date)."""
+        pass
+
+    @abstractmethod
+    async def sum_applied_in_period_by_cooperative(
+        self,
+        cooperative_id: UUID,
+        period_start: date,
+        period_end: date,
+    ) -> dict[UUID, Decimal]:
+        """Суммы начислений по субъектам СТ за интервал (applied, accrual_date)."""
+        pass
+
 
 class IPaymentAggregateProvider(ABC):
     """Provider for aggregated payment data.
@@ -175,4 +202,186 @@ class IPaymentAggregateProvider(ABC):
         Returns:
             Dict mapping financial_subject_id to sum of participating payments.
         """
+        pass
+
+    @abstractmethod
+    async def sum_confirmed_in_period(
+        self,
+        financial_subject_id: UUID,
+        period_start: date,
+        period_end: date,
+    ) -> Decimal:
+        """Сумма платежей со статусом confirmed за интервал (по payment_date)."""
+        pass
+
+    @abstractmethod
+    async def sum_confirmed_in_period_by_cooperative(
+        self,
+        cooperative_id: UUID,
+        period_start: date,
+        period_end: date,
+    ) -> dict[UUID, Decimal]:
+        """Суммы платежей по субъектам СТ за интервал (confirmed, payment_date)."""
+        pass
+
+
+class IFinancialPeriodRepository(IRepository[FinancialPeriod], ABC):
+    """Repository interface for FinancialPeriod operations."""
+
+    @abstractmethod
+    async def get_by_id(self, id: UUID, cooperative_id: UUID) -> FinancialPeriod | None:
+        """Get period by ID, filtered by cooperative."""
+        pass
+
+    @abstractmethod
+    async def get_by_date(
+        self,
+        cooperative_id: UUID,
+        date: date,
+    ) -> FinancialPeriod | None:
+        """Get period that contains the given date."""
+        pass
+
+    @abstractmethod
+    async def get_all(
+        self,
+        cooperative_id: UUID,
+        year: int | None = None,
+    ) -> list[FinancialPeriod]:
+        """Get all periods for cooperative, optionally filtered by year."""
+        pass
+
+    @abstractmethod
+    async def get_previous_period(
+        self,
+        period: FinancialPeriod,
+    ) -> FinancialPeriod | None:
+        """Get previous period for the same cooperative.
+
+        For monthly: returns previous month or previous year's December.
+        For yearly: returns previous year.
+        """
+        pass
+
+    @abstractmethod
+    async def add(self, entity: FinancialPeriod) -> FinancialPeriod:
+        """Add new period."""
+        pass
+
+    @abstractmethod
+    async def update(self, entity: FinancialPeriod) -> FinancialPeriod:
+        """Update existing period."""
+        pass
+
+    @abstractmethod
+    async def delete(self, id: UUID, cooperative_id: UUID) -> None:
+        """Delete period by ID."""
+        pass
+
+
+class IBalanceSnapshotRepository(ABC):
+    """Repository interface for BalanceSnapshot operations.
+
+    BalanceSnapshot is a read model for fast balance queries.
+    """
+
+    @abstractmethod
+    async def get_by_financial_subject(
+        self,
+        financial_subject_id: UUID,
+        period_id: UUID,
+    ) -> BalanceSnapshot | None:
+        """Get snapshot for financial subject and period."""
+        pass
+
+    @abstractmethod
+    async def get_by_cooperative(
+        self,
+        cooperative_id: UUID,
+        period_id: UUID,
+    ) -> list[BalanceSnapshot]:
+        """Get all snapshots for cooperative and period."""
+        pass
+
+    @abstractmethod
+    async def add(self, entity: BalanceSnapshot) -> BalanceSnapshot:
+        """Add new snapshot."""
+        pass
+
+    @abstractmethod
+    async def delete_by_period(
+        self,
+        period_id: UUID,
+        cooperative_id: UUID,
+    ) -> int:
+        """Delete all snapshots for period. Returns count of deleted."""
+        pass
+
+
+class IDebtLineRepository(ABC):
+    """Репозиторий строк долга (фаза 5)."""
+
+    @abstractmethod
+    async def get_by_id(self, line_id: UUID, cooperative_id: UUID) -> DebtLine | None:
+        pass
+
+    @abstractmethod
+    async def get_by_accrual_id(self, accrual_id: UUID) -> DebtLine | None:
+        pass
+
+    @abstractmethod
+    async def get_by_financial_subject(
+        self,
+        financial_subject_id: UUID,
+        cooperative_id: UUID,
+    ) -> list[DebtLine]:
+        pass
+
+    @abstractmethod
+    async def get_active_with_outstanding(
+        self,
+        cooperative_id: UUID,
+    ) -> list[DebtLine]:
+        """Статус active и остаток > 0."""
+        pass
+
+    @abstractmethod
+    async def get_overdue(
+        self,
+        cooperative_id: UUID,
+        as_of_date: date,
+    ) -> list[DebtLine]:
+        """Active, outstanding > 0, overdue_since не позже as_of_date."""
+        pass
+
+    @abstractmethod
+    async def add(self, entity: DebtLine) -> DebtLine:
+        pass
+
+    @abstractmethod
+    async def update(self, entity: DebtLine) -> DebtLine:
+        pass
+
+
+class IPenaltySettingsRepository(ABC):
+    """Настройки пеней по СТ."""
+
+    @abstractmethod
+    async def list_for_cooperative(self, cooperative_id: UUID) -> list[PenaltySettings]:
+        pass
+
+    @abstractmethod
+    async def get_by_id(self, settings_id: UUID, cooperative_id: UUID) -> PenaltySettings | None:
+        pass
+
+    @abstractmethod
+    async def add(self, entity: PenaltySettings) -> PenaltySettings:
+        pass
+
+    @abstractmethod
+    async def update(self, entity: PenaltySettings) -> PenaltySettings:
+        pass
+
+    @abstractmethod
+    async def delete(self, settings_id: UUID, cooperative_id: UUID) -> None:
         pass

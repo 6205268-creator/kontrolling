@@ -23,7 +23,7 @@
 
 ## Правила и стандарты для соблюдения
 
-1. ORM-модели существуют только в `app/modules/{module}/infrastructure/models.py`. Регистрация для Alembic — только через `db/register_models.py`.
+1. ORM-модели существуют только в `app/modules/{module}/infrastructure/models.py`. Регистрация в `Base.metadata` — только через `db/register_models.py`.
 2. Presentation (api) не импортирует классы из infrastructure напрямую для типов, используемых в зависимостях (например текущий пользователь). Тип/интерфейс — в domain или application; маппинг — в infrastructure.
 3. Единственная каноническая точка инъекции сессии БД в роутах — `app.api.deps.get_db`. Документировать в правилах тестирования, почему при необходимости переопределяются оба (deps.get_db и db_session.get_db) или привести к одному переопределению.
 4. Любое изменение политики моделей или слоёв фиксируется в ADR или в обновлении AGENTS.md/PENDING_GAPS.

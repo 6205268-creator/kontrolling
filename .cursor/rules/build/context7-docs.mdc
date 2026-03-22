@@ -8,7 +8,7 @@ globs: backend/**, frontend/**
 
 **Инструмент:** [Context7 MCP](https://github.com/upstash/context7) — актуальная, версионная документация и примеры кода для библиотек.
 
-**Правило:** При **любом** запросе по документации, настройке, API или примерам кода по библиотекам стека (FastAPI, SQLAlchemy, Pydantic, Vue, Vite, Pinia, pytest, Alembic и т.п.) **всегда** использовать Context7 MCP (инструменты `resolve-library-id` / `query-docs`), не полагаться только на обучение модели.
+**Правило:** При **любом** запросе по документации, настройке, API или примерам кода по библиотекам стека (FastAPI, SQLAlchemy, Pydantic, Vue, Vite, Pinia, pytest и т.п.) **всегда** использовать Context7 MCP (инструменты `resolve-library-id` / `query-docs`), не полагаться только на обучение модели.
 
 - Если известна библиотека — можно указывать её ID (например: `use library /fastapi/fastapi`).
 - Для конкретной версии — упоминать версию в задаче (например: «SQLAlchemy 2.0»).

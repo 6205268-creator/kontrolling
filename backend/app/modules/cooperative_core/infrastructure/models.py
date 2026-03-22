@@ -8,7 +8,7 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import DateTime, String
+from sqlalchemy import DateTime, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, Guid
@@ -31,6 +31,18 @@ class CooperativeModel(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     unp: Mapped[str | None] = mapped_column(String(20), unique=True, nullable=True)
     address: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    period_reopen_allowed_days: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=30,
+        comment="Сколько дней казначей может переоткрыть закрытый период",
+    )
+    penalty_accrual_schedule: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="monthly",
+        comment="Автоначисление пеней: monthly, weekly, disabled",
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )

@@ -64,6 +64,8 @@ class CooperativeRepository(ICooperativeRepository):
         model.name = entity.name
         model.unp = entity.unp
         model.address = entity.address
+        model.period_reopen_allowed_days = entity.period_reopen_allowed_days
+        model.penalty_accrual_schedule = entity.penalty_accrual_schedule
 
         await self.session.commit()
         await self.session.refresh(model)

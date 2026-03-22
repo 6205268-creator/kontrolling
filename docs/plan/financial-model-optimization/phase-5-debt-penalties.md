@@ -49,9 +49,9 @@ class DebtLine:
 4. `overdue_since` = `due_date + 1 день`, если на дату `due_date` outstanding > 0.
 5. DebtLine **не удаляется** при отмене начисления — вместо этого status = "written_off".
 
-### Data-миграция
+### Существующие данные
 
-> **Решение (принято 2026-03-19):** Data-миграция существующих начислений в DebtLines **не требуется**. При деплое фазы 5 база будет чистая. DebtLines создаются только для новых начислений через event handler `AccrualApplied`.
+> **Решение (принято 2026-03-19):** Перенос старых начислений в DebtLines **не делаем**. База поднимается с нуля; DebtLines создаются только для новых начислений через event handler `AccrualApplied`.
 
 ### Где разместить
 
@@ -77,7 +77,6 @@ backend/app/modules/financial_core/domain/repositories.py
 backend/app/modules/financial_core/infrastructure/models.py
 backend/app/modules/financial_core/infrastructure/repositories.py
 backend/app/modules/financial_core/infrastructure/event_handlers.py
-backend/alembic/versions/  (миграция)
 backend/app/modules/deps.py
 ```
 
@@ -115,7 +114,6 @@ class PenaltySettings:
 backend/app/modules/accruals/domain/entities.py  (добавить is_system в ContributionType)
 backend/app/modules/accruals/infrastructure/models.py  (добавить is_system в ContributionTypeModel)
 backend/app/scripts/seed_db.py  (seed-запись PENALTY)
-backend/alembic/versions/  (миграция: добавить is_system в contribution_types)
 ```
 
 ### Что сделать
@@ -132,7 +130,6 @@ backend/alembic/versions/  (миграция: добавить is_system в cont
 backend/app/modules/financial_core/domain/entities.py  (или penalties/domain/entities.py)
 backend/app/modules/financial_core/infrastructure/models.py
 backend/app/modules/financial_core/api/routes.py  (или penalties/api/routes.py)
-backend/alembic/versions/  (миграция)
 ```
 
 ---
@@ -264,6 +261,7 @@ backend/app/modules/deps.py  (DI: зарегистрировать SimpleDailyPe
 backend/tests/test_core/test_penalty_strategy.py  (НОВЫЙ)
 backend/tests/test_core/test_penalty_calculator.py  (НОВЫЙ)
 backend/tests/test_api/test_penalties.py  (НОВЫЙ)
+backend/tests/test_api/test_phase5_penalties_integration.py  (НОВЫЙ — полный цикл: начисление → долг → платёж → пени)
 ```
 
 ---
@@ -302,18 +300,18 @@ backend/tests/test_api/test_reporting.py
 
 ## Критерий приёмки фазы 5
 
-- [ ] DebtLine создаётся автоматически при применении начисления.
-- [ ] При погашении через PaymentDistribution — `outstanding_amount` обновляется.
-- [ ] PenaltySettings: CRUD работает.
-- [ ] `IPenaltyStrategy` изолирован; `SimpleDailyPenaltyStrategy` подключается через DI.
-- [ ] `PenaltyCalculator` считает от `outstanding_amount` (текущего остатка, а не исходной суммы).
-- [ ] `AccruePenalties`: идемпотентный, создаёт начисления типа «пени».
-- [ ] Автоматический scheduler запускает `AccruePenalties` по расписанию.
-- [ ] `WriteOffPenalty`: казначей может вручную списать пени для конкретного начисления.
-- [ ] При полной оплате долга пени **не списываются автоматически**.
-- [ ] Отчёт по должникам: корректные данные с пенями.
-- [ ] Тесты: минимум 10 кейсов (без просрочки, с просрочкой, частичная оплата, grace period, отключённые пени, разные ставки, write-off, повторный запуск accrue — идемпотентность).
-- [ ] pytest + ruff чисто.
+- [x] DebtLine создаётся автоматически при применении начисления. *(API: `tests/test_api/test_phase5_penalties_integration.py`)*
+- [x] При погашении через PaymentDistribution — `outstanding_amount` обновляется. *(тот же файл + общий `conftest`: одна БД для HTTP и обработчиков событий)*
+- [x] PenaltySettings: CRUD работает. *( `tests/test_api/test_penalties.py` )*
+- [x] `IPenaltyStrategy` изолирован; `SimpleDailyPenaltyStrategy` подключается через DI. *( `tests/test_core/test_penalty_strategy.py` )*
+- [x] `PenaltyCalculator` считает от `outstanding_amount` (текущего остатка, а не исходной суммы). *(юнит + интеграция с частичной оплатой)*
+- [x] `AccruePenalties`: идемпотентный, создаёт начисления типа «пени». *(интеграция `test_phase5_accrue_penalties_idempotent`)*
+- [x] Автоматический scheduler запускает `AccruePenalties` по расписанию. *(`app/scheduler.py`, APScheduler; условия `penalty_accrual_schedule` по кооперативу)*
+- [x] `WriteOffPenalty`: казначей может вручную списать пени для конкретного начисления. *(интеграция + `test_write_off_non_penalty_rejected`)*
+- [x] При полной оплате долга пени **не списываются автоматически** *(расчёт по строке долга пустой после полного погашения основного начисления; отдельные начисления-пени не трогаются)*.
+- [x] Отчёт по должникам: корректные данные с пенями. *(`GET /api/reports/debtors`, `backend/tests/test_api/test_reports.py` — сценарии `test_get_debtors_report*` и связанные)*
+- [x] Тесты: минимум 10 кейсов (без просрочки, с просрочкой, частичная оплата, grace period, отключённые пени, разные ставки, write-off, повторный запуск accrue — идемпотентность). *( `test_penalty_strategy.py` + интеграция фазы 5 + `test_penalties.py` )*
+- [x] pytest + ruff чисто.
 
 ---
 

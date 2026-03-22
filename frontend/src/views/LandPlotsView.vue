@@ -102,25 +102,21 @@ const selectedCooperativeId = ref<string>('');
 const isAdmin = computed(() => authStore.userRole === 'admin');
 const canCreate = computed(() => authStore.isAuthenticated);
 
-// Table columns
+// Table columns (площадь не показываем — не интересует)
 const columns = [
   { key: 'plot_number', label: 'Номер участка', sortable: true },
-  { key: 'area_sqm', label: 'Площадь, м²', sortable: true, format: 'number' as const },
   { key: 'status', label: 'Статус', sortable: true },
   { key: 'owners', label: 'Владельцы', sortable: false },
   { key: 'actions', label: 'Действия', sortable: false },
 ];
 
-// Filtered plots
+// Filtered plots (owners — строка: фамилия или "Фамилия (доля), ...")
 const filteredPlots = computed(() => {
-  const plots = landPlotsStore.plots.map((plot) => ({
+  return landPlotsStore.plots.map((plot) => ({
     ...plot,
-    area_sqm: plot.area_sqm,
     status: plot.status,
-    owners: ownersSummary(plot.owners),
+    owners: formatOwnersColumn(plot.owners),
   }));
-  
-  return plots;
 });
 
 function getStatusType(status: string): string {
@@ -141,11 +137,31 @@ function statusLabel(status: string): string {
   return labels[status] ?? status;
 }
 
-function ownersSummary(owners: { is_primary: boolean }[]): string {
+/** Фамилия — первое слово ФИО (или полное имя, если одно слово). */
+function surnameFromName(name: string | undefined): string {
+  if (!name?.trim()) return '—';
+  const first = name.trim().split(/\s+/)[0];
+  return first || name.trim();
+}
+
+/**
+ * Колонка «Владельцы»: фамилия владельца (или владельцев).
+ * Если владелец один и доля целая (1/1) — только фамилия.
+ * Если несколько владельцев или доля не целая — в скобках доля, например «Иванов (1/2), Петров (1/2)».
+ */
+function formatOwnersColumn(
+  owners: { owner_name?: string; share_numerator: number; share_denominator: number }[]
+): string {
   if (!owners?.length) return '—';
-  const primary = owners.filter((o) => o.is_primary).length;
-  if (owners.length === 1) return primary ? '1 (основной)' : '1';
-  return `${owners.length} (основных: ${primary})`;
+  const fullShare = (n: number, d: number) => n === d && n === 1;
+  const parts = owners.map((o) => {
+    const surname = surnameFromName(o.owner_name);
+    if (owners.length === 1 && fullShare(o.share_numerator, o.share_denominator)) {
+      return surname;
+    }
+    return `${surname} (${o.share_numerator}/${o.share_denominator})`;
+  });
+  return parts.join(', ');
 }
 
 function onFilterChange(): void {

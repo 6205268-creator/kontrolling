@@ -65,7 +65,7 @@
         <p v-if="ownerships.length === 0" class="hint">Добавьте хотя бы одного владельца.</p>
         <div v-for="(row, index) in ownerships" :key="index" class="ownership-row">
           <div class="owner-search">
-            <label>Владелец *</label>
+            <label>Владелец</label>
             <input
               v-model="row.searchQuery"
               type="text"
@@ -74,7 +74,6 @@
               @focus="onOwnerFocus(index)"
               @input="onOwnerInput(index)"
             />
-            <p class="field-hint">Выберите владельца из списка после ввода фамилии, имени или УНП</p>
             <button
               type="button"
               class="btn-pick-owner"
@@ -95,6 +94,12 @@
                 Ничего не найдено
               </li>
             </ul>
+          </div>
+          <div class="primary-check">
+            <label :title="'Основной владелец (член СТ)'">
+              <input v-model="row.is_primary" type="checkbox" :title="'Основной владелец (член СТ)'" />
+              <span class="primary-check-label">Главный</span>
+            </label>
           </div>
           <div class="share-block">
             <label>Доля в участке</label>
@@ -135,14 +140,8 @@
               <span class="share-hint-inline">Напр. 1/2 — половина участка</span>
             </div>
           </div>
-          <div class="primary-check">
-            <label>
-              <input v-model="row.is_primary" type="checkbox" />
-              Основной владелец (член СТ)
-            </label>
-          </div>
           <div class="valid-from">
-            <label>Дата начала владения *</label>
+            <label>Дата начала владения</label>
             <input v-model="row.valid_from" type="date" required />
           </div>
           <button type="button" class="btn-remove" title="Удалить" @click="removeOwnership(index)">
@@ -199,11 +198,11 @@ import { useAuthStore } from '@/stores/auth';
 import type { Cooperative, Owner } from '@/types';
 
 const SHARE_PRESETS: { value: string; label: string; num: number; den: number }[] = [
-  { value: '1/1', label: 'Целиком (1/1)', num: 1, den: 1 },
-  { value: '1/2', label: 'Половина (1/2)', num: 1, den: 2 },
-  { value: '1/3', label: 'Треть (1/3)', num: 1, den: 3 },
-  { value: '1/4', label: 'Четверть (1/4)', num: 1, den: 4 },
-  { value: '2/3', label: 'Две трети (2/3)', num: 2, den: 3 },
+  { value: '1/1', label: '1/1', num: 1, den: 1 },
+  { value: '1/2', label: '1/2', num: 1, den: 2 },
+  { value: '1/3', label: '1/3', num: 1, den: 3 },
+  { value: '1/4', label: '1/4', num: 1, den: 4 },
+  { value: '2/3', label: '2/3', num: 2, den: 3 },
 ];
 
 interface OwnershipRow {
@@ -455,19 +454,32 @@ onMounted(async () => {
 
 <style scoped>
 .form-view {
-  padding: 20px;
-  background: #f8fafc;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e2e8f0;
+  font-family: var(--font-sans);
+  padding: 28px 32px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e7eb;
   max-width: 720px;
   min-width: 0;
   overflow-x: auto;
 }
 
+.form-view input,
+.form-view select,
+.form-view button,
+.form-view label,
+.form-view .readonly-value,
+.form-view .hint {
+  font-family: inherit;
+}
+
 .form-view h1 {
-  margin: 0 0 24px;
+  margin: 0 0 28px;
   font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.02em;
 }
 
 .form-section {
@@ -476,8 +488,10 @@ onMounted(async () => {
 
 .form-section h2 {
   margin: 0 0 16px;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  font-weight: 600;
   color: #374151;
+  letter-spacing: -0.01em;
 }
 
 .field {
@@ -496,10 +510,17 @@ onMounted(async () => {
 .field select {
   width: 100%;
   max-width: 320px;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
   font-size: 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--p-primary-color, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .readonly-value {
@@ -517,20 +538,27 @@ onMounted(async () => {
 
 .ownership-row {
   display: grid;
-  grid-template-columns: minmax(0, 260px) minmax(0, 180px) minmax(0, 160px) minmax(0, 132px) 36px;
+  grid-template-columns: minmax(0, 260px) minmax(0, 260px) minmax(0, 160px) 36px;
   grid-template-rows: auto auto;
   gap: 12px 16px;
   align-items: end;
   margin-bottom: 16px;
-  padding: 12px;
-  background: #f1f5f9;
-  border-radius: 8px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   min-width: 0;
 }
 
 .ownership-row .owner-search {
-  grid-column: 1 / -1;
+  grid-column: 1 / 3;
   grid-row: 1;
+}
+
+.ownership-row .primary-check {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: center;
 }
 
 .ownership-row .share-block {
@@ -540,40 +568,31 @@ onMounted(async () => {
   z-index: 11;
 }
 
-.ownership-row .primary-check {
+.ownership-row .valid-from {
   grid-column: 2;
   grid-row: 2;
 }
 
-.ownership-row .valid-from {
-  grid-column: 3;
-  grid-row: 2;
-}
-
 .ownership-row .btn-remove {
-  grid-column: 5;
+  grid-column: 4;
   grid-row: 2;
-}
-
-.field-hint {
-  margin: 4px 0 0;
-  font-size: 0.75rem;
-  color: #64748b;
-  line-height: 1.3;
 }
 
 .btn-pick-owner {
-  margin-top: 6px;
-  padding: 6px 12px;
+  margin-top: 8px;
+  padding: 8px 14px;
   font-size: 0.8125rem;
+  font-weight: 500;
   color: var(--p-primary-color, #2563eb);
   background: transparent;
   border: 1px solid var(--p-primary-color, #2563eb);
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 .btn-pick-owner:hover {
   background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
 }
 
 .dialog-loading {
@@ -620,7 +639,7 @@ onMounted(async () => {
 
 @media (max-width: 900px) {
   .ownership-row {
-    grid-template-columns: 1fr 1fr 1fr 36px;
+    grid-template-columns: 1fr 1fr 36px;
     grid-template-rows: auto auto auto;
   }
   .ownership-row .owner-search {
@@ -640,7 +659,7 @@ onMounted(async () => {
     grid-row: 3;
   }
   .ownership-row .btn-remove {
-    grid-column: 4;
+    grid-column: 3;
     grid-row: 3;
   }
 }
@@ -652,10 +671,16 @@ onMounted(async () => {
 
 .owner-search input {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
   font-size: 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.owner-search input:focus {
+  outline: none;
+  border-color: var(--p-primary-color, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .suggestions {
@@ -691,27 +716,30 @@ onMounted(async () => {
   cursor: default;
 }
 
-.share-block label,
-.valid-from label,
-.primary-check label {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #6b7280;
-}
-
 .share-block {
   min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.share-block label {
+  flex-shrink: 0;
+  margin-bottom: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
 }
 
 .share-select {
-  width: 100%;
-  max-width: 100%;
   min-width: 0;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  width: auto;
+  max-width: 120px;
+  flex: 0 1 auto;
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
   font-size: 0.875rem;
   background: #fff;
   box-sizing: border-box;
@@ -722,7 +750,8 @@ onMounted(async () => {
   align-items: center;
   flex-wrap: wrap;
   gap: 6px 12px;
-  margin-top: 8px;
+  flex-basis: 100%;
+  margin-top: 4px;
 }
 
 .share-fields-custom .share-num,
@@ -753,13 +782,36 @@ onMounted(async () => {
   color: #6b7280;
 }
 
-.valid-from input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+.valid-from {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.valid-from label {
+  flex-shrink: 0;
+  margin-bottom: 0;
   font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.valid-from input {
+  flex: 1;
+  min-width: 140px;
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: inherit;
   box-sizing: border-box;
+}
+.valid-from input:focus {
+  outline: none;
+  border-color: var(--p-primary-color, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .primary-check {
@@ -774,12 +826,15 @@ onMounted(async () => {
   gap: 8px;
   cursor: pointer;
   font-size: 0.875rem;
+  margin-bottom: 0;
+  font-weight: 500;
+  color: #374151;
 }
 
-.valid-from {
-  min-width: 0;
-  max-width: 132px;
+.primary-check-label {
+  font-family: inherit;
 }
+
 
 .btn-remove {
   width: 36px;
@@ -818,24 +873,27 @@ onMounted(async () => {
 .form-actions {
   display: flex;
   gap: 12px;
-  margin-top: 24px;
-  padding-top: 20px;
+  margin-top: 28px;
+  padding-top: 24px;
   border-top: 1px solid #e5e7eb;
 }
 
 .btn-primary {
-  padding: 10px 20px;
+  padding: 10px 22px;
   border: none;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   color: white;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
+  box-shadow: 0 1px 2px rgba(99, 102, 241, 0.25);
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
 }
 
 .btn-primary:hover:not(:disabled) {
-  opacity: 0.95;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  transform: translateY(-1px);
 }
 
 .btn-primary:disabled {

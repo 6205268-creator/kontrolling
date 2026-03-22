@@ -8,7 +8,7 @@ AI assistants: read this file first. Respond in Russian unless told otherwise.
 
 ## Tech Stack
 
-- **Backend:** Python 3.11+, FastAPI, SQLAlchemy 2.0 (async), Alembic, PostgreSQL 15+
+- **Backend:** Python 3.11+, FastAPI, SQLAlchemy 2.0 (async), PostgreSQL 15+ (схема таблиц создаётся из ORM при старте приложения, без Alembic)
 - **Frontend:** Vue 3 + TypeScript + Vite + Pinia
 - **Auth:** JWT + bcrypt | **Tests:** pytest (backend), Vitest (frontend) | **Lint:** ruff
 
@@ -34,7 +34,7 @@ The project owner is not a developer. Use simple language, no jargon, no code bl
 ## Critical Pitfalls
 
 - Run backend from `backend/` dir (`.env` is CWD-relative).
-- New ORM models → import in `db/register_models.py`.
+- New ORM models → import in `db/register_models.py` (чтобы `create_all` увидел таблицы).
 - API layer must NOT import from Infrastructure.
 - Use `Guid` from `app.db.base` for UUID columns.
 - Tests: set `DATABASE_URL` before importing `app.main`.

@@ -237,3 +237,46 @@ class PaymentAggregateProvider(IPaymentAggregateProvider):
         )
 
         return {row[0]: (row[1] or Decimal("0.00")) for row in result.all()}
+
+    async def sum_confirmed_in_period(
+        self,
+        financial_subject_id: UUID,
+        period_start: date,
+        period_end: date,
+    ) -> Decimal:
+        result = await self.session.execute(
+            select(func.sum(PaymentModel.amount)).where(
+                PaymentModel.financial_subject_id == financial_subject_id,
+                PaymentModel.status == "confirmed",
+                PaymentModel.payment_date >= period_start,
+                PaymentModel.payment_date <= period_end,
+            )
+        )
+        return result.scalar() or Decimal("0.00")
+
+    async def sum_confirmed_in_period_by_cooperative(
+        self,
+        cooperative_id: UUID,
+        period_start: date,
+        period_end: date,
+    ) -> dict[UUID, Decimal]:
+        from app.modules.financial_core.infrastructure.models import FinancialSubjectModel
+
+        result = await self.session.execute(
+            select(
+                PaymentModel.financial_subject_id,
+                func.sum(PaymentModel.amount).label("total"),
+            )
+            .join(
+                FinancialSubjectModel,
+                PaymentModel.financial_subject_id == FinancialSubjectModel.id,
+            )
+            .where(
+                FinancialSubjectModel.cooperative_id == cooperative_id,
+                PaymentModel.status == "confirmed",
+                PaymentModel.payment_date >= period_start,
+                PaymentModel.payment_date <= period_end,
+            )
+            .group_by(PaymentModel.financial_subject_id)
+        )
+        return {row[0]: (row[1] or Decimal("0.00")) for row in result.all()}

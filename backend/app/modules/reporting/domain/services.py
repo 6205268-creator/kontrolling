@@ -26,3 +26,6 @@ class DebtorInfo:
     subject_info: dict
     owner_name: str
     total_debt: Decimal
+    overdue_days: int = 0
+    penalty_amount: Decimal = Decimal("0.00")
+    total_with_penalty: Decimal = Decimal("0.00")

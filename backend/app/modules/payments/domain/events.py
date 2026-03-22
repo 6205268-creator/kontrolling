@@ -16,6 +16,7 @@ class PaymentConfirmed(DomainEvent):
     """Event published when a Payment is confirmed (created)."""
 
     payment_id: UUID
+    cooperative_id: UUID
     financial_subject_id: UUID
     payer_owner_id: UUID
     amount: Decimal

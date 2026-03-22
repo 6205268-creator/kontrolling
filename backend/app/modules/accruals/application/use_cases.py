@@ -15,9 +15,10 @@ from .dtos import AccrualCreate
 class CreateAccrualUseCase:
     """Use case for creating an Accrual."""
 
-    def __init__(self, accrual_repo: IAccrualRepository, fs_repo=None):
+    def __init__(self, accrual_repo: IAccrualRepository, fs_repo=None, period_guard=None):
         self.accrual_repo = accrual_repo
         self.fs_repo = fs_repo
+        self.period_guard = period_guard
 
     async def execute(self, data: AccrualCreate, cooperative_id: UUID) -> Accrual:
         """Create a new accrual.
@@ -40,11 +41,18 @@ class CreateAccrualUseCase:
                     "Financial subject does not belong to the specified cooperative"
                 )
 
+        if self.period_guard:
+            await self.period_guard.ensure_open_for_date(cooperative_id, data.accrual_date)
+
         # Domain validation
         if data.amount < 0:
             raise ValidationError("Amount must be non-negative")
 
-        operation_number = f"ACC-{cooperative_id.hex[:8]}-{uuid4().hex[:8]}"
+        operation_number = (
+            data.operation_number.strip()
+            if data.operation_number
+            else f"ACC-{cooperative_id.hex[:8]}-{uuid4().hex[:8]}"
+        )
         entity = Accrual(
             financial_subject_id=data.financial_subject_id,
             contribution_type_id=data.contribution_type_id,
@@ -100,9 +108,15 @@ class GetAccrualsByCooperativeUseCase:
 class ApplyAccrualUseCase:
     """Use case for applying an accrual (status: created → applied)."""
 
-    def __init__(self, repo: IAccrualRepository, event_dispatcher: EventDispatcher | None = None):
+    def __init__(
+        self,
+        repo: IAccrualRepository,
+        event_dispatcher: EventDispatcher | None = None,
+        period_guard=None,
+    ):
         self.repo = repo
         self.event_dispatcher = event_dispatcher
+        self.period_guard = period_guard
 
     async def execute(self, accrual_id: UUID, cooperative_id: UUID) -> Accrual:
         """Apply accrual (change status to 'applied').
@@ -127,6 +141,9 @@ class ApplyAccrualUseCase:
                 f"Cannot apply accrual with status '{accrual.status}'. Only 'created' status allowed."
             )
 
+        if self.period_guard:
+            await self.period_guard.ensure_open_for_date(cooperative_id, accrual.accrual_date)
+
         accrual.status = "applied"
         result = await self.repo.update(accrual)
 
@@ -135,10 +152,12 @@ class ApplyAccrualUseCase:
             self.event_dispatcher.dispatch(
                 AccrualApplied(
                     accrual_id=result.id,
+                    cooperative_id=cooperative_id,
                     financial_subject_id=result.financial_subject_id,
                     contribution_type_id=result.contribution_type_id,
                     amount=result.amount,
                     accrual_date=result.accrual_date,
+                    due_date=result.due_date,
                     operation_number=result.operation_number,
                 )
             )
@@ -149,9 +168,15 @@ class ApplyAccrualUseCase:
 class CancelAccrualUseCase:
     """Use case for cancelling an accrual (status → cancelled)."""
 
-    def __init__(self, repo: IAccrualRepository, event_dispatcher: EventDispatcher | None = None):
+    def __init__(
+        self,
+        repo: IAccrualRepository,
+        event_dispatcher: EventDispatcher | None = None,
+        period_guard=None,
+    ):
         self.repo = repo
         self.event_dispatcher = event_dispatcher
+        self.period_guard = period_guard
 
     async def execute(
         self,
@@ -208,9 +233,10 @@ class CancelAccrualUseCase:
 class MassCreateAccrualsUseCase:
     """Use case for mass creating accruals."""
 
-    def __init__(self, accrual_repo: IAccrualRepository, fs_repo=None):
+    def __init__(self, accrual_repo: IAccrualRepository, fs_repo=None, period_guard=None):
         self.accrual_repo = accrual_repo
         self.fs_repo = fs_repo
+        self.period_guard = period_guard
 
     async def execute(
         self,
@@ -239,6 +265,9 @@ class MassCreateAccrualsUseCase:
                     raise ValidationError(
                         "Financial subject does not belong to the specified cooperative"
                     )
+
+            if self.period_guard:
+                await self.period_guard.ensure_open_for_date(cooperative_id, data.accrual_date)
 
             operation_number = f"ACC-{cooperative_id.hex[:8]}-{uuid4().hex[:8]}"
             entity = Accrual(

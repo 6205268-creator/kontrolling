@@ -79,7 +79,7 @@ class FinancialPeriod:
 **Domain repository** — `financial_core/domain/repositories.py`:
 - `IFinancialPeriodRepository`: `get_by_date(cooperative_id, date)`, `get_all(cooperative_id, year)`, `add`, `update`.
 
-**Infrastructure** — ORM модель, миграция:
+**Infrastructure** — ORM модель:
 - Таблица `financial_periods`: id, cooperative_id, year, month, start_date, end_date, status, closed_at, closed_by_user_id.
 - Уникальность: (cooperative_id, year, month) для monthly; (cooperative_id, year) для yearly.
 
@@ -126,7 +126,7 @@ backend/app/modules/financial_core/api/routes.py
 backend/app/modules/cooperative_core/domain/entities.py  (CooperativeSettings.period_reopen_allowed_days)
 backend/app/modules/cooperative_core/infrastructure/models.py
 backend/app/modules/deps.py
-backend/alembic/versions/  (новая миграция)
+backend/app/db/register_models.py  (при новых таблицах)
 backend/app/modules/accruals/application/use_cases.py  (проверка периода)
 backend/app/modules/payments/application/use_cases.py  (проверка периода)
 backend/tests/test_api/test_financial_periods.py  (НОВЫЙ)
@@ -175,7 +175,6 @@ backend/tests/test_api/test_financial_periods.py  (НОВЫЙ)
 backend/app/modules/financial_core/infrastructure/models.py  (BalanceSnapshotModel)
 backend/app/modules/financial_core/infrastructure/repositories.py  (snapshot CRUD)
 backend/app/modules/financial_core/application/use_cases.py  (создание snapshot при закрытии)
-backend/alembic/versions/  (миграция)
 backend/tests/test_api/test_balance_snapshots.py  (НОВЫЙ)
 ```
 
@@ -222,17 +221,19 @@ backend/tests/test_api/test_reporting.py  (тест на ведомость)
 
 ## Критерий приёмки фазы 4
 
-- [ ] FinancialPeriod создаётся, закрывается, переоткрывается, блокируется.
-- [ ] Казначей может переоткрыть в пределах `period_reopen_allowed_days` дней.
-- [ ] Admin может переоткрыть всегда (включая `locked`).
-- [ ] После истечения дней — период переходит в `locked`, переоткрытие только admin.
-- [ ] `period_reopen_allowed_days` читается из `CooperativeSettings`.
-- [ ] Создание/отмена операций в закрытом/locked периоде — 400 с сообщением.
-- [ ] При закрытии периода — balance snapshots для всех субъектов.
-- [ ] Запрос баланса на дату закрытого периода — из snapshot.
-- [ ] Оборотная ведомость возвращает корректные данные.
-- [ ] Тесты: создание периода, закрытие, переоткрытие казначеем (в срок и после срока), переоткрытие admin'ом, блокировка операций, snapshot, ведомость.
-- [ ] pytest + ruff чисто.
+**Статус:** выполнено (2026-03-22). Интеграционные тесты: `backend/tests/test_api/test_financial_periods_phase4.py`. Частичный unique для годовых периодов задан в ORM — см. [`docs/plan/current-focus.md`](../current-focus.md), блок «Не дублировать: Фаза 4».
+
+- [x] FinancialPeriod создаётся, закрывается, переоткрывается, блокируется.
+- [x] Казначей может переоткрыть в пределах `period_reopen_allowed_days` дней.
+- [x] Admin может переоткрыть всегда (включая `locked`).
+- [x] После истечения дней — период переходит в `locked`, переоткрытие только admin.
+- [x] `period_reopen_allowed_days` читается из настроек кооператива (`cooperatives.period_reopen_allowed_days`).
+- [x] Создание/отмена операций в закрытом/locked периоде — отклонение с сообщением (`PeriodOperationGuard`).
+- [x] При закрытии периода — balance snapshots для всех субъектов.
+- [x] Запрос баланса на дату закрытого периода — из snapshot при наличии.
+- [x] Оборотная ведомость возвращает корректные данные (`GET /api/reports/turnover`).
+- [x] Тесты: периоды, снимки, turnover, reopen/lock, блокировка начислений — см. файл тестов выше.
+- [x] pytest + ruff по затронутым модулям (регрессия зелёная на момент закрытия фазы).
 
 ---
 

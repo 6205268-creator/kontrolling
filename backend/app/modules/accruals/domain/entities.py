@@ -26,6 +26,7 @@ class ContributionType:
     name: str
     code: str
     description: str | None = None
+    is_system: bool = False
     created_at: datetime | None = None
     id: UUID | None = None
 

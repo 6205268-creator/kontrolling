@@ -72,6 +72,8 @@ export interface PlotOwnership {
   valid_from: string;
   valid_to?: string;
   created_at: string;
+  /** ФИО владельца (приходит в списке/детали участка) */
+  owner_name?: string;
 }
 
 // FinancialSubject (финансовый субъект)

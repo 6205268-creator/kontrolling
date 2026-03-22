@@ -32,9 +32,9 @@ globs: backend/**/*.py, backend/tests/**/*
 
 Иначе часть кода (например, слой, вызывающий `get_db` напрямую из `db.session`) может получить сессию из глобального движка, а не из `test_db`.
 
-## Модели и Alembic
+## Модели и схема БД
 
-- ORM-модели существуют только в `app.modules.<module>.infrastructure.models`. Регистрация для Alembic — через вызов `import_all_models()` из `app.db.register_models` в `alembic/env.py`. Каждая новая ORM-модель добавляется в соответствующий модуль и импортируется в `register_models.py`; иначе Alembic не увидит таблицу при `autogenerate`, а в тестах `Base.metadata.create_all` не создаст её.
+- ORM-модели существуют только в `app.modules.<module>.infrastructure.models`. Каждая новая модель должна быть импортирована в `app.db.register_models.import_all_models()` (или в тестовом `conftest` до `create_all`), иначе таблица не попадёт в `Base.metadata` и не создастся ни при старте приложения, ни в тестах. Проект **не использует Alembic** — схема синхронизируется с ORM через `create_all` при старте API.
 
 ## UUID в моделях
 

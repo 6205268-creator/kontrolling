@@ -123,6 +123,7 @@ class PlotOwnershipInDB(PlotOwnershipBase):
     land_plot_id: UUID
     created_at: datetime
     updated_at: datetime
+    owner_name: str | None = Field(None, description="ФИО владельца (для списка/детали)")
 
 
 class LandPlotWithOwners(LandPlotInDB):
