@@ -55,6 +55,7 @@ class MemberModel(Base):
     )
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
     joined_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
@@ -70,6 +71,7 @@ class MemberModel(Base):
             personal_account_id=self.personal_account_id,
             status=self.status,
             joined_at=self.joined_at,
+            closed_at=self.closed_at,
             created_at=self.created_at,
         )
 
@@ -83,6 +85,7 @@ class MemberModel(Base):
             personal_account_id=entity.personal_account_id,
             status=entity.status,
             joined_at=entity.joined_at,
+            closed_at=entity.closed_at,
             created_at=entity.created_at,
         )
 

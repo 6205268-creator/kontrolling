@@ -131,8 +131,8 @@ class ContributionTypeRepository(IContributionTypeRepository):
         model = result.scalar_one_or_none()
         return model.to_domain() if model else None
 
-    async def get_all(self, cooperative_id: UUID) -> list[ContributionType]:
-        """Get all contribution types. Note: cooperative_id not used."""
+    async def get_all(self) -> list[ContributionType]:
+        """Get all contribution types."""
         query = select(ContributionTypeModel).order_by(ContributionTypeModel.name)
         result = await self.session.execute(query)
         models = result.scalars().all()

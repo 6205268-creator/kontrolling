@@ -71,7 +71,7 @@ class IContributionTypeRepository(IRepository[ContributionType], ABC):
         pass
 
     @abstractmethod
-    async def get_all(self, cooperative_id: UUID) -> list[ContributionType]:
+    async def get_all(self) -> list[ContributionType]:
         """Get all contribution types."""
         pass
 

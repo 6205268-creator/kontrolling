@@ -333,6 +333,4 @@ class GetContributionTypesUseCase:
 
     async def execute(self) -> list:
         """Get all contribution types."""
-        return await self.repo.get_all(
-            UUID(int=0)
-        )  # cooperative_id not used for contribution types
+        return await self.repo.get_all()

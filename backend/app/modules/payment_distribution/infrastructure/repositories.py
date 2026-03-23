@@ -121,6 +121,7 @@ class MemberRepository(IMemberRepository):
         model.status = entity.status
         model.personal_account_id = entity.personal_account_id
         model.joined_at = entity.joined_at
+        model.closed_at = entity.closed_at
 
         await self.session.flush()
         await self.session.refresh(model)

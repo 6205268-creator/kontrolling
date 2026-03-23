@@ -7,3 +7,8 @@ node_modules/
 
 # Параллельный проект (отдельный репозиторий)
 kontrolling-scenarios/
+
+# Локальные артефакты / AI
+CLAUDE_AI/
+repomix-output.xml
+.gitmessage_commit.txt

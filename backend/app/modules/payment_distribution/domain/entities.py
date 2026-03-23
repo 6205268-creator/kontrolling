@@ -38,6 +38,7 @@ class Member:
     personal_account_id: UUID | None = None
     status: str = "active"  # active, closed
     joined_at: datetime | None = None
+    closed_at: datetime | None = None
     created_at: datetime | None = None
     id: UUID | None = None
 
@@ -48,7 +49,7 @@ class Member:
             closed_at: Дата закрытия.
         """
         self.status = "closed"
-        self.joined_at = closed_at
+        self.closed_at = closed_at
 
 
 @dataclass
