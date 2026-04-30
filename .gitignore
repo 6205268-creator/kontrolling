@@ -12,3 +12,10 @@ kontrolling-scenarios/
 CLAUDE_AI/
 repomix-output.xml
 .gitmessage_commit.txt
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
